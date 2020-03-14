@@ -123,7 +123,7 @@ namespace WHO_Data_Parser
             }
             string jsonString = JsonConvert.SerializeObject(overallData);
             Debug.WriteLine(jsonString);
-            string outputFileLocation = "../../../../who_output.json";
+            string outputFileLocation = "../../../../who_data.json";
             bool fileExists = File.Exists(outputFileLocation);
             if (fileExists)
             {
