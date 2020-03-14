@@ -8,7 +8,7 @@ export type Store = ReturnType<typeof rootReducer>;
 
 export const configureStore = () => {
   const sagaMiddleware = createSagaMiddleware();
-  const middlewares = [];
+  const middlewares = [sagaMiddleware];
   const middlewareEnhancer = applyMiddleware(...middlewares);
   const composeEnhancers = composeWithDevTools({
     trace: true,
