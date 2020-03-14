@@ -34,18 +34,10 @@ module.exports = {
       {
         test: /\.(ts|tsx)$/,
         use: {
-          loader: "babel-loader",
+          loader: "ts-loader",
           options: {
-            cacheDirectory: true,
-            babelrc: false,
-            presets: [
-              [
-                "@babel/preset-env",
-                { targets: { browsers: "last 2 versions " } }
-              ],
-              "@babel/preset-typescript",
-              "@babel/preset-react"
-            ]
+            transpileOnly: true,
+            experimentalWatchApi: true
           }
         },
         exclude: /node_modules/
