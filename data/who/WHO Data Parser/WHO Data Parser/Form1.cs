@@ -123,7 +123,13 @@ namespace WHO_Data_Parser
             }
             string jsonString = JsonConvert.SerializeObject(overallData);
             Debug.WriteLine(jsonString);
-
+            string outputFileLocation = "../../../../who_output.json";
+            bool fileExists = File.Exists(outputFileLocation);
+            if (fileExists)
+            {
+                File.Delete(outputFileLocation);
+            }
+            File.WriteAllText(outputFileLocation, jsonString);
         }
 
         private void porcessTablesContents1(WHOData whoData, List<List<List<string>>> tables)
