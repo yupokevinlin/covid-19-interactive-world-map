@@ -6,8 +6,8 @@ import MailIcon from "@material-ui/icons/Mail";
 export interface PageWrapperContainerProps {}
 
 const PageWrapperContainer: React.FC<PageWrapperContainerProps> = props => {
-  const list: Array<MenuItem> = [];
-  return <PageWrapper children={props.children} menuItems={list} />;
+  const menuItems: Array<MenuItem> = [];
+  return <PageWrapper children={props.children} menuItems={menuItems} />;
 };
 
 export default PageWrapperContainer;
