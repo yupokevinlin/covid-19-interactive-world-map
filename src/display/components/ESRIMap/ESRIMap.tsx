@@ -8,6 +8,7 @@ import FeatureLayer = __esri.FeatureLayer;
 import FieldProperties = __esri.FieldProperties;
 import { ClassBreakColors, LatLon, MapConfirmedCasesClassBreakColors } from "../../../api/MapApi/types";
 import { usePreviousProps } from "../../../hooks/usePreviousProps";
+import Legend = __esri.Legend;
 
 export type ESRIMapProps = ESRIMapDataProps & ESRIMapStyleProps & ESRIMapEventProps;
 
@@ -46,13 +47,13 @@ const ESRIMap: React.FC<ESRIMapProps> = props => {
   const mapRef: React.MutableRefObject<HTMLDivElement> = useRef();
   const prevProps: ESRIMapProps = usePreviousProps<ESRIMapProps>(props);
   useEffect(() => {
-    loadModules(["esri/Map", "esri/views/MapView", "esri/layers/FeatureLayer"], { css: true }).then(
-      ([Map, MapView, FeatureLayer]) => {
-        if (!map) {
-          initialize(Map, MapView, FeatureLayer);
-        }
+    loadModules(["esri/Map", "esri/views/MapView", "esri/layers/FeatureLayer", "esri/widgets/Legend"], {
+      css: true,
+    }).then(([Map, MapView, FeatureLayer, Legend]) => {
+      if (!map) {
+        initialize(Map, MapView, FeatureLayer, Legend);
       }
-    );
+    });
 
     if (prevProps) {
       if (prevProps.mapPolygons !== mapPolygons) {
@@ -61,7 +62,7 @@ const ESRIMap: React.FC<ESRIMapProps> = props => {
     }
   }, [mapPolygons]);
 
-  const initialize = (Map, MapView, FeatureLayer): void => {
+  const initialize = (Map, MapView, FeatureLayer, Legend): void => {
     map = new Map({
       basemap: initialBaseMap,
     });
@@ -78,6 +79,13 @@ const ESRIMap: React.FC<ESRIMapProps> = props => {
 
     const layers: Array<FeatureLayer> = [polygonLayer];
     layers.forEach(layer => map.add(layer));
+
+    const legend: Legend = new Legend({
+      view: mapView,
+    });
+
+    mapView.ui.add(legend, "bottom-left");
+
     updatePolygonLayer();
   };
 
@@ -136,24 +144,23 @@ const ESRIMap: React.FC<ESRIMapProps> = props => {
       },
     ];
 
-    const outline = {
-      width: 1,
-      color: [126, 126, 126, 1],
-    };
-
     const renderer = {
       type: "class-breaks",
       field: "confirmedCases",
+      legendOptions: {
+        title: "Confirmed Cases",
+      },
       defaultSymbol: {
         type: "simple-fill",
-        style: "solid",
-        color: [0, 0, 0, 0.3],
+        style: "backward-diagonal",
+        color: [0, 0, 0, 0.4],
         outline: {
           width: 1,
-          color: outline,
+          color: [126, 126, 126, 1],
         },
       },
-      classBreakInfos: generateLogarithmicClassStep(8, MapConfirmedCasesClassBreakColors, [0, 1, 5, 7, 8]),
+      defaultLabel: "no data",
+      classBreakInfos: generateLogarithmicClassStep(7, MapConfirmedCasesClassBreakColors, [0, 1.5, 4, 5.5, 8]),
     };
 
     return new FeatureLayer({
@@ -168,7 +175,7 @@ const ESRIMap: React.FC<ESRIMapProps> = props => {
   };
 
   const generateLogarithmicClassStep = (steps: number, colors: ClassBreakColors, domain: Array<number>): Array<any> => {
-    const backgroundOpacity: number = 0.3;
+    const backgroundOpacity: number = 0.4;
     const outlineOpacity: number = 1;
     const outlineWidth: number = 1;
     const classBreakInfos: Array<any> = [];
@@ -190,12 +197,15 @@ const ESRIMap: React.FC<ESRIMapProps> = props => {
               color: [126, 126, 126, outlineOpacity],
             },
           },
+          label: "0",
         });
       } else {
         const color: Color = colorScale(step);
+        const minValue: number = Math.pow(10, step - 1);
+        const maxvalue: number = step === steps ? Number.MAX_SAFE_INTEGER : Math.pow(10, step) - 0.1;
         classBreakInfos.push({
-          minValue: Math.pow(10, step - 1),
-          maxValue: step === steps ? Number.MAX_SAFE_INTEGER : Math.pow(10, step) - 0.1,
+          minValue: minValue,
+          maxValue: maxvalue,
           symbol: {
             type: "simple-fill",
             style: "solid",
@@ -205,6 +215,7 @@ const ESRIMap: React.FC<ESRIMapProps> = props => {
               color: [126, 126, 126, outlineOpacity],
             },
           },
+          label: step === steps ? `>${minValue}` : `${minValue} - ${Math.floor(maxvalue)}`,
         });
       }
     }
