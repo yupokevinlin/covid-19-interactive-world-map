@@ -35,6 +35,7 @@ const MapPage: React.FC<MapPageProps> = props => {
     100,
     1000,
     1000,
+    10000,
     100000,
     1000000,
   ];
