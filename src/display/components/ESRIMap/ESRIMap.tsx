@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
 import { loadModules } from "esri-loader";
+import "./ESRIMap.css";
 import MapView = __esri.MapView;
 import Map = __esri.Map;
 import chroma, { Color, Scale } from "chroma-js";
