@@ -6,7 +6,13 @@ import Map = __esri.Map;
 import chroma, { Color, Scale } from "chroma-js";
 import FeatureLayer = __esri.FeatureLayer;
 import FieldProperties = __esri.FieldProperties;
-import { ClassBreakColors, LatLon, MapConfirmedCasesClassBreakColors } from "../../../api/MapApi/types";
+import {
+  ClassBreakColors,
+  LatLon,
+  MapConfirmedCasesClassBreakColors,
+  MapDeathsClassBreakColors,
+  MapRecoveredCasesClassBreakColors,
+} from "../../../api/MapApi/types";
 import { usePreviousProps } from "../../../hooks/usePreviousProps";
 import Legend = __esri.Legend;
 
@@ -15,6 +21,7 @@ export type ESRIMapProps = ESRIMapDataProps & ESRIMapStyleProps & ESRIMapEventPr
 export interface ESRIMapDataProps {
   initialBaseMap?: string;
   mapPolygons: Array<MapPolygon>;
+  displayedLayer: ESRIMapModeNames;
 }
 
 export interface ESRIMapStyleProps {}
@@ -25,6 +32,8 @@ export interface MapPolygon {
   internalId: number;
   name: string;
   confirmedCasesCount: number;
+  recoveredCasesCount: number;
+  deathsCount: number;
   geometry: Array<Array<LatLon>>;
 }
 
@@ -38,11 +47,17 @@ let mapView: MapView = null;
 let polygonLayer: FeatureLayer = null;
 
 export enum ESRIMapLayerNames {
-  polygonLayer = "polygonLayer",
+  polygonLayer = "polygon-layer",
+}
+
+export enum ESRIMapModeNames {
+  confirmedCases = "Confirmed Cases",
+  recoveredCases = "Recovered Cases",
+  deaths = "Deaths",
 }
 
 const ESRIMap: React.FC<ESRIMapProps> = props => {
-  const { initialBaseMap = "streets", mapPolygons = [] } = props;
+  const { initialBaseMap = "streets", mapPolygons = [], displayedLayer } = props;
 
   const mapRef: React.MutableRefObject<HTMLDivElement> = useRef();
   const prevProps: ESRIMapProps = usePreviousProps<ESRIMapProps>(props);
@@ -57,10 +72,13 @@ const ESRIMap: React.FC<ESRIMapProps> = props => {
 
     if (prevProps) {
       if (prevProps.mapPolygons !== mapPolygons) {
-        updatePolygonLayer();
+        updatePolygonLayerData();
+      }
+      if (prevProps.displayedLayer !== displayedLayer) {
+        updatePolygonLayerRenderer();
       }
     }
-  }, [mapPolygons]);
+  }, [mapPolygons, displayedLayer]);
 
   const initialize = (Map, MapView, FeatureLayer, Legend): void => {
     map = new Map({
@@ -86,10 +104,41 @@ const ESRIMap: React.FC<ESRIMapProps> = props => {
 
     mapView.ui.add(legend, "bottom-left");
 
-    updatePolygonLayer();
+    updatePolygonLayerData();
   };
 
-  const updatePolygonLayer = (): void => {
+  const updatePolygonLayerRenderer = (): void => {
+    const renderer = (polygonLayer.renderer as __esri.ClassBreaksRenderer).clone();
+    renderer.legendOptions = {
+      title: displayedLayer,
+    };
+    switch (displayedLayer) {
+      case ESRIMapModeNames.confirmedCases: {
+        renderer.field = "confirmedCases";
+        renderer.classBreakInfos = generateLogarithmicClassStep(7, MapConfirmedCasesClassBreakColors, [
+          0,
+          1.5,
+          4,
+          5.5,
+          8,
+        ]);
+        break;
+      }
+      case ESRIMapModeNames.recoveredCases: {
+        renderer.field = "recoveredCases";
+        renderer.classBreakInfos = generateLogarithmicClassStep(7, MapRecoveredCasesClassBreakColors, [0, 2, 4, 6, 8]);
+        break;
+      }
+      case ESRIMapModeNames.deaths: {
+        renderer.field = "deaths";
+        renderer.classBreakInfos = generateLogarithmicClassStep(7, MapDeathsClassBreakColors, [0, 2, 4, 6, 8]);
+        break;
+      }
+    }
+    polygonLayer.renderer = renderer;
+  };
+
+  const updatePolygonLayerData = (): void => {
     polygonLayer.queryObjectIds().then(oldObjectIds => {
       const renderer = (polygonLayer.renderer as __esri.ClassBreaksRenderer).clone();
 
@@ -98,6 +147,8 @@ const ESRIMap: React.FC<ESRIMapProps> = props => {
           name: mapPolygon.name,
           internalId: mapPolygon.internalId,
           confirmedCases: mapPolygon.confirmedCasesCount,
+          recoveredCases: mapPolygon.recoveredCasesCount,
+          deaths: mapPolygon.deathsCount,
         },
         geometry: {
           type: "polygon",
@@ -142,13 +193,23 @@ const ESRIMap: React.FC<ESRIMapProps> = props => {
         alias: "confirmedCases",
         type: "integer",
       },
+      {
+        name: "recoveredCases",
+        alias: "recoveredCases",
+        type: "integer",
+      },
+      {
+        name: "deaths",
+        alias: "deaths",
+        type: "integer",
+      },
     ];
 
     const renderer = {
       type: "class-breaks",
       field: "confirmedCases",
       legendOptions: {
-        title: "Confirmed Cases",
+        title: ESRIMapModeNames.confirmedCases,
       },
       defaultSymbol: {
         type: "simple-fill",
