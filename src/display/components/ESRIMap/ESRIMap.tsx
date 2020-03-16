@@ -202,7 +202,7 @@ const ESRIMap: React.FC<ESRIMapProps> = props => {
             color: [...color.rgb(), backgroundOpacity],
             outline: {
               width: outlineWidth,
-              color: [...color.rgb(), outlineOpacity],
+              color: [126, 126, 126, outlineOpacity],
             },
           },
         });
