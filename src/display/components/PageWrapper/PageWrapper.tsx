@@ -49,9 +49,20 @@ const ContentAndSpacerWrapper = styled.div`
   flex-wrap: nowrap;
 `;
 
-const ContentWrapper = styled.div<{ height: number }>`
-  height: ${props => `calc(100% - ${StyleUtils.getCssPixelString(props.height)})`};
+const ContentWrapper = styled.div`
+  height: calc(100% - 64px);
+  @media (max-width: 600px) {
+    height: calc(100% - 56px);
+  }
   width: 100%;
+`;
+
+const ContentSpacer = styled.div`
+  height: 64px;
+  @media (max-width: 600px) {
+    height: 56px;
+  }
+  width: 0%;
 `;
 
 const drawerWidth = 240;
@@ -169,8 +180,8 @@ const PageWrapper: React.FC<PageWrapperProps> = props => {
         </Hidden>
       </nav>
       <ContentAndSpacerWrapper>
-        <Spacer height={appBarHeight} />
-        <ContentWrapper height={appBarHeight}>{props.children}</ContentWrapper>
+        <ContentSpacer className={"content-spacer"} />
+        <ContentWrapper className={"content-wrapper"}>{props.children}</ContentWrapper>
       </ContentAndSpacerWrapper>
     </StyledPageWrapper>
   );
