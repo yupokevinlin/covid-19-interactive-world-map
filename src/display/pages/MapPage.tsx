@@ -70,16 +70,15 @@ export const StyledMapPage = styled.div`
 `;
 
 export const StyledMapContainer = styled.div`
-  height: calc(100% - 100px);
+  height: calc(100% - 108px);
   width: 100%;
   @media (max-width: 710px) {
-    height: calc(100% - 180px);
     flex-direction: column;
   }
 `;
 
 const StyledCountDisplayButtonListWrapper = styled.div`
-  height: 100px;
+  height: 108px;
   width: 100%;
   display: flex;
   align-items: center;
@@ -87,7 +86,6 @@ const StyledCountDisplayButtonListWrapper = styled.div`
   flex-direction: row;
   flex-wrap: nowrap;
   @media (max-width: 710px) {
-    height: 180px;
     flex-direction: column;
   }
 `;
