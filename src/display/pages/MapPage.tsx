@@ -116,7 +116,7 @@ const MapPage: React.FC<MapPageProps> = props => {
       <StyledMapContainer>
         <ESRIMap mapPolygons={mapPolygons} displayedLayer={layer} />
       </StyledMapContainer>
-      <RegionDisplayBar countryCode={countryCode} countryName={countryCode} />
+      <RegionDisplayBar countryCode={countryCode} countryName={countryName} />
       <StyledCountDisplayButtonListWrapper className={"count-display-buttons-wrapper"}>
         <CountDisplayButton
           handleClick={handleClick}
