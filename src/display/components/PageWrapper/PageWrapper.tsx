@@ -107,10 +107,6 @@ const PageWrapper: React.FC<PageWrapperProps> = props => {
   const [open, setOpen] = useState<boolean>(false);
   const appBarRef: React.MutableRefObject<HTMLHeadElement> = useRef();
 
-  useEffect(() => {
-    setAppBarHeight(appBarRef.current.offsetHeight);
-  }, []);
-
   const handleDrawerToggle = (): void => {
     setOpen(!open);
   };
