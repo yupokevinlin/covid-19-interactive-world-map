@@ -105,7 +105,6 @@ const PageWrapper: React.FC<PageWrapperProps> = props => {
   const classes: ClassNameMap<string> = useStyles();
   const theme: Theme = useTheme();
   const [open, setOpen] = useState<boolean>(false);
-  const [appBarHeight, setAppBarHeight] = useState<number>(64);
   const appBarRef: React.MutableRefObject<HTMLHeadElement> = useRef();
 
   useEffect(() => {
