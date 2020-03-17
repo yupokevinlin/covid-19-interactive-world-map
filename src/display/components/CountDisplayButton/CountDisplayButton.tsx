@@ -68,6 +68,7 @@ const CountDisplayButton: React.FC<CountDisplayButtonProps> = props => {
   theme.typography.subtitle1 = {
     fontSize: "24px",
     lineHeight: "28px",
+    fontWeight: 300,
     "@media (max-width:710px)": {
       fontSize: "14px",
       lineHeight: "16px",
