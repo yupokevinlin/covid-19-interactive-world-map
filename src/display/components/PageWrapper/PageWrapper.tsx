@@ -65,7 +65,7 @@ const ContentSpacer = styled.div`
   width: 0%;
 `;
 
-const drawerWidth = 240;
+const drawerWidth: number = 210;
 
 const useStyles = makeStyles(theme => ({
   root: {
