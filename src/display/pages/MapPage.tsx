@@ -4,6 +4,7 @@ import { CountryOutline, LatLon } from "../../api/MapApi/types";
 import { MapApi } from "../../api/MapApi/MapApi";
 import styled from "styled-components";
 import CountDisplayButton from "../components/CountDisplayButton/CountDisplayButton";
+import RegionDisplayBar from "../components/RegionDisplayBar/RegionDisplayBar";
 
 const countryOutlines: Array<CountryOutline> = MapApi.getCountryOutlines();
 const testNumbers: Array<number> = [
@@ -55,6 +56,8 @@ export interface MapPageDataProps {
   confirmedCasesCount: number;
   recoveredCasesCount: number;
   deathsCount: number;
+  countryName: string;
+  countryCode: string;
 }
 
 export interface MapPageStyleProps {}
@@ -70,10 +73,11 @@ export const StyledMapPage = styled.div`
 `;
 
 export const StyledMapContainer = styled.div`
-  height: calc(100% - 108px);
+  height: calc(100% - 178px);
   width: 100%;
   @media (max-width: 710px) {
     flex-direction: column;
+    height: calc(100% - 148px);
   }
 `;
 
@@ -91,7 +95,7 @@ const StyledCountDisplayButtonListWrapper = styled.div`
 `;
 
 const MapPage: React.FC<MapPageProps> = props => {
-  const { confirmedCasesCount, recoveredCasesCount, deathsCount } = props;
+  const { confirmedCasesCount, recoveredCasesCount, deathsCount, countryName, countryCode } = props;
 
   const [layer, setLayer] = useState<ESRIMapModeNames>(ESRIMapModeNames.confirmedCases);
 
@@ -112,6 +116,7 @@ const MapPage: React.FC<MapPageProps> = props => {
       <StyledMapContainer>
         <ESRIMap mapPolygons={mapPolygons} displayedLayer={layer} />
       </StyledMapContainer>
+      <RegionDisplayBar countryCode={countryCode} countryName={countryCode} />
       <StyledCountDisplayButtonListWrapper className={"count-display-buttons-wrapper"}>
         <CountDisplayButton
           handleClick={handleClick}
