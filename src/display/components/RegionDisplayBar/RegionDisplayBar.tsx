@@ -64,6 +64,18 @@ const RegionDisplayBar: React.FC<RegionDisplayBarProps> = props => {
     fontSize: "60px",
     lineHeight: "70px",
     fontWeight: 300,
+    "@media (min-width: 1150px) and (max-width: 1350px)": {
+      fontSize: "45px",
+      lineHeight: "50px",
+    },
+    "@media (min-width: 950px) and (max-width: 1150px)": {
+      fontSize: "30px",
+      lineHeight: "40px",
+    },
+    "@media (min-width: 710px) and (max-width: 950px)": {
+      fontSize: "25px",
+      lineHeight: "35px",
+    },
     "@media (max-width: 710px)": {
       fontSize: "20px",
       lineHeight: "30px",

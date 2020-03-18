@@ -33,19 +33,25 @@ const StyledMenuButton = styled.div`
   flex-wrap: nowrap;
   align-items: center;
   justify-content: center;
-  max-width: 350px;
+  max-width: 500px;
   max-height: 32px;
   min-height: 32px;
-  padding: 0 30px;
+  padding: 0 20px;
   border-radius: 5px;
   :hover {
     background-color: #cccccc;
+  }
+  @media (max-width: 950px) {
+    max-height: 32px;
+    min-height: 32px;
+    max-width: 350px;
+    padding: 0 10px;
   }
   @media (max-width: 710px) {
     max-height: 20px;
     min-height: 20px;
     max-width: 150px;
-    padding: 0 10px;
+    padding: 0 5px;
   }
 `;
 
@@ -61,6 +67,10 @@ const ListMenu: React.FC<ListMenuProps> = props => {
       fontSize: "26px",
       lineHeight: "30px",
       fontWeight: 300,
+      "@media (min-width:710px) and (max-width: 950px)": {
+        fontSize: "20x",
+        lineHeight: "20px",
+      },
       "@media (max-width:710px)": {
         fontSize: "16px",
         lineHeight: "16px",
@@ -72,6 +82,10 @@ const ListMenu: React.FC<ListMenuProps> = props => {
       lineHeight: "30px",
       fontWeight: 300,
       textDecoration: "underline",
+      "@media (min-width:710px) and (max-width: 950px)": {
+        fontSize: "20x",
+        lineHeight: "20px",
+      },
       "@media (max-width:710px)": {
         fontSize: "16px",
         lineHeight: "16px",
