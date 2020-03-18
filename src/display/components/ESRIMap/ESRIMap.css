@@ -51,12 +51,17 @@
   }
   .esri-legend__layer-row {
     height: 29px !important;
-    width: 90px !important;
-  }
-  esri-legend__layer-cell.esri-legend__layer-cell--symbols {
-    font-size: 12px;
+    width: max-content !important;
   }
   .esri-legend__layer-table {
     margin: 0 !important;
+  }
+  .esri-legend__layer-cell.esri-legend__layer-cell--symbols {
+    padding: 2px !important;
+  }
+  .esri-legend__layer-cell.esri-legend__layer-cell--info {
+    padding: 2px !important;
+    width: max-content !important;
+    min-width: 0px !important;
   }
 }

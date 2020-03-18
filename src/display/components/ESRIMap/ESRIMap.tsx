@@ -275,7 +275,7 @@ const ESRIMap: React.FC<ESRIMapProps> = props => {
         let label: string = "";
         if (isSmall) {
           label =
-            step === steps ? `>${MathUtils.abbreviateNumber(minValue)}` : `${MathUtils.abbreviateNumber(minValue)}(s)`;
+            step === steps ? `>${MathUtils.abbreviateNumber(minValue)}` : `${MathUtils.abbreviateNumber(minValue)}'s`;
         } else {
           label =
             step === steps
