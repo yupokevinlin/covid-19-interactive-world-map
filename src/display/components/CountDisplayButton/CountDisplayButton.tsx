@@ -3,6 +3,7 @@ import { ButtonBase, createMuiTheme, Theme, Typography } from "@material-ui/core
 import { StyleUtils } from "../../../helper/StyleUtils";
 import styled from "styled-components";
 import ThemeProvider from "@material-ui/styles/ThemeProvider";
+import { ESRIMapModeNames } from "../ESRIMap/ESRIMap";
 
 export type CountDisplayButtonProps = CountDisplayButtonDataProps &
   CountDisplayButtonStyleProps &
@@ -11,7 +12,7 @@ export type CountDisplayButtonProps = CountDisplayButtonDataProps &
 export interface CountDisplayButtonDataProps {}
 
 export interface CountDisplayButtonStyleProps {
-  name: string;
+  name: ESRIMapModeNames;
   color: string;
   count: number;
   text: string;
@@ -23,7 +24,7 @@ export interface CountDisplayButtonEventProps {
 }
 
 export interface CountDisplayButtonClickEvent {
-  name: string;
+  name: ESRIMapModeNames;
 }
 
 const StyledCountDisplayButton = styled.div<{ borderWidth: number }>`
@@ -87,7 +88,6 @@ const CountDisplayButton: React.FC<CountDisplayButtonProps> = props => {
   return (
     <StyledCountDisplayButton className={"count-display-button"} onClick={onClick} borderWidth={borderWidth}>
       <ButtonBase
-        focusRipple
         style={{
           height: `100%`,
           width: `100%`,
