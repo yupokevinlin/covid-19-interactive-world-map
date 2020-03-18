@@ -3,8 +3,10 @@ import ESRIMap, { ESRIMapLayerNames, ESRIMapModeNames, MapPolygon } from "../com
 import { CountryOutline, LatLon } from "../../api/MapApi/types";
 import { MapApi } from "../../api/MapApi/MapApi";
 import styled from "styled-components";
-import CountDisplayButton from "../components/CountDisplayButton/CountDisplayButton";
+import CountDisplayButton, { CountDisplayButtonClickEvent } from "../components/CountDisplayButton/CountDisplayButton";
 import RegionDisplayBar from "../components/RegionDisplayBar/RegionDisplayBar";
+import ListMenu, { ListMenuItem } from "../components/ListMenu/ListMenu";
+import RegionSelectBreadcrumbs, { BreadCrumbItem } from "../components/RegionSelectBreadcrumbs/RegionSelectBreadcrumbs";
 
 const countryOutlines: Array<CountryOutline> = MapApi.getCountryOutlines();
 const testNumbers: Array<number> = [
@@ -50,6 +52,41 @@ const mapPolygons: Array<MapPolygon> = countryOutlines.map((countryOutline, inde
   };
 });
 
+const regionSelectData: BreadCrumbItem = {
+  name: ["World"],
+  childElements: [
+    {
+      name: ["World", "Canada"],
+      childElements: [
+        {
+          name: ["World", "Canada", "British Columbia"],
+          childElements: [],
+        },
+        {
+          name: ["World", "Canada", "Alberta"],
+          childElements: [],
+        },
+        {
+          name: ["World", "Canada", "Saskatchewan"],
+          childElements: [],
+        },
+        {
+          name: ["World", "Canada", "Manitoba"],
+          childElements: [],
+        },
+        {
+          name: ["World", "Canada", "Ontario"],
+          childElements: [],
+        },
+        {
+          name: ["World", "Canada", "Quebec"],
+          childElements: [],
+        },
+      ],
+    },
+  ],
+};
+
 export type MapPageProps = MapPageDataProps & MapPageStyleProps & MapPageEventProps;
 
 export interface MapPageDataProps {
@@ -73,11 +110,11 @@ export const StyledMapPage = styled.div`
 `;
 
 export const StyledMapContainer = styled.div`
-  height: calc(100% - 178px);
+  height: calc(100% - 210px);
   width: 100%;
   @media (max-width: 710px) {
     flex-direction: column;
-    height: calc(100% - 148px);
+    height: calc(100% - 168px);
   }
 `;
 
@@ -99,27 +136,20 @@ const MapPage: React.FC<MapPageProps> = props => {
 
   const [layer, setLayer] = useState<ESRIMapModeNames>(ESRIMapModeNames.confirmedCases);
 
-  const handleClick = (e: any): void => {
-    const randomNumber: number = Math.random() * 10;
-    if (randomNumber >= 0 && randomNumber < 3.3) {
-      setLayer(ESRIMapModeNames.confirmedCases);
-    } else if (randomNumber >= 3.3 && randomNumber < 6.7) {
-      setLayer(ESRIMapModeNames.recoveredCases);
-    } else {
-      setLayer(ESRIMapModeNames.deaths);
-    }
+  const handleCountDisplayButtonClick = (e: CountDisplayButtonClickEvent): void => {
+    setLayer(e.name);
   };
 
-  console.log(layer);
   return (
     <StyledMapPage className={"map-page"}>
+      <RegionSelectBreadcrumbs data={regionSelectData} />
       <StyledMapContainer>
         <ESRIMap mapPolygons={mapPolygons} displayedLayer={layer} />
       </StyledMapContainer>
       <RegionDisplayBar countryCode={countryCode} countryName={countryName} />
       <StyledCountDisplayButtonListWrapper className={"count-display-buttons-wrapper"}>
         <CountDisplayButton
-          handleClick={handleClick}
+          handleClick={handleCountDisplayButtonClick}
           key={ESRIMapModeNames.confirmedCases}
           name={ESRIMapModeNames.confirmedCases}
           color={"#FFFF00"}
@@ -127,7 +157,7 @@ const MapPage: React.FC<MapPageProps> = props => {
           text={ESRIMapModeNames.confirmedCases}
         />
         <CountDisplayButton
-          handleClick={handleClick}
+          handleClick={handleCountDisplayButtonClick}
           key={ESRIMapModeNames.deaths}
           name={ESRIMapModeNames.deaths}
           color={"#FF0000"}
@@ -135,7 +165,7 @@ const MapPage: React.FC<MapPageProps> = props => {
           text={ESRIMapModeNames.deaths}
         />
         <CountDisplayButton
-          handleClick={handleClick}
+          handleClick={handleCountDisplayButtonClick}
           key={ESRIMapModeNames.recoveredCases}
           name={ESRIMapModeNames.recoveredCases}
           color={"#00AA00"}
