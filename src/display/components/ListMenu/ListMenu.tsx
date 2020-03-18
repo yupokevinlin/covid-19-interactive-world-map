@@ -21,6 +21,7 @@ export interface ListMenuEventProps {
 
 export interface ListMenuItem {
   name: Array<string>;
+  countryCode?: string;
   childElements: Array<ListMenuItem>;
 }
 
@@ -127,12 +128,12 @@ const ListMenu: React.FC<ListMenuProps> = props => {
         onClose={onClose}
       >
         <MenuItem key={0}>
-          <ListMenuItemComponent name={name} handleListMenuItemClick={handleListMenuItemClick} />
+          <ListMenuItemComponent item={props} handleListMenuItemClick={handleListMenuItemClick} />
         </MenuItem>
         <Divider />
         {childElements.map((item, index) => (
           <MenuItem key={index + 1}>
-            <ListMenuItemComponent name={item.name} handleListMenuItemClick={handleListMenuItemClick} />
+            <ListMenuItemComponent item={item} handleListMenuItemClick={handleListMenuItemClick} />
           </MenuItem>
         ))}
       </Menu>

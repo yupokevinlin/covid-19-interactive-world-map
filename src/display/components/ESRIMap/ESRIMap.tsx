@@ -33,7 +33,7 @@ export interface ESRIMapEventProps {}
 
 export interface MapPolygon {
   internalId: number;
-  name: string;
+  name: Array<string>;
   confirmedCasesCount: number;
   recoveredCasesCount: number;
   deathsCount: number;
@@ -64,28 +64,33 @@ const ESRIMap: React.FC<ESRIMapProps> = props => {
   const { initialBaseMap = "streets", mapPolygons = [], displayedLayer } = props;
 
   const mapRef: React.MutableRefObject<HTMLDivElement> = useRef();
+
   const prevProps: ESRIMapProps = usePreviousProps<ESRIMapProps>(props);
   useEffect(() => {
-    isSmall = window.innerWidth <= 710;
     loadModules(
       ["esri/Map", "esri/views/MapView", "esri/layers/FeatureLayer", "esri/widgets/Legend", "esri/widgets/Expand"],
       {
         css: true,
       }
     ).then(([Map, MapView, FeatureLayer, Legend, Expand]) => {
+      isSmall = window.innerWidth <= 710;
       if (!map) {
         initialize(Map, MapView, FeatureLayer, Legend, Expand);
       }
-    });
 
-    if (prevProps) {
-      if (prevProps.mapPolygons !== mapPolygons) {
-        updatePolygonLayerData();
+      if (prevProps) {
+        if (prevProps.mapPolygons !== mapPolygons) {
+          if (polygonLayer) {
+            updatePolygonLayerData();
+          }
+        }
+        if (prevProps.displayedLayer !== displayedLayer) {
+          if (polygonLayer) {
+            updatePolygonLayerRenderer();
+          }
+        }
       }
-      if (prevProps.displayedLayer !== displayedLayer) {
-        updatePolygonLayerRenderer();
-      }
-    }
+    });
   }, [mapPolygons, displayedLayer]);
 
   const initialize = (Map, MapView, FeatureLayer, Legend, Expand): void => {
@@ -111,7 +116,6 @@ const ESRIMap: React.FC<ESRIMapProps> = props => {
     });
 
     mapView.ui.add(legend, "bottom-left");
-
     updatePolygonLayerData();
   };
 
@@ -152,7 +156,7 @@ const ESRIMap: React.FC<ESRIMapProps> = props => {
 
       const addFeatures: Array<any> = mapPolygons.map(mapPolygon => ({
         attributes: {
-          name: mapPolygon.name,
+          name: mapPolygon.name[mapPolygon.name.length - 1],
           internalId: mapPolygon.internalId,
           confirmedCases: mapPolygon.confirmedCasesCount,
           recoveredCases: mapPolygon.recoveredCasesCount,

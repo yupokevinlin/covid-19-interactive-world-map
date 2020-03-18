@@ -1,32 +1,29 @@
 import React from "react";
 import ListItemText from "@material-ui/core/ListItemText";
+import { ListMenuItem as ListMenuItemObject } from "../ListMenu";
 
 export type ListMenuItemProps = ListMenuItemDataProps & ListMenuItemStyleProps & ListMenuItemEventProps;
 
 export interface ListMenuItemDataProps {
-  name: Array<string>;
+  item: ListMenuItemObject;
 }
 
 export interface ListMenuItemStyleProps {}
 
 export interface ListMenuItemEventProps {
-  handleListMenuItemClick(e: ListMenuSelectEvent): void;
+  handleListMenuItemClick(e: ListMenuItemObject): void;
 }
 
-export interface ListMenuSelectEvent {
-  name: Array<string>;
-}
+export type ListMenuSelectEvent = ListMenuItemObject;
 
 const ListMenuItem: React.FC<ListMenuItemProps> = props => {
-  const { name, handleListMenuItemClick } = props;
+  const { item, handleListMenuItemClick } = props;
 
   const onClick = (e: React.MouseEvent<HTMLElement>): void => {
-    handleListMenuItemClick({
-      name: name,
-    });
+    handleListMenuItemClick(item);
   };
 
-  return <ListItemText primary={name[name.length - 1]} onClick={onClick} />;
+  return <ListItemText primary={item.name[item.name.length - 1]} onClick={onClick} />;
 };
 
 export default ListMenuItem;

@@ -14,7 +14,9 @@ export interface RegionSelectBreadcrumbsDataProps {
 
 export interface RegionSelectBreadcrumbsStyleProps {}
 
-export interface RegionSelectBreadcrumbsEventProps {}
+export interface RegionSelectBreadcrumbsEventProps {
+  handleMenuItemSelect?(e: ListMenuSelectEvent): void;
+}
 
 export type BreadCrumbItem = ListMenuItem;
 
@@ -34,7 +36,7 @@ const StyledRegionSelectBreadcrumbs = styled.div`
 `;
 
 const RegionSelectBreadcrumbs: React.FC<RegionSelectBreadcrumbsProps> = props => {
-  const { data } = props;
+  const { data, handleMenuItemSelect } = props;
 
   const [currentPosition, setCurrentPosition] = useState<Array<string>>(data.name);
 
@@ -55,6 +57,9 @@ const RegionSelectBreadcrumbs: React.FC<RegionSelectBreadcrumbsProps> = props =>
 
   const handleListMenuItemSelect = (e: ListMenuSelectEvent): void => {
     setCurrentPosition([...e.name]);
+    if (handleMenuItemSelect) {
+      handleMenuItemSelect(e);
+    }
   };
 
   let keyIndex: number = 0;
