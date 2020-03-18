@@ -1,5 +1,6 @@
 export interface CountryOutline {
   name: CountryOutlineName;
+  countryCode: string;
   geometry: Array<Array<LatLon>>;
 }
 

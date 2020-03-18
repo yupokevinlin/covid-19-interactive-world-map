@@ -70,6 +70,7 @@ export namespace MapApi {
       const countryOutline: CountryOutline = {
         name: name,
         geometry: geometry,
+        countryCode: properties.ISO_A2,
       };
 
       countryOutlines.push(countryOutline);
