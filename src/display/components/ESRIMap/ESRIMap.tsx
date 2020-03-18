@@ -90,6 +90,7 @@ const ESRIMap: React.FC<ESRIMapProps> = props => {
           }
         }
       }
+      return cleanUp;
     });
   }, [mapPolygons, displayedLayer]);
 
@@ -117,6 +118,12 @@ const ESRIMap: React.FC<ESRIMapProps> = props => {
 
     mapView.ui.add(legend, "bottom-left");
     updatePolygonLayerData();
+  };
+
+  const cleanUp = (): void => {
+    if (mapView) {
+      mapView.container = null;
+    }
   };
 
   const updatePolygonLayerRenderer = (): void => {
