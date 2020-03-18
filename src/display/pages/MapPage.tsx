@@ -7,85 +7,7 @@ import CountDisplayButton, { CountDisplayButtonClickEvent } from "../components/
 import RegionDisplayBar from "../components/RegionDisplayBar/RegionDisplayBar";
 import ListMenu, { ListMenuItem } from "../components/ListMenu/ListMenu";
 import RegionSelectBreadcrumbs, { BreadCrumbItem } from "../components/RegionSelectBreadcrumbs/RegionSelectBreadcrumbs";
-
-const countryOutlines: Array<CountryOutline> = MapApi.getCountryOutlines();
-const testNumbers: Array<number> = [
-  0,
-  0,
-  0,
-  0,
-  0,
-  1,
-  1,
-  1,
-  1,
-  1,
-  1,
-  1,
-  1,
-  1,
-  1,
-  1,
-  10,
-  10,
-  10,
-  10,
-  10,
-  10,
-  100,
-  100,
-  100,
-  1000,
-  1000,
-  10000,
-  100000,
-  1000000,
-];
-const mapPolygons: Array<MapPolygon> = countryOutlines.map((countryOutline, index) => {
-  return {
-    internalId: index,
-    name: countryOutline.name.en,
-    confirmedCasesCount: testNumbers[Math.floor(Math.random() * testNumbers.length)],
-    recoveredCasesCount: testNumbers[Math.floor(Math.random() * testNumbers.length)],
-    deathsCount: testNumbers[Math.floor(Math.random() * testNumbers.length)],
-    geometry: countryOutline.geometry,
-  };
-});
-
-const regionSelectData: BreadCrumbItem = {
-  name: ["World"],
-  childElements: [
-    {
-      name: ["World", "Canada"],
-      childElements: [
-        {
-          name: ["World", "Canada", "British Columbia"],
-          childElements: [],
-        },
-        {
-          name: ["World", "Canada", "Alberta"],
-          childElements: [],
-        },
-        {
-          name: ["World", "Canada", "Saskatchewan"],
-          childElements: [],
-        },
-        {
-          name: ["World", "Canada", "Manitoba"],
-          childElements: [],
-        },
-        {
-          name: ["World", "Canada", "Ontario"],
-          childElements: [],
-        },
-        {
-          name: ["World", "Canada", "Quebec"],
-          childElements: [],
-        },
-      ],
-    },
-  ],
-};
+import { ListMenuSelectEvent } from "../components/ListMenu/ListMenuItem/ListMenuItem";
 
 export type MapPageProps = MapPageDataProps & MapPageStyleProps & MapPageEventProps;
 
@@ -95,11 +17,22 @@ export interface MapPageDataProps {
   deathsCount: number;
   countryName: string;
   countryCode: string;
+  layer: ESRIMapModeNames;
+  regionSelectData: BreadCrumbItem;
+  mapPolygonData: Array<MapPolygon>;
 }
 
 export interface MapPageStyleProps {}
 
-export interface MapPageEventProps {}
+export interface MapPageEventProps {
+  handleCountDisplayTypeChange(e: CountDisplayButtonClickEvent): void;
+  handleRegionSelect(e: ListMenuSelectEvent): void;
+}
+
+export interface MapPageRegionData {
+  countryCode: string;
+  countryName: string;
+}
 
 export const StyledMapPage = styled.div`
   height: 100%;
@@ -132,19 +65,32 @@ const StyledCountDisplayButtonListWrapper = styled.div`
 `;
 
 const MapPage: React.FC<MapPageProps> = props => {
-  const { confirmedCasesCount, recoveredCasesCount, deathsCount, countryName, countryCode } = props;
-
-  const [layer, setLayer] = useState<ESRIMapModeNames>(ESRIMapModeNames.confirmedCases);
+  const {
+    confirmedCasesCount,
+    recoveredCasesCount,
+    deathsCount,
+    countryName,
+    countryCode,
+    layer,
+    regionSelectData,
+    mapPolygonData,
+    handleCountDisplayTypeChange,
+    handleRegionSelect,
+  } = props;
 
   const handleCountDisplayButtonClick = (e: CountDisplayButtonClickEvent): void => {
-    setLayer(e.name);
+    handleCountDisplayTypeChange(e);
+  };
+
+  const handleMenuItemSelect = (e: ListMenuSelectEvent): void => {
+    handleRegionSelect(e);
   };
 
   return (
     <StyledMapPage className={"map-page"}>
-      <RegionSelectBreadcrumbs data={regionSelectData} />
+      <RegionSelectBreadcrumbs data={regionSelectData} handleMenuItemSelect={handleMenuItemSelect} />
       <StyledMapContainer>
-        <ESRIMap mapPolygons={mapPolygons} displayedLayer={layer} />
+        <ESRIMap mapPolygons={mapPolygonData} displayedLayer={layer} />
       </StyledMapContainer>
       <RegionDisplayBar countryCode={countryCode} countryName={countryName} />
       <StyledCountDisplayButtonListWrapper className={"count-display-buttons-wrapper"}>
