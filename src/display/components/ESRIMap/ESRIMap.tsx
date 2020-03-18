@@ -16,6 +16,8 @@ import {
 } from "../../../api/MapApi/types";
 import { usePreviousProps } from "../../../hooks/usePreviousProps";
 import Legend = __esri.Legend;
+import ReactResizeDetector from "react-resize-detector";
+import { MathUtils } from "../../../helper/MathUtils";
 
 export type ESRIMapProps = ESRIMapDataProps & ESRIMapStyleProps & ESRIMapEventProps;
 
@@ -46,6 +48,7 @@ const StyledESRIMap = styled.div`
 let map: Map = null;
 let mapView: MapView = null;
 let polygonLayer: FeatureLayer = null;
+let isSmall: boolean = false;
 
 export enum ESRIMapLayerNames {
   polygonLayer = "polygon-layer",
@@ -63,11 +66,15 @@ const ESRIMap: React.FC<ESRIMapProps> = props => {
   const mapRef: React.MutableRefObject<HTMLDivElement> = useRef();
   const prevProps: ESRIMapProps = usePreviousProps<ESRIMapProps>(props);
   useEffect(() => {
-    loadModules(["esri/Map", "esri/views/MapView", "esri/layers/FeatureLayer", "esri/widgets/Legend"], {
-      css: true,
-    }).then(([Map, MapView, FeatureLayer, Legend]) => {
+    isSmall = window.innerWidth <= 710;
+    loadModules(
+      ["esri/Map", "esri/views/MapView", "esri/layers/FeatureLayer", "esri/widgets/Legend", "esri/widgets/Expand"],
+      {
+        css: true,
+      }
+    ).then(([Map, MapView, FeatureLayer, Legend, Expand]) => {
       if (!map) {
-        initialize(Map, MapView, FeatureLayer, Legend);
+        initialize(Map, MapView, FeatureLayer, Legend, Expand);
       }
     });
 
@@ -81,7 +88,7 @@ const ESRIMap: React.FC<ESRIMapProps> = props => {
     }
   }, [mapPolygons, displayedLayer]);
 
-  const initialize = (Map, MapView, FeatureLayer, Legend): void => {
+  const initialize = (Map, MapView, FeatureLayer, Legend, Expand): void => {
     map = new Map({
       basemap: initialBaseMap,
     });
@@ -264,10 +271,22 @@ const ESRIMap: React.FC<ESRIMapProps> = props => {
       } else {
         const color: Color = colorScale(step);
         const minValue: number = Math.pow(10, step - 1);
-        const maxvalue: number = step === steps ? Number.MAX_SAFE_INTEGER : Math.pow(10, step) - 0.1;
+        const maxValue: number = step === steps ? Number.MAX_SAFE_INTEGER : Math.pow(10, step) - 0.1;
+        let label: string = "";
+        if (isSmall) {
+          label =
+            step === steps ? `>${MathUtils.abbreviateNumber(minValue)}` : `${MathUtils.abbreviateNumber(minValue)}(s)`;
+        } else {
+          label =
+            step === steps
+              ? `>${MathUtils.abbreviateNumber(minValue)}`
+              : `${MathUtils.abbreviateNumber(minValue)} - ${MathUtils.abbreviateNumber(
+                  maxValue < 100 ? Math.floor(maxValue) : Math.ceil(maxValue)
+                )}`;
+        }
         classBreakInfos.push({
           minValue: minValue,
-          maxValue: maxvalue,
+          maxValue: maxValue,
           symbol: {
             type: "simple-fill",
             style: "solid",
@@ -277,14 +296,30 @@ const ESRIMap: React.FC<ESRIMapProps> = props => {
               color: [126, 126, 126, outlineOpacity],
             },
           },
-          label: step === steps ? `>${minValue}` : `${minValue} - ${Math.floor(maxvalue)}`,
+          label: label,
         });
       }
     }
     return classBreakInfos;
   };
 
-  return <StyledESRIMap className={"esri-map"} ref={mapRef} />;
+  const onResize = (): void => {
+    const newWidth: number = window.innerWidth;
+    if (newWidth > 710 && isSmall) {
+      isSmall = false;
+      updatePolygonLayerRenderer();
+    } else if (newWidth <= 710 && !isSmall) {
+      isSmall = true;
+      updatePolygonLayerRenderer();
+    }
+  };
+
+  return (
+    <React.Fragment>
+      <ReactResizeDetector handleWidth handleHeight onResize={onResize} />
+      <StyledESRIMap className={"esri-map"} ref={mapRef} />
+    </React.Fragment>
+  );
 };
 
 export default ESRIMap;
