@@ -48,6 +48,7 @@
   .esri-legend {
     width: 500px !important;
     height: max-content !important;
+    overflow-y: hidden !important;
   }
   .esri-legend__layer-row {
     height: 29px !important;
