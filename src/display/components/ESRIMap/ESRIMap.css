@@ -1,6 +1,12 @@
 .esri-view-surface.esri-view-surface--inset-outline::after {
   outline: none !important;
 }
+.esri-view-surface.esri-view-surface--touch-none {
+  outline: none !important;
+}
+.esri-view-surface {
+  outline: none !important;
+}
 .esri-legend {
   width: 130px !important;
   margin: 0 !important;
