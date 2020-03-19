@@ -4,72 +4,9 @@
   "description": "An interactive map and dashboard for the COVID-19 outbreak.",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
-    "coverage": "jest --coverage",
-    "build": "webpack --config webpack.prod.config.js",
-    "start": "webpack-dev-server --config webpack.dev.config.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "keywords": [],
   "author": "Kevin Lin",
-  "license": "MIT",
-  "dependencies": {
-    "@material-ui/core": "^4.9.5",
-    "@material-ui/icons": "^4.9.1",
-    "@material-ui/styles": "^4.9.0",
-    "chroma-js": "^2.1.0",
-    "esri-loader": "^2.13.0",
-    "react": "^16.12.0",
-    "react-country-flag": "^2.0.1",
-    "react-dom": "^16.12.0",
-    "react-redux": "^7.2.0",
-    "react-resize-detector": "^4.2.1",
-    "redux": "^4.0.5",
-    "redux-devtools-extension": "^2.13.8",
-    "redux-saga": "^1.1.3",
-    "styled-components": "^5.0.1",
-    "typeface-roboto": "0.0.75"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.8.4",
-    "@babel/preset-env": "^7.8.4",
-    "@babel/preset-react": "^7.8.3",
-    "@types/arcgis-js-api": "^4.14.0",
-    "@types/chroma-js": "^2.0.0",
-    "@types/jest": "^24.9.1",
-    "@types/styled-components": "^4.4.3",
-    "@types/webpack-env": "^1.15.1",
-    "@typescript-eslint/eslint-plugin": "^2.23.0",
-    "@typescript-eslint/parser": "^2.20.0",
-    "babel-jest": "^24.9.0",
-    "babel-loader": "^8.0.6",
-    "css-loader": "^3.4.2",
-    "enzyme": "^3.11.0",
-    "enzyme-adapter-react-16": "^1.15.2",
-    "enzyme-to-json": "^3.4.4",
-    "eslint": "^6.8.0",
-    "eslint-plugin-react": "^7.18.3",
-    "eslint-plugin-react-hooks": "^2.4.0",
-    "file-loader": "^5.0.2",
-    "html-webpack-plugin": "^3.2.0",
-    "husky": "^4.2.3",
-    "image-webpack-loader": "^6.0.0",
-    "jest": "^24.9.0",
-    "jest-styled-components": "^6.3.4",
-    "prettier": "^1.19.1",
-    "pretty-quick": "^2.0.1",
-    "sass-loader": "^8.0.2",
-    "style-loader": "^1.1.3",
-    "ts-jest": "^24.3.0",
-    "ts-loader": "^6.2.1",
-    "typescript": "^3.7.5",
-    "webpack": "^4.41.6",
-    "webpack-cli": "^3.3.11",
-    "webpack-dev-server": "^3.10.3",
-    "webpack-env": "^0.8.0",
-    "webpack-merge": "^4.2.2"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "pretty-quick --staged"
-    }
-  }
+  "license": "MIT"
 }

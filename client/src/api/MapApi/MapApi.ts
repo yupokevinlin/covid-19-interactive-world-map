@@ -1,4 +1,4 @@
-import WorldOutlineJson from "../../../data/map/WorldOutline.json";
+import WorldOutlineJson from "../../../../data/map/WorldOutline.json";
 import { CountryOutline, CountryOutlineName, LatLon } from "./types";
 
 export namespace MapApi {
