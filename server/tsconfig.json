@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "outDir": "./build/",
+    "allowJs": false,
+    "target": "es2019",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "strict": true,
+    "experimentalDecorators": true,
+    "jsx": "react",
+    "importHelpers": true,
+    "lib": [ "dom", "esnext" ]
+  }
+}
