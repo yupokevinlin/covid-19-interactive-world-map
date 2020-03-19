@@ -40,6 +40,7 @@ export const StyledMapPage = styled.div`
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
+  background-color: #f8f8f8;
 `;
 
 export const StyledMapContainer = styled.div`
