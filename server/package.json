@@ -1,0 +1,12 @@
+{
+  "name": "covid-19-interactive-world-map",
+  "version": "1.0.0",
+  "description": "Back end server for an interactive map and dashboard for the COVID-19 outbreak.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Kevin Lin",
+  "license": "MIT"
+}
