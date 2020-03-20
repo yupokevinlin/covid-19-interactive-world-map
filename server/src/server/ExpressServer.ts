@@ -4,18 +4,18 @@ import { Server } from "http";
 import * as compress from "compression";
 import * as bodyParser from "body-parser";
 import * as cookieParser from "cookie-parser";
-import * as NodeCache from "node-cache";
+import ServerCache from "./Cache";
 
 export class ExpressServer {
   private server?: Express;
   private httpServer?: Server;
-  private cache?: NodeCache;
 
   public async setup(port: number) {
     const server = express();
     this.setupStandardMiddlewares(server);
     this.httpServer = this.listen(server, port);
     this.server = server;
+    ServerCache.init();
     return this.server;
   }
 
@@ -25,10 +25,6 @@ export class ExpressServer {
 
   public kill() {
     if (this.httpServer) this.httpServer.close();
-  }
-
-  private setStaticCache() {
-    this.cache = new NodeCache();
   }
 
   private setupStandardMiddlewares(server: Express) {
