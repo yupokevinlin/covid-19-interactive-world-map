@@ -4,7 +4,7 @@ import { Server } from "http";
 import * as compress from "compression";
 import * as bodyParser from "body-parser";
 import * as cookieParser from "cookie-parser";
-import ServerCache from "./Cache";
+import {MapEndPoints} from "../service/Map/MapEndpoints";
 
 export class ExpressServer {
   private server?: Express;
@@ -15,7 +15,7 @@ export class ExpressServer {
     this.setupStandardMiddlewares(server);
     this.httpServer = this.listen(server, port);
     this.server = server;
-    ServerCache.init();
+    this.addEndPoints(server);
     return this.server;
   }
 
@@ -31,6 +31,13 @@ export class ExpressServer {
     server.use(bodyParser.json());
     server.use(cookieParser());
     server.use(compress());
+  }
+
+  private addEndPoints(server: Express) {
+    server.get("/", function(req, rsp) {rsp.send("Server is Running!");});
+    server.get("/api/map/layer0", MapEndPoints.getMayLayer0Polygons);
+    server.get("/api/map/layer1/:name", MapEndPoints.getMayLayer1Polygons);
+    server.get("/api/map/layer2/:name", MapEndPoints.getMayLayer2Polygons);
   }
 }
 
