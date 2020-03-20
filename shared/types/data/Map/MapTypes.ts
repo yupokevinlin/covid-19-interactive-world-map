@@ -3,4 +3,9 @@ export interface ServerMapPolygon {
   type: string;
   countryCode: string;
   geometry: Array<Array<[number, number]>>;
+  hasChildren: boolean;
+}
+
+export interface ServerMapPolygonsObject {
+  [name: string]: Array<ServerMapPolygon>;
 }
