@@ -1,14 +1,20 @@
-export interface ServerCasesDataTimeSeries {
-  [date: string]: ServerCasesDataObject;
+export interface ServerDailyCasesDataObject {
+  [date: string]: ServerDailyCasesData;
 }
 
-export interface ServerCasesData {
-  name: Array<string>;
+export interface ServerDailyCasesData {
+  date: string;
   deaths: number;
   confirmedCases: number;
   recoveredCases: number;
 }
 
-export interface ServerCasesDataObject {
-  [name: string]: ServerCasesData;
+export interface ServerTimeSeriesCasesData {
+  name: Array<string>;
+  hasChildren: boolean;
+  data: ServerDailyCasesDataObject;
+}
+
+export interface ServerTimeSeriesCasesDataObject {
+  [name: string]: ServerTimeSeriesCasesData;
 }
