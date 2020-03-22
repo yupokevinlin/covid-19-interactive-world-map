@@ -3,14 +3,16 @@ const mapLayer0: any = require("../../../../data/map/gadm/gadm36_0-simplified.js
 const mapLayer1: any = require("../../../../data/map/gadm/gadm36_1-simplified.json");
 const mapLayer2: any = require("../../../../data/map/gadm/gadm36_2-simplified.json");
 import * as fs from "fs";
+const countries = require("i18n-iso-countries");
 
 export namespace MapUtils {
   export const convertMapData = (): void => {
     const layer0Features: Array<any> = mapLayer0.features;
     const layer0: Array<ServerMapPolygon> = layer0Features.map(feature => {
-      const name: Array<string> = [feature.properties.NAME_0];
-      const type: string = "Country";
       const countryCode: string = feature.properties.GID_0;
+      const countryName: string = countries.getName(feature.properties.GID_0, "en");
+      const name: Array<string> = [countryName];
+      const type: string = "Country";
       const geometry: Array<Array<[number, number]>> = feature.geometry.type === "MultiPolygon" ? feature.geometry.coordinates : [feature.geometry.coordinates];
       return {
         name: name,
@@ -22,9 +24,10 @@ export namespace MapUtils {
     });
     const layer1Features: Array<any> = mapLayer1.features;
     const layer1: Array<ServerMapPolygon> = layer1Features.map(feature => {
-      const name: Array<string> = [feature.properties.NAME_0, feature.properties.NAME_1];
-      const type: string = feature.ENGTYPE_1;
       const countryCode: string = feature.properties.GID_0;
+      const countryName: string = countries.getName(feature.properties.GID_0, "en");
+      const name: Array<string> = [countryName, feature.properties.NAME_1];
+      const type: string = feature.ENGTYPE_1;
       const geometry: Array<Array<[number, number]>> = feature.geometry.type === "MultiPolygon" ? feature.geometry.coordinates : [feature.geometry.coordinates];
       return {
         name: name,
@@ -37,9 +40,10 @@ export namespace MapUtils {
     const layer2Features: Array<any> = mapLayer2.features;
     const layer2: Array<ServerMapPolygon> = layer2Features.map(feature => {
       if (feature.properties.NAME_0 === "Taiwan") {
-        const name: Array<string> = [feature.properties.NAME_0, feature.properties.NAME_2];
-        const type: string = feature.properties.ENGTYPE_2;
         const countryCode: string = feature.properties.GID_0;
+        const countryName: string = countries.getName(feature.properties.GID_0, "en");
+        const name: Array<string> = [countryName, feature.properties.NAME_2];
+        const type: string = feature.properties.ENGTYPE_2;
         const geometry: Array<Array<[number, number]>> = feature.geometry.type === "MultiPolygon" ? feature.geometry.coordinates : [feature.geometry.coordinates];
         layer1.push({
           name: name,
@@ -49,9 +53,10 @@ export namespace MapUtils {
           hasChildren: false
         });
       }
-      const name: Array<string> = [feature.properties.NAME_0, feature.properties.NAME_1, feature.properties.NAME_2];
-      const type: string = feature.properties.ENGTYPE_2;
       const countryCode: string = feature.properties.GID_0;
+      const countryName: string = countries.getName(feature.properties.GID_0, "en");
+      const name: Array<string> = [countryName, feature.properties.NAME_1, feature.properties.NAME_2];
+      const type: string = feature.properties.ENGTYPE_2;
       const geometry: Array<Array<[number, number]>> = feature.geometry.type === "MultiPolygon" ? feature.geometry.coordinates : [feature.geometry.coordinates];
       return {
         name: name,
