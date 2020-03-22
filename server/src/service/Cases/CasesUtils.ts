@@ -46,8 +46,9 @@ export namespace CasesUtils {
             }
           }
         }
+        worldData.data = worldDailyCasesData;
       } else {
-        const name: Array<string> = nameConverter(row[0], row[1]);
+        const name: Array<string> = nameConverter(row[1], row[0]);
         const nameString: string = JSON.stringify(name);
         const confirmedCasesRow: Array<string> = row;
         const deathsRow: Array<string> = deathsResultArray.find(deathsResultRow => deathsResultRow[0] === confirmedCasesRow[0] && deathsResultRow[1] === confirmedCasesRow[1]) || [];
@@ -64,6 +65,7 @@ export namespace CasesUtils {
             }
           }
         }
+
         if (name.length < 3) {
           const newWorldDataObject: ServerDailyCasesDataObject = {};
           Object.entries(worldData.data).forEach(([key, entry]) => {
@@ -222,9 +224,9 @@ export namespace CasesUtils {
     if (newCountryName === "United States of America") {
       const regionNameArray: Array<string> = region.split(",");
       if (regionNameArray.length === 2) {
-        const usStateCode: string = regionNameArray[0].trim();
+        const usStateCode: string = regionNameArray[1].trim();
         newRegionName = usStates[usStateCode];
-        newDistrictName = regionNameArray[1].replace("County", "").trim();
+        newDistrictName = regionNameArray[0].replace("County", "").trim();
       }
     }
     switch (region) {
