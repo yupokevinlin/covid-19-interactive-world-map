@@ -9,9 +9,14 @@ const axios = require('axios').default;
 
 
 export namespace CasesUtils {
-  const layer0CasesTimeSeries: ServerTimeSeriesCasesDataObject = {};
-  const layer1CasesTimeSeries: ServerTimeSeriesCasesDataObject = {};
-  const layer2CasesTimeSeries: ServerTimeSeriesCasesDataObject = {};
+  export const worldData: ServerTimeSeriesCasesData = {
+    name: [],
+    hasChildren: true,
+    data: {}
+  };
+  export const layer0CasesTimeSeries: ServerTimeSeriesCasesDataObject = {};
+  export const layer1CasesTimeSeries: ServerTimeSeriesCasesDataObject = {};
+  export const layer2CasesTimeSeries: ServerTimeSeriesCasesDataObject = {};
   export const getCasesTimeSeries = async (): Promise<boolean> => {
     const confirmedCasesUrl: string = "https://data.humdata.org/hxlproxy/api/data-preview.csv?url=https%3A%2F%2Fraw.githubusercontent.com%2FCSSEGISandData%2FCOVID-19%2Fmaster%2Fcsse_covid_19_data%2Fcsse_covid_19_time_series%2Ftime_series_19-covid-Confirmed.csv&filename=time_series_2019-ncov-Confirmed.csv";
     const deathsUrl: string = "https://data.humdata.org/hxlproxy/api/data-preview.csv?url=https%3A%2F%2Fraw.githubusercontent.com%2FCSSEGISandData%2FCOVID-19%2Fmaster%2Fcsse_covid_19_data%2Fcsse_covid_19_time_series%2Ftime_series_19-covid-Deaths.csv&filename=time_series_2019-ncov-Deaths.csv";
@@ -28,7 +33,20 @@ export namespace CasesUtils {
     const recoveredCasesResultArray: Array<Array<string>> = csv.parse(recoveredCasesResultCsvString);
 
     confirmedCasesResultArray.forEach((row, rowIndex) => {
-      if (rowIndex > 0) {
+      if (rowIndex === 0) {
+        const worldDailyCasesData: ServerDailyCasesDataObject = {};
+        for (let columnIndex = 0; columnIndex < row.length; columnIndex++) {
+          if (columnIndex > 3) {
+            const date: string = confirmedCasesResultArray[0][columnIndex];
+            worldDailyCasesData[date] = {
+              date: date,
+              deaths: 0,
+              confirmedCases: 0,
+              recoveredCases: 0,
+            }
+          }
+        }
+      } else {
         const name: Array<string> = nameConverter(row[0], row[1]);
         const nameString: string = JSON.stringify(name);
         const confirmedCasesRow: Array<string> = row;
@@ -42,9 +60,21 @@ export namespace CasesUtils {
               date: date,
               deaths: parseInt(deathsRow[columnIndex]),
               confirmedCases: parseInt(confirmedCasesRow[columnIndex]),
-              recoveredCases: parseInt(recoveredCasesRow[columnIndex])
+              recoveredCases: parseInt(recoveredCasesRow[columnIndex]),
             }
           }
+        }
+        if (name.length < 3) {
+          const newWorldDataObject: ServerDailyCasesDataObject = {};
+          Object.entries(worldData.data).forEach(([key, entry]) => {
+            newWorldDataObject[key] = {
+              date: entry.date,
+              confirmedCases: entry.confirmedCases + (dailyCasesDataObject[key].confirmedCases || 0),
+              deaths: entry.deaths + (dailyCasesDataObject[key].deaths || 0),
+              recoveredCases: entry.recoveredCases + (dailyCasesDataObject[key].recoveredCases || 0),
+            }
+          });
+          worldData.data = newWorldDataObject;
         }
         switch (name.length) {
           case 1: {
