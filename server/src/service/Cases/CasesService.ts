@@ -18,6 +18,9 @@ export namespace CasesService {
   export const getLayer0CasesByName = (name: string): ServerTimeSeriesCasesData => {
     return layer0CasesTimeSeries[name];
   };
+  export const getLayer1Cases = (): ServerTimeSeriesCasesDataObject => {
+    return layer1CasesTimeSeries;
+  };
   export const getLayer1CasesByLayer0Name = (name: string): ServerTimeSeriesCasesDataObject => {
     const returnObject: ServerTimeSeriesCasesDataObject = {};
     Object.entries(layer1CasesTimeSeries).forEach(([key, value]) => {
@@ -29,6 +32,9 @@ export namespace CasesService {
   };
   export const getLayer1CasesByName = (name: string): ServerTimeSeriesCasesData => {
     return layer1CasesTimeSeries[name];
+  };
+  export const getLayer2Cases = (): ServerTimeSeriesCasesDataObject => {
+    return layer2CasesTimeSeries;
   };
   export const getLayer2CasesByLayer0Layer1Names = (name: string): ServerTimeSeriesCasesDataObject => {
     const returnObject: ServerTimeSeriesCasesDataObject = {};

@@ -23,6 +23,13 @@ export namespace CasesEndpoints {
       next(e);
     }
   };
+  export const getLayer1Cases = (req: Request, rsp: Response, next: NextFunction): any => {
+    try {
+      rsp.send(CasesService.getLayer1Cases());
+    } catch (e) {
+      next(e);
+    }
+  };
   export const getLayer1CasesByLayer0Name = (req: Request, rsp: Response, next: NextFunction): any => {
     try {
       rsp.send(CasesService.getLayer1CasesByLayer0Name(req.params.name));
@@ -33,6 +40,13 @@ export namespace CasesEndpoints {
   export const getLayer1CasesByName = (req: Request, rsp: Response, next: NextFunction): any => {
     try {
       rsp.send(CasesService.getLayer1CasesByName(req.params.name));
+    } catch (e) {
+      next(e);
+    }
+  };
+  export const getLayer2Cases = (req: Request, rsp: Response, next: NextFunction): any => {
+    try {
+      rsp.send(CasesService.getLayer2Cases());
     } catch (e) {
       next(e);
     }
