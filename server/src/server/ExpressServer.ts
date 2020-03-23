@@ -42,9 +42,12 @@ export class ExpressServer {
     server.get("/api/map/layer1/:name", MapEndPoints.getMayLayer1Polygons);
     server.get("/api/map/layer2/:name", MapEndPoints.getMayLayer2Polygons);
     server.get("/api/cases/world", CasesEndpoints.getWorldCases);
-    server.get("/api/cases/layer0/:name", CasesEndpoints.getLayer0Cases);
-    server.get("/api/cases/layer1/:name", CasesEndpoints.getLayer1Cases);
-    server.get("/api/cases/layer2/:name", CasesEndpoints.getLayer2Cases);
+    server.get("/api/cases/layer0", CasesEndpoints.getLayer0Cases);
+    server.get("/api/cases/layer0/:name", CasesEndpoints.getLayer0CasesByName);
+    server.get("/api/cases/layer1/:name", CasesEndpoints.getLayer1CasesByName);
+    server.get("/api/cases/layer1_by_layer0/:name", CasesEndpoints.getLayer1CasesByLayer0Name);
+    server.get("/api/cases/layer2/:name", CasesEndpoints.getLayer2CasesByName);
+    server.get("/api/cases/layer1_by_layer0layer1/:name", CasesEndpoints.getLayer2CasesByLayer0Layer1Names);
   }
 }
 
