@@ -1,12 +1,11 @@
 import {
-  ServerDailyCasesDataObject,
+  ServerDailyCasesDataObject, ServerTaiwanDataObject,
   ServerTimeSeriesCasesData,
   ServerTimeSeriesCasesDataObject
 } from "../../../../shared/types/data/Cases/CasesTypes";
 
 const csv = require("csv-string");
 const axios = require('axios').default;
-
 
 export namespace CasesUtils {
   export const worldData: ServerTimeSeriesCasesData = {
@@ -153,6 +152,52 @@ export namespace CasesUtils {
           }
         }
       }
+    });
+    return true;
+  };
+
+  export const getTaiwanData = async (confirmedCasesResultArray: Array<Array<string>>): Promise<boolean> => {
+    const taiwanDataUrl: string = "https://od.cdc.gov.tw/eic/Weekly_Age_County_Gender_19CoV.json";
+    const taiwanData: Array<any> = await axios.get(taiwanDataUrl);
+    layer0CasesTimeSeries[JSON.stringify(["Taiwan"])] = {
+      ...layer0CasesTimeSeries[JSON.stringify(["Taiwan"])],
+      hasChildren: true
+    };
+    const taiwanDistrictTranslation: any = {
+      "金門縣": "Kinmen",
+      "江縣": "Lienkiang",
+      "高雄市": "Kaohsiung",
+      "新北市": "New Taipei",
+      "台中市": "Taichung",
+      "台南市": "Tainan",
+      "台北市": "Taipei",
+      "彰化縣": "Changhua",
+      "嘉義市": "Chiayi City",
+      "嘉義縣": "Chiayi County",
+      "新竹市": "Hsinchu City",
+      "新竹縣": "Hsinchu County",
+      "花蓮縣": "Hualien",
+      "基隆市": "Keelung",
+      "苗栗縣": "Miaoli",
+      "南投縣": "Nantou",
+      "澎湖縣": "Penghu",
+      "屏東縣": "Pingtung",
+      "臺東縣": "Taitung",
+      "桃園市": "Taoyuan",
+      "宜蘭縣": "Yilan",
+      "雲林縣": "Yunlin",
+    };
+    const taiwanDataObject: ServerTaiwanDataObject = {};
+    taiwanData.forEach(data => {
+      const districtName: string = taiwanDistrictTranslation[data["縣市"]];
+      const confirmedCases: number = parseInt(data["確定病例數"]);
+      const week: number = parseInt(data["診斷週別"]);
+      const year: number = parseInt(data["診斷年份"]);
+      taiwanDataObject[districtName].push({
+        confirmedCases: confirmedCases,
+        week: week,
+        year: year
+      });
     });
     return true;
   };

@@ -18,3 +18,13 @@ export interface ServerTimeSeriesCasesData {
 export interface ServerTimeSeriesCasesDataObject {
   [name: string]: ServerTimeSeriesCasesData;
 }
+
+export interface ServerTaiwanDataObject {
+  [district: string]: Array<ServerTaiwanData>;
+}
+
+export interface ServerTaiwanData {
+  confirmedCases: number;
+  week: number;
+  year: number;
+}
