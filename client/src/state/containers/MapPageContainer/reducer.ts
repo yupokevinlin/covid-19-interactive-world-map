@@ -4,12 +4,15 @@ import { MapPageContainerAction } from "./action";
 
 export const initialState: MapPageContainerState = {
   isLoaded: false,
-  worldConfirmedCasesCount: 0,
-  confirmedCasesCount: 0,
-  worldDeathsCount: 0,
-  deathsCount: 0,
-  worldRecoveredCasesCount: 0,
-  recoveredCasesCount: 0,
+  displayedConfirmedCasesCount: 0,
+  displayedDeathsCount: 0,
+  displayedRecoveredCasesCount: 0,
+  worldCasesData: {
+    name: [],
+    hasChildren: true,
+    data: {}
+  },
+  casesData: {},
   language: "en",
   mapPolygonData: [],
   regionSelectData: {
@@ -17,8 +20,8 @@ export const initialState: MapPageContainerState = {
     childElements: [],
   },
   currentLayer: ESRIMapModeNames.confirmedCases,
-  currentCountryCode: "World",
-  currentCountryName: "World",
+  currentName: [],
+  currentDateString: ""
 };
 
 export const reducer = (

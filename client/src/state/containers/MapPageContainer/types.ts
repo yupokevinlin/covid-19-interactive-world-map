@@ -1,20 +1,23 @@
 import { ESRIMapModeNames, MapPolygon } from "../../../display/components/ESRIMap/ESRIMap";
 import { BreadCrumbItem } from "../../../display/components/RegionSelectBreadcrumbs/RegionSelectBreadcrumbs";
+import {
+  ServerTimeSeriesCasesData,
+  ServerTimeSeriesCasesDataObject
+} from "../../../../../shared/types/data/Cases/CasesTypes";
 
 export interface MapPageContainerState {
   isLoaded: boolean;
-  worldConfirmedCasesCount: number;
-  confirmedCasesCount: number;
-  worldDeathsCount: number;
-  deathsCount: number;
-  worldRecoveredCasesCount: number;
-  recoveredCasesCount: number;
+  worldCasesData: ServerTimeSeriesCasesData;
+  casesData: ServerTimeSeriesCasesDataObject;
+  displayedConfirmedCasesCount: number;
+  displayedDeathsCount: number;
+  displayedRecoveredCasesCount: number;
   language: string;
   mapPolygonData: Array<MapPolygon>;
   regionSelectData: BreadCrumbItem;
   currentLayer: ESRIMapModeNames;
-  currentCountryCode: string;
-  currentCountryName: string;
+  currentName: Array<string>;
+  currentDateString: string;
 }
 
 export enum MapPageContainerActionTypes {
