@@ -231,10 +231,10 @@ export namespace CasesUtils {
     });
     const firstDayString: string = confirmedCasesResultArray[0][4];
     const firstDayStringArray: Array<string> = firstDayString.split("/");
-    const firstDay: Moment = moment().date(parseInt(firstDayStringArray[1])).month(parseInt(firstDayStringArray[0]) - 1).year(2020);
+    const firstDay: Moment = moment().date(parseInt(firstDayStringArray[1])).month(parseInt(firstDayStringArray[0]) - 1).year(parseInt(`20${firstDayStringArray[2]}`));
     const lastDayString: string = confirmedCasesResultArray[0][confirmedCasesResultArray[0].length - 1];
     const lastDayStringArray: Array<string> = lastDayString.split("/");
-    const lastDay: Moment = moment().date(parseInt(lastDayStringArray[1])).month(parseInt(lastDayStringArray[0]) - 1).year(2020);
+    const lastDay: Moment = moment().date(parseInt(lastDayStringArray[1])).month(parseInt(lastDayStringArray[0]) - 1).year(parseInt(`20${firstDayStringArray[2]}`));
     Object.entries(taiwanDataObject).forEach(([key, confirmedCasesArray]) => {
       const name: Array<string> = ["Taiwan", key];
       const nameString: string = JSON.stringify(name);
@@ -254,7 +254,7 @@ export namespace CasesUtils {
           }
         } else {
           const allDateDifference: number = lastDay.diff(firstDay, "days");
-          let currentDay: Moment = moment().date(parseInt(firstDayStringArray[1])).month(parseInt(firstDayStringArray[0]) - 1).year(2020);
+          let currentDay: Moment = moment().date(parseInt(firstDayStringArray[1])).month(parseInt(firstDayStringArray[0]) - 1).year(parseInt(`20${firstDayStringArray[2]}`));
           for (let dayOffset = 0; dayOffset <= allDateDifference; dayOffset++) {
             const currentDayString: string = currentDay.format("M/D/YY");
             layer1CasesTimeSeries[nameString].data[currentDayString] = {
