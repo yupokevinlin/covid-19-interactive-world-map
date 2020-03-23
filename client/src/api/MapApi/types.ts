@@ -1,32 +1,9 @@
 export interface CountryOutline {
-  name: CountryOutlineName;
+  name: Array<string>;
   countryCode: string;
   geometry: Array<Array<LatLon>>;
 }
 
-export interface CountryOutlineName {
-  ar: string;
-  bn: string;
-  de: string;
-  en: string;
-  es: string;
-  fr: string;
-  el: string;
-  hi: string;
-  hu: string;
-  id: string;
-  it: string;
-  ja: string;
-  ko: string;
-  nl: string;
-  pl: string;
-  pt: string;
-  ru: string;
-  sv: string;
-  tr: string;
-  vi: string;
-  zh: string;
-}
 
 export interface LatLon {
   lat: number;
