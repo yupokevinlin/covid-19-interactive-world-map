@@ -6,6 +6,12 @@ import * as fs from "fs";
 const countries = require("i18n-iso-countries");
 
 export namespace MapUtils {
+  export const getGeometryFromGADMGeometry = (geometry: any, type: string): Array<Array<[number, number]>> => {
+    return type === "MultiPolygon" ?
+      geometry.map((e: Array<Array<Array<[number, number]>>>) => (e[0].map((e: Array<[number, number]>) => e.map((e: [number, number]) => e)))) :
+      geometry;
+  };
+
   export const convertMapData = (): void => {
     const layer0Features: Array<any> = mapLayer0.features;
     const layer0: Array<ServerMapPolygon> = layer0Features.map(feature => {
@@ -13,7 +19,7 @@ export namespace MapUtils {
       const countryName: string = countries.getName(feature.properties.GID_0, "en");
       const name: Array<string> = [countryName];
       const type: string = "Country";
-      const geometry: Array<Array<[number, number]>> = feature.geometry.type === "MultiPolygon" ? feature.geometry.coordinates : [feature.geometry.coordinates];
+      const geometry: Array<Array<[number, number]>> = getGeometryFromGADMGeometry(feature.geometry.coordinates, feature.geometry.type);
       return {
         name: name,
         type: type,
@@ -28,7 +34,7 @@ export namespace MapUtils {
       const countryName: string = countries.getName(feature.properties.GID_0, "en");
       const name: Array<string> = [countryName, feature.properties.NAME_1];
       const type: string = feature.ENGTYPE_1;
-      const geometry: Array<Array<[number, number]>> = feature.geometry.type === "MultiPolygon" ? feature.geometry.coordinates : [feature.geometry.coordinates];
+      const geometry: Array<Array<[number, number]>> = getGeometryFromGADMGeometry(feature.geometry.coordinates, feature.geometry.type);
       return {
         name: name,
         type: type,
@@ -44,7 +50,7 @@ export namespace MapUtils {
         const countryName: string = countries.getName(feature.properties.GID_0, "en");
         const name: Array<string> = [countryName, feature.properties.NAME_2];
         const type: string = feature.properties.ENGTYPE_2;
-        const geometry: Array<Array<[number, number]>> = feature.geometry.type === "MultiPolygon" ? feature.geometry.coordinates : [feature.geometry.coordinates];
+        const geometry: Array<Array<[number, number]>> = getGeometryFromGADMGeometry(feature.geometry.coordinates, feature.geometry.type);
         layer1.push({
           name: name,
           type: type,
@@ -57,7 +63,7 @@ export namespace MapUtils {
       const countryName: string = countries.getName(feature.properties.GID_0, "en");
       const name: Array<string> = [countryName, feature.properties.NAME_1, feature.properties.NAME_2];
       const type: string = feature.properties.ENGTYPE_2;
-      const geometry: Array<Array<[number, number]>> = feature.geometry.type === "MultiPolygon" ? feature.geometry.coordinates : [feature.geometry.coordinates];
+      const geometry: Array<Array<[number, number]>> = getGeometryFromGADMGeometry(feature.geometry.coordinates, feature.geometry.type);
       return {
         name: name,
         type: type,
