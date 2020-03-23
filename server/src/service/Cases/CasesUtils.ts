@@ -19,6 +19,7 @@ export namespace CasesUtils {
   export const layer1CasesTimeSeries: ServerTimeSeriesCasesDataObject = {};
   export const layer2CasesTimeSeries: ServerTimeSeriesCasesDataObject = {};
   export const getCasesTimeSeries = async (): Promise<boolean> => {
+    console.log("Started Getting World Data.");
     const confirmedCasesUrl: string = "https://data.humdata.org/hxlproxy/api/data-preview.csv?url=https%3A%2F%2Fraw.githubusercontent.com%2FCSSEGISandData%2FCOVID-19%2Fmaster%2Fcsse_covid_19_data%2Fcsse_covid_19_time_series%2Ftime_series_19-covid-Confirmed.csv&filename=time_series_2019-ncov-Confirmed.csv";
     const deathsUrl: string = "https://data.humdata.org/hxlproxy/api/data-preview.csv?url=https%3A%2F%2Fraw.githubusercontent.com%2FCSSEGISandData%2FCOVID-19%2Fmaster%2Fcsse_covid_19_data%2Fcsse_covid_19_time_series%2Ftime_series_19-covid-Deaths.csv&filename=time_series_2019-ncov-Deaths.csv";
     const recoveredCasesUrl: string = "https://data.humdata.org/hxlproxy/api/data-preview.csv?url=https%3A%2F%2Fraw.githubusercontent.com%2FCSSEGISandData%2FCOVID-19%2Fmaster%2Fcsse_covid_19_data%2Fcsse_covid_19_time_series%2Ftime_series_19-covid-Recovered.csv&filename=time_series_2019-ncov-Recovered.csv";
@@ -155,11 +156,13 @@ export namespace CasesUtils {
         }
       }
     });
+    console.log("Getting World Data Complete!");
     await getTaiwanData(confirmedCasesResultArray);
     return true;
   };
 
   export const getTaiwanData = async (confirmedCasesResultArray: Array<Array<string>>): Promise<boolean> => {
+    console.log("Started Getting Taiwan Data.");
     const taiwanDataUrl: string = "https://od.cdc.gov.tw/eic/Weekly_Age_County_Gender_19CoV.json";
     const taiwanDataResponse: any = await axios.get(taiwanDataUrl);
     const taiwanData: Array<any> = taiwanDataResponse.data;
@@ -263,6 +266,7 @@ export namespace CasesUtils {
         }
       });
     });
+    console.log("Getting Taiwan Data Complete!");
     return true;
   };
 
