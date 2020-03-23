@@ -3,9 +3,11 @@ import {
   ServerTimeSeriesCasesData,
   ServerTimeSeriesCasesDataObject
 } from "../../../../shared/types/data/Cases/CasesTypes";
+import {Moment} from "moment";
 
 const csv = require("csv-string");
-const axios = require('axios').default;
+const axios = require("axios").default;
+const moment = require("moment");
 
 export namespace CasesUtils {
   export const worldData: ServerTimeSeriesCasesData = {
@@ -153,12 +155,14 @@ export namespace CasesUtils {
         }
       }
     });
+    await getTaiwanData(confirmedCasesResultArray);
     return true;
   };
 
   export const getTaiwanData = async (confirmedCasesResultArray: Array<Array<string>>): Promise<boolean> => {
     const taiwanDataUrl: string = "https://od.cdc.gov.tw/eic/Weekly_Age_County_Gender_19CoV.json";
-    const taiwanData: Array<any> = await axios.get(taiwanDataUrl);
+    const taiwanDataResponse: any = await axios.get(taiwanDataUrl);
+    const taiwanData: Array<any> = taiwanDataResponse.data;
     layer0CasesTimeSeries[JSON.stringify(["Taiwan"])] = {
       ...layer0CasesTimeSeries[JSON.stringify(["Taiwan"])],
       hasChildren: true
@@ -193,10 +197,70 @@ export namespace CasesUtils {
       const confirmedCases: number = parseInt(data["確定病例數"]);
       const week: number = parseInt(data["診斷週別"]);
       const year: number = parseInt(data["診斷年份"]);
+      if (!taiwanDataObject[districtName]) {
+        taiwanDataObject[districtName] = [];
+      }
       taiwanDataObject[districtName].push({
         confirmedCases: confirmedCases,
         week: week,
         year: year
+      });
+    });
+    Object.entries(taiwanDistrictTranslation).forEach(([key, value]) => {
+      const name: Array<string> = ["Taiwan", value as string];
+      const dataObject: ServerDailyCasesDataObject = {};
+      for (let columnIndex = 0; columnIndex < confirmedCasesResultArray[0].length; columnIndex++) {
+        if (columnIndex > 3) {
+          const date: string = confirmedCasesResultArray[0][columnIndex];
+          dataObject[date] = {
+            date: date,
+            deaths: 0,
+            confirmedCases: 0,
+            recoveredCases: 0,
+          }
+        }
+      }
+      layer1CasesTimeSeries[JSON.stringify(name)] = {
+        name: name,
+        hasChildren: false,
+        data: dataObject
+      };
+    });
+    const firstDayString: string = confirmedCasesResultArray[0][4];
+    const firstDayStringArray: Array<string> = firstDayString.split("/");
+    const firstDay: Moment = moment().date(parseInt(firstDayStringArray[1])).month(parseInt(firstDayStringArray[0]) - 1).year(2020);
+    const lastDayString: string = confirmedCasesResultArray[0][confirmedCasesResultArray[0].length - 1];
+    const lastDayStringArray: Array<string> = lastDayString.split("/");
+    const lastDay: Moment = moment().date(parseInt(lastDayStringArray[1])).month(parseInt(lastDayStringArray[0]) - 1).year(2020);
+    Object.entries(taiwanDataObject).forEach(([key, confirmedCasesArray]) => {
+      const name: Array<string> = ["Taiwan", key];
+      const nameString: string = JSON.stringify(name);
+      confirmedCasesArray.forEach((confirmedCase) => {
+        const startDayForCase: Moment = moment().week(confirmedCase.week).year(confirmedCase.year).startOf("week");
+        const isAfterFirstDay: boolean = startDayForCase.diff(firstDay, "days") > 0;
+        if (isAfterFirstDay) {
+          const dayDifference: number = lastDay.diff(startDayForCase, "days");
+          let currentDay: Moment = moment().week(confirmedCase.week).year(confirmedCase.year).startOf("week");
+          for (let dayOffset = 0; dayOffset <= dayDifference; dayOffset++) {
+            const currentDayString: string = currentDay.format("M/D/YY");
+            layer1CasesTimeSeries[nameString].data[currentDayString] = {
+              ...layer1CasesTimeSeries[nameString].data[currentDayString],
+              confirmedCases: layer1CasesTimeSeries[nameString].data[currentDayString].confirmedCases + confirmedCase.confirmedCases
+            };
+            currentDay.add(1, "days");
+          }
+        } else {
+          const allDateDifference: number = lastDay.diff(firstDay, "days");
+          let currentDay: Moment = moment().date(parseInt(firstDayStringArray[1])).month(parseInt(firstDayStringArray[0]) - 1).year(2020);
+          for (let dayOffset = 0; dayOffset <= allDateDifference; dayOffset++) {
+            const currentDayString: string = currentDay.format("M/D/YY");
+            layer1CasesTimeSeries[nameString].data[currentDayString] = {
+              ...layer1CasesTimeSeries[nameString].data[currentDayString],
+              confirmedCases: layer1CasesTimeSeries[nameString].data[currentDayString].confirmedCases + confirmedCase.confirmedCases
+            };
+            currentDay.add(1, "days");
+          }
+        }
       });
     });
     return true;
