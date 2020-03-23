@@ -18,6 +18,7 @@ export namespace CasesUtils {
   export const layer0CasesTimeSeries: ServerTimeSeriesCasesDataObject = {};
   export const layer1CasesTimeSeries: ServerTimeSeriesCasesDataObject = {};
   export const layer2CasesTimeSeries: ServerTimeSeriesCasesDataObject = {};
+  export const enableLayer2: boolean = false;
   export const getCasesTimeSeries = async (): Promise<boolean> => {
     console.log("Getting World Data.");
     const confirmedCasesUrl: string = "https://data.humdata.org/hxlproxy/api/data-preview.csv?url=https%3A%2F%2Fraw.githubusercontent.com%2FCSSEGISandData%2FCOVID-19%2Fmaster%2Fcsse_covid_19_data%2Fcsse_covid_19_time_series%2Ftime_series_19-covid-Confirmed.csv&filename=time_series_2019-ncov-Confirmed.csv";
@@ -138,19 +139,21 @@ export namespace CasesUtils {
             break;
           }
           case 3: {
-            layer0CasesTimeSeries[JSON.stringify([name[0]])] = {
-              ...layer0CasesTimeSeries[JSON.stringify([name[0]])],
-              hasChildren: true
-            };
-            layer0CasesTimeSeries[JSON.stringify([name[0], name[1]])] = {
-              ...layer0CasesTimeSeries[JSON.stringify([name[0], name[1]])],
-              hasChildren: true
-            };
-            layer2CasesTimeSeries[nameString] = {
-              name: name,
-              hasChildren: false,
-              data: dailyCasesDataObject
-            };
+            if (enableLayer2) {
+              layer0CasesTimeSeries[JSON.stringify([name[0]])] = {
+                ...layer0CasesTimeSeries[JSON.stringify([name[0]])],
+                hasChildren: true
+              };
+              layer0CasesTimeSeries[JSON.stringify([name[0], name[1]])] = {
+                ...layer0CasesTimeSeries[JSON.stringify([name[0], name[1]])],
+                hasChildren: true
+              };
+              layer2CasesTimeSeries[nameString] = {
+                name: name,
+                hasChildren: false,
+                data: dailyCasesDataObject
+              };
+            }
             break;
           }
         }
@@ -231,10 +234,10 @@ export namespace CasesUtils {
     });
     const firstDayString: string = confirmedCasesResultArray[0][4];
     const firstDayStringArray: Array<string> = firstDayString.split("/");
-    const firstDay: Moment = moment().date(parseInt(firstDayStringArray[1])).month(parseInt(firstDayStringArray[0]) - 1).year(parseInt(`20${firstDayStringArray[2]}`));
+    const firstDay: Moment = moment().date(parseInt(firstDayStringArray[1])).month(parseInt(firstDayStringArray[0]) - 1).year(parseInt(`20${firstDayStringArray[2]}`)).startOf("day");
     const lastDayString: string = confirmedCasesResultArray[0][confirmedCasesResultArray[0].length - 1];
     const lastDayStringArray: Array<string> = lastDayString.split("/");
-    const lastDay: Moment = moment().date(parseInt(lastDayStringArray[1])).month(parseInt(lastDayStringArray[0]) - 1).year(parseInt(`20${firstDayStringArray[2]}`));
+    const lastDay: Moment = moment().date(parseInt(lastDayStringArray[1])).month(parseInt(lastDayStringArray[0]) - 1).year(parseInt(`20${firstDayStringArray[2]}`)).startOf("day");
     Object.entries(taiwanDataObject).forEach(([key, confirmedCasesArray]) => {
       const name: Array<string> = ["Taiwan", key];
       const nameString: string = JSON.stringify(name);
@@ -254,7 +257,7 @@ export namespace CasesUtils {
           }
         } else {
           const allDateDifference: number = lastDay.diff(firstDay, "days");
-          let currentDay: Moment = moment().date(parseInt(firstDayStringArray[1])).month(parseInt(firstDayStringArray[0]) - 1).year(parseInt(`20${firstDayStringArray[2]}`));
+          let currentDay: Moment = moment().date(parseInt(firstDayStringArray[1])).month(parseInt(firstDayStringArray[0]) - 1).year(parseInt(`20${firstDayStringArray[2]}`)).startOf("day");
           for (let dayOffset = 0; dayOffset <= allDateDifference; dayOffset++) {
             const currentDayString: string = currentDay.format("M/D/YY");
             layer1CasesTimeSeries[nameString].data[currentDayString] = {
@@ -273,20 +276,26 @@ export namespace CasesUtils {
   export const nameConverter = (country: string, region: string): Array<string> => {
     const countryNameTranslation: any = {
       "Bahamas, The": "Bahamas",
+      "Brunei": "Brunei Darussalam",
       "Cabo Verde": "Cape Verde",
       "Congo (Brazzaville)": "Congo",
       "Congo (Kinshasa)": "Congo, the Democratic Republic of the",
       "Cote d'Ivoire": "Cote D'Ivoire",
       "Czechia": "Czech Republic",
+      "East Timor": "Timor-Leste",
       "Eswatini": "Swaziland",
       "Gambia, The": "Gambia",
       "Holy See": "Holy See (Vatican City State)",
+      "Iran": "Iran, Islamic Republic of",
       "Korea, South": "South Korea",
+      "Moldova": "Moldova, Republic of",
       "North Macedonia": "North Macedonia, Republic of",
       "Russia": "Russian Federation",
+      "Syria": "Syrian Arab Republic",
       "Taiwan*": "Taiwan",
       "Tanzania": "Tanzania, United Republic of",
       "US": "United States of America",
+
     };
     const usStates: any = {
       "AL": "Alabama",
