@@ -123,18 +123,27 @@ export namespace CasesUtils {
               });
               layer0CasesTimeSeries[parentNameString] = {
                 ...layer0CasesTimeSeries[parentNameString],
+                hasChildren: true,
                 data: newDailyCasesDataObject
               };
             } else {
               layer0CasesTimeSeries[parentNameString] = {
                 name: parentName,
-                hasChildren: false,
+                hasChildren: true,
                 data: dailyCasesDataObject
               };
             }
             break;
           }
           case 3: {
+            layer0CasesTimeSeries[JSON.stringify([name[0]])] = {
+              ...layer0CasesTimeSeries[JSON.stringify([name[0]])],
+              hasChildren: true
+            };
+            layer0CasesTimeSeries[JSON.stringify([name[0], name[1]])] = {
+              ...layer0CasesTimeSeries[JSON.stringify([name[0], name[1]])],
+              hasChildren: true
+            };
             layer2CasesTimeSeries[nameString] = {
               name: name,
               hasChildren: false,
