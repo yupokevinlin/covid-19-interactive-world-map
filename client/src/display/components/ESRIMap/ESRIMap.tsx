@@ -18,6 +18,7 @@ import { usePreviousProps } from "../../../hooks/usePreviousProps";
 import Legend = __esri.Legend;
 import ReactResizeDetector from "react-resize-detector";
 import { MathUtils } from "../../../helper/MathUtils";
+import {ServerDailyCasesDataObject} from "../../../../../shared/types/data/Cases/CasesTypes";
 
 export type ESRIMapProps = ESRIMapDataProps & ESRIMapStyleProps & ESRIMapEventProps;
 
@@ -34,10 +35,14 @@ export interface ESRIMapEventProps {}
 export interface MapPolygon {
   internalId: number;
   name: Array<string>;
-  confirmedCasesCount: number;
-  recoveredCasesCount: number;
-  deathsCount: number;
-  geometry: Array<Array<LatLon>>;
+  hasChildren: boolean;
+  type: string;
+  countryCode: string;
+  displayedConfirmedCasesCount: number;
+  displayedRecoveredCasesCount: number;
+  displayedDeathsCount: number;
+  data: ServerDailyCasesDataObject;
+  geometry: Array<Array<[number, number]>>;
 }
 
 const StyledESRIMap = styled.div`
@@ -161,22 +166,24 @@ const ESRIMap: React.FC<ESRIMapProps> = props => {
     polygonLayer.queryObjectIds().then(oldObjectIds => {
       const renderer = (polygonLayer.renderer as __esri.ClassBreaksRenderer).clone();
 
-      const addFeatures: Array<any> = mapPolygons.map(mapPolygon => ({
-        attributes: {
-          name: mapPolygon.name[mapPolygon.name.length - 1],
-          internalId: mapPolygon.internalId,
-          confirmedCases: mapPolygon.confirmedCasesCount,
-          recoveredCases: mapPolygon.recoveredCasesCount,
-          deaths: mapPolygon.deathsCount,
-        },
-        geometry: {
-          type: "polygon",
-          hasZ: false,
-          hasM: false,
-          rings: mapPolygon.geometry.map(element => element.map(coordinates => [coordinates.lon, coordinates.lat])),
-          spatialReference: { wkid: 4326 },
-        },
-      }));
+      const addFeatures: Array<any> = mapPolygons.map(mapPolygon => {
+        return {
+          attributes: {
+            name: mapPolygon.name[mapPolygon.name.length - 1],
+            internalId: mapPolygon.internalId,
+            confirmedCases: mapPolygon.displayedConfirmedCasesCount,
+            recoveredCases: mapPolygon.displayedRecoveredCasesCount,
+            deaths: mapPolygon.displayedDeathsCount,
+          },
+          geometry: {
+            type: "polygon",
+            hasZ: false,
+            hasM: false,
+            rings: mapPolygon.geometry,
+            spatialReference: { wkid: 4326 },
+          },
+        }
+      });
 
       const deleteFeatures: Array<{ objectId: number }> = oldObjectIds.map(oldObjectId => ({ objectId: oldObjectId }));
 

@@ -86,7 +86,7 @@ const RegionDisplayBar: React.FC<RegionDisplayBarProps> = props => {
     setHeight(ref.current.offsetHeight);
   };
 
-  const isWorld: boolean = countryName === "World" || countryCode === "World";
+  const isWorld: boolean = !countryName || !countryCode;
 
   return (
     <React.Fragment>

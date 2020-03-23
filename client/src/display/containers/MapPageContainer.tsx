@@ -39,12 +39,12 @@ const MapPageContainer: React.FC<MapPageContainerProps> = props => {
   } else {
     return (
       <MapPage
-        recoveredCasesCount={state.recoveredCasesCount}
-        deathsCount={state.deathsCount}
-        confirmedCasesCount={state.confirmedCasesCount}
+        displayedConfirmedCasesCount={state.displayedConfirmedCasesCount}
+        displayedRecoveredCasesCount={state.displayedRecoveredCasesCount}
+        displayedDeathsCount={state.displayedDeathsCount}
+        language={state.language}
         layer={state.currentLayer}
-        countryCode={state.currentCountryCode}
-        countryName={state.currentCountryName}
+        name={state.currentName}
         mapPolygonData={state.mapPolygonData}
         regionSelectData={state.regionSelectData}
         handleCountDisplayTypeChange={handleCountDisplayTypeChange}

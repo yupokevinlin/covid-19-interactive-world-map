@@ -1,22 +1,21 @@
-import React, { useState } from "react";
-import ESRIMap, { ESRIMapLayerNames, ESRIMapModeNames, MapPolygon } from "../components/ESRIMap/ESRIMap";
-import { CountryOutline, LatLon } from "../../api/MapApi/types";
-import { MapApi } from "../../api/MapApi/MapApi";
+import React from "react";
+import ESRIMap, { ESRIMapModeNames, MapPolygon } from "../components/ESRIMap/ESRIMap";
 import styled from "styled-components";
 import CountDisplayButton, { CountDisplayButtonClickEvent } from "../components/CountDisplayButton/CountDisplayButton";
 import RegionDisplayBar from "../components/RegionDisplayBar/RegionDisplayBar";
-import ListMenu, { ListMenuItem } from "../components/ListMenu/ListMenu";
 import RegionSelectBreadcrumbs, { BreadCrumbItem } from "../components/RegionSelectBreadcrumbs/RegionSelectBreadcrumbs";
 import { ListMenuSelectEvent } from "../components/ListMenu/ListMenuItem/ListMenuItem";
+import countries from "i18n-iso-countries";
+countries.registerLocale(require("i18n-iso-countries/langs/en.json"));
 
 export type MapPageProps = MapPageDataProps & MapPageStyleProps & MapPageEventProps;
 
 export interface MapPageDataProps {
-  confirmedCasesCount: number;
-  recoveredCasesCount: number;
-  deathsCount: number;
-  countryName: string;
-  countryCode: string;
+  language: string;
+  displayedConfirmedCasesCount: number;
+  displayedRecoveredCasesCount: number;
+  displayedDeathsCount: number;
+  name: Array<string>;
   layer: ESRIMapModeNames;
   regionSelectData: BreadCrumbItem;
   mapPolygonData: Array<MapPolygon>;
@@ -67,11 +66,11 @@ const StyledCountDisplayButtonListWrapper = styled.div`
 
 const MapPage: React.FC<MapPageProps> = props => {
   const {
-    confirmedCasesCount,
-    recoveredCasesCount,
-    deathsCount,
-    countryName,
-    countryCode,
+    displayedConfirmedCasesCount,
+    displayedRecoveredCasesCount,
+    displayedDeathsCount,
+    language,
+    name,
     layer,
     regionSelectData,
     mapPolygonData,
@@ -87,6 +86,8 @@ const MapPage: React.FC<MapPageProps> = props => {
     handleRegionSelect(e);
   };
 
+  const countryCode: string = countries.getAlpha3Code(name[0], "en");
+  const countryName: string = countries.getName(countryCode, language);
   return (
     <StyledMapPage className={"map-page"}>
       <RegionSelectBreadcrumbs data={regionSelectData} handleMenuItemSelect={handleMenuItemSelect} />
@@ -100,7 +101,7 @@ const MapPage: React.FC<MapPageProps> = props => {
           key={ESRIMapModeNames.confirmedCases}
           name={ESRIMapModeNames.confirmedCases}
           color={"#FFFF00"}
-          count={confirmedCasesCount}
+          count={displayedConfirmedCasesCount}
           text={ESRIMapModeNames.confirmedCases}
         />
         <CountDisplayButton
@@ -108,7 +109,7 @@ const MapPage: React.FC<MapPageProps> = props => {
           key={ESRIMapModeNames.deaths}
           name={ESRIMapModeNames.deaths}
           color={"#FF0000"}
-          count={deathsCount}
+          count={displayedDeathsCount}
           text={ESRIMapModeNames.deaths}
         />
         <CountDisplayButton
@@ -116,7 +117,7 @@ const MapPage: React.FC<MapPageProps> = props => {
           key={ESRIMapModeNames.recoveredCases}
           name={ESRIMapModeNames.recoveredCases}
           color={"#00AA00"}
-          count={recoveredCasesCount}
+          count={displayedRecoveredCasesCount}
           text={ESRIMapModeNames.recoveredCases}
         />
       </StyledCountDisplayButtonListWrapper>
