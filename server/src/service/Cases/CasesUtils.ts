@@ -10,6 +10,7 @@ const axios = require("axios").default;
 const moment = require("moment");
 
 export namespace CasesUtils {
+  const enableLogs: boolean = false;
   export let worldData: ServerTimeSeriesCasesData = {
     name: [],
     hasChildren: true,
@@ -60,14 +61,16 @@ export namespace CasesUtils {
         for (let columnIndex = 0; columnIndex < row.length; columnIndex++) {
           if (columnIndex > 3) {
             const date: string = confirmedCasesResultArray[0][columnIndex];
-            if (isNaN(parseInt(confirmedCasesRow[columnIndex]))) {
-              console.log(`Confirmed Cases is NaN for ${nameString} at ${date}.`);
-            }
-            if (isNaN(parseInt(deathsRow[columnIndex]))) {
-              console.log(`Deaths is NaN for ${nameString} at ${date}.`);
-            }
-            if (isNaN(parseInt(recoveredCasesRow[columnIndex]))) {
-              console.log(`Recovered Cases is NaN for ${nameString} at ${date}.`);
+            if (enableLogs) {
+              if (isNaN(parseInt(confirmedCasesRow[columnIndex]))) {
+                console.log(`Confirmed Cases is NaN for ${nameString} at ${date}.`);
+              }
+              if (isNaN(parseInt(deathsRow[columnIndex]))) {
+                console.log(`Deaths is NaN for ${nameString} at ${date}.`);
+              }
+              if (isNaN(parseInt(recoveredCasesRow[columnIndex]))) {
+                console.log(`Recovered Cases is NaN for ${nameString} at ${date}.`);
+              }
             }
             dailyCasesDataObject[date] = {
               date: date,
