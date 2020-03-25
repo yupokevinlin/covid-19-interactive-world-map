@@ -10,19 +10,19 @@ const axios = require("axios").default;
 const moment = require("moment");
 
 export namespace CasesUtils {
-  export const worldData: ServerTimeSeriesCasesData = {
+  export let worldData: ServerTimeSeriesCasesData = {
     name: [],
     hasChildren: true,
     data: {}
   };
-  export const layer0CasesTimeSeries: ServerTimeSeriesCasesDataObject = {};
-  export const layer1CasesTimeSeries: ServerTimeSeriesCasesDataObject = {};
-  export const layer2CasesTimeSeries: ServerTimeSeriesCasesDataObject = {};
+  export let layer0CasesTimeSeries: ServerTimeSeriesCasesDataObject = {};
+  export let layer1CasesTimeSeries: ServerTimeSeriesCasesDataObject = {};
+  export let layer2CasesTimeSeries: ServerTimeSeriesCasesDataObject = {};
   export const enableLayer2: boolean = false;
   export const getCasesTimeSeries = async (): Promise<boolean> => {
-    console.log("Getting World Data.");
-    const confirmedCasesUrl: string = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv";
-    const deathsUrl: string = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Deaths.csv";
+    console.log("Getting World Data...");
+    const confirmedCasesUrl: string = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv";
+    const deathsUrl: string = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv";
     const recoveredCasesUrl: string = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Recovered.csv";
 
     const confirmedCasesResult: any = await axios.get(confirmedCasesUrl);
@@ -60,11 +60,20 @@ export namespace CasesUtils {
         for (let columnIndex = 0; columnIndex < row.length; columnIndex++) {
           if (columnIndex > 3) {
             const date: string = confirmedCasesResultArray[0][columnIndex];
+            if (isNaN(parseInt(confirmedCasesRow[columnIndex]))) {
+              console.log(`Confirmed Cases is NaN for ${nameString} at ${date}.`);
+            }
+            if (isNaN(parseInt(deathsRow[columnIndex]))) {
+              console.log(`Deaths is NaN for ${nameString} at ${date}.`);
+            }
+            if (isNaN(parseInt(recoveredCasesRow[columnIndex]))) {
+              console.log(`Recovered Cases is NaN for ${nameString} at ${date}.`);
+            }
             dailyCasesDataObject[date] = {
               date: date,
-              deaths: parseInt(deathsRow[columnIndex]),
-              confirmedCases: parseInt(confirmedCasesRow[columnIndex]),
-              recoveredCases: parseInt(recoveredCasesRow[columnIndex]),
+              deaths: parseInt(deathsRow[columnIndex]) || 0,
+              confirmedCases: parseInt(confirmedCasesRow[columnIndex]) || 0,
+              recoveredCases: parseInt(recoveredCasesRow[columnIndex]) || 0,
             }
           }
         }
@@ -161,11 +170,69 @@ export namespace CasesUtils {
     });
     console.log("Getting World Data Complete!");
     await getTaiwanData(confirmedCasesResultArray);
+    await fixDataAllDiscrepancies();
     return true;
   };
 
+  export const fixDataAllDiscrepancies = async (): Promise<boolean> => {
+    console.log("Fixing Data...");
+    layer0CasesTimeSeries = fixDataDiscrepanciesForTimeSeriesObject(layer0CasesTimeSeries);
+    layer1CasesTimeSeries = fixDataDiscrepanciesForTimeSeriesObject(layer1CasesTimeSeries);
+    layer2CasesTimeSeries = fixDataDiscrepanciesForTimeSeriesObject(layer2CasesTimeSeries);
+    worldData = {
+      name: worldData.name,
+      hasChildren: worldData.hasChildren,
+      data: fixDataDiscrepanciesForDailyDataObject(worldData.data)
+    };
+    console.log("Fixing Data Complete!");
+    return true;
+  };
+
+  export const fixDataDiscrepanciesForTimeSeriesObject = (timeSeriesObject: ServerTimeSeriesCasesDataObject): ServerTimeSeriesCasesDataObject => {
+    const newTimeSeriesDataObject: ServerTimeSeriesCasesDataObject = {};
+    Object.entries(timeSeriesObject).forEach(([timeSeriesObjectKey, timeSeriesObjectValue]) => {
+      const name: Array<string> = [...timeSeriesObjectValue.name];
+      const hasChildren: boolean = timeSeriesObjectValue.hasChildren;
+      newTimeSeriesDataObject[timeSeriesObjectKey] = {
+        name: name,
+        hasChildren: hasChildren,
+        data: fixDataDiscrepanciesForDailyDataObject(timeSeriesObjectValue.data)
+      }
+    });
+    return newTimeSeriesDataObject;
+  };
+
+  export const fixDataDiscrepanciesForDailyDataObject = (dailyDataObject: ServerDailyCasesDataObject): ServerDailyCasesDataObject => {
+    const newDailyCasesDataObject: ServerDailyCasesDataObject = {};
+    let currentConfirmed: number = 0;
+    let currentDeaths: number = 0;
+    let currentRecovered: number = 0;
+    Object.entries(dailyDataObject).forEach(([dailyCasesDataKey, dailyCasesDataValue]) => {
+      const date: string = dailyCasesDataValue.date;
+      const confirmedCases: number = Math.max(currentConfirmed, dailyCasesDataValue.confirmedCases);
+      if (confirmedCases > currentConfirmed) {
+        currentConfirmed = confirmedCases;
+      }
+      const deaths: number = Math.max(currentDeaths, dailyCasesDataValue.deaths);
+      if (deaths > currentDeaths) {
+        currentDeaths = deaths;
+      }
+      const recoveredCases: number = Math.max(currentRecovered, dailyCasesDataValue.recoveredCases);
+      if (recoveredCases > currentRecovered) {
+        currentRecovered = recoveredCases;
+      }
+      newDailyCasesDataObject[dailyCasesDataKey] = {
+        date: date,
+        confirmedCases: confirmedCases,
+        deaths: deaths,
+        recoveredCases: recoveredCases
+      }
+    });
+    return newDailyCasesDataObject;
+  };
+
   export const getTaiwanData = async (confirmedCasesResultArray: Array<Array<string>>): Promise<boolean> => {
-    console.log("Getting Taiwan Data.");
+    console.log("Getting Taiwan Data...");
     const taiwanDataUrl: string = "https://od.cdc.gov.tw/eic/Weekly_Age_County_Gender_19CoV.json";
     const taiwanDataResponse: any = await axios.get(taiwanDataUrl);
     const taiwanData: Array<any> = taiwanDataResponse.data;
