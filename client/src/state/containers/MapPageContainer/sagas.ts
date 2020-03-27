@@ -48,7 +48,8 @@ function* initialize(action: MapPageContainerInitializeAction): any {
       currentName: [],
       currentDateString: currentDateString,
       countryCode: "",
-      mapPolygonData: getMapPolygonData(layer0MapData, casesData, currentDateString),
+      mapPolygonData: getInitialMapPolygonData(layer0MapData, casesData, currentDateString),
+      regionSelectData: getInitialRegionSelectData(layer0MapData, layer0CasesData),
       isLoaded: true
     }
   });
@@ -78,7 +79,7 @@ function* handleRegionChange(action: MapPageContainerHandleRegionChangeAction): 
   // });
 }
 
-const getMapPolygonData = (layer0MapData: Array<ServerMapPolygon>, casesData: ServerTimeSeriesCasesDataObject, currentDateString: string): Array<MapPolygon> => {
+const getInitialMapPolygonData = (layer0MapData: Array<ServerMapPolygon>, casesData: ServerTimeSeriesCasesDataObject, currentDateString: string): Array<MapPolygon> => {
   return layer0MapData.map((layerData, index) => {
     const nameString: string = JSON.stringify(layerData.name);
     const matchingCasesData: ServerTimeSeriesCasesData = casesData[nameString];
@@ -92,21 +93,31 @@ const getMapPolygonData = (layer0MapData: Array<ServerMapPolygon>, casesData: Se
       displayedDeathsCount: matchingCasesData?.data[currentDateString]?.deaths || 0,
       displayedRecoveredCasesCount: matchingCasesData?.data[currentDateString]?.recoveredCases || 0,
       data: matchingCasesData?.data || {},
-      hasChildren: layerData.hasChildren && matchingCasesData?.hasChildren || false
+      hasChildren: layerData.hasChildren && matchingCasesData?.hasChildren || false,
+      hidden: false
     };
     return mapPolygon;
   });
 };
 
-const getRegionSelectData = (countryOutlines: Array<CountryOutline>, language: string): BreadCrumbItem => {
+const getInitialRegionSelectData = (layer0MapData: Array<ServerMapPolygon>, layer0CasesData: ServerTimeSeriesCasesDataObject): BreadCrumbItem => {
   return {
     name: ["World"],
     countryCode: "World",
-    childElements: countryOutlines.map(countryOutline => ({
-      name: ["World", countryOutline.name[language]],
-      countryCode: countryOutline.countryCode,
-      childElements: [],
-    })),
+    hasChildren: true,
+    childElements: layer0MapData.map(layer0 => {
+      const matchingLayer0CasesData: ServerTimeSeriesCasesData = layer0CasesData[JSON.stringify(layer0.name)];
+      let layer0CasesHasChildren: boolean = false;
+      if (matchingLayer0CasesData) {
+        layer0CasesHasChildren = matchingLayer0CasesData.hasChildren;
+      }
+      return {
+        name: ["World", layer0.name[0]],
+        countryCode: layer0.countryCode,
+        hasChildren: layer0.hasChildren && layer0CasesHasChildren,
+        childElements: []
+      }
+    }),
   };
 };
 

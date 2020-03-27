@@ -43,6 +43,7 @@ export interface MapPolygon {
   displayedDeathsCount: number;
   data: ServerDailyCasesDataObject;
   geometry: Array<Array<[number, number]>>;
+  hidden: boolean;
 }
 
 const StyledESRIMap = styled.div`
