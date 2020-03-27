@@ -74,7 +74,7 @@ const RegionSelectBreadcrumbs: React.FC<RegionSelectBreadcrumbsProps> = props =>
 
         const filteredListMenuItem: ListMenuItem = {
           ...props,
-          childElements: props.childElements.sort((a, b) => {
+          childElements: props.childElements.filter(childElement => childElement.name[childElement.name.length - 1]).sort((a, b) => {
             const nameA: string = a?.name[index + 1]?.toUpperCase();
             const nameB: string = b?.name[index + 1]?.toUpperCase();
             if (nameA < nameB) {
