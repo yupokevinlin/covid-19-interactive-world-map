@@ -28,11 +28,6 @@ export interface MapPageEventProps {
   handleRegionSelect(e: ListMenuSelectEvent): void;
 }
 
-export interface MapPageRegionData {
-  countryCode: string;
-  countryName: string;
-}
-
 export const StyledMapPage = styled.div`
   height: 100%;
   width: 100%;
