@@ -429,6 +429,10 @@ export namespace CasesUtils {
         newRegionName = usStates[usStateCode];
         newDistrictName = regionNameArray[0].replace("County", "").trim();
       }
+    } else if (newCountryName === "Canada") {
+      if (newRegionName === "Quebec") {
+        newRegionName = "Québec";
+      }
     }
     switch (region) {
       case "From Diamond Princess": {
