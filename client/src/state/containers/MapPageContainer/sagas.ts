@@ -10,6 +10,7 @@ import { Store } from "../../store";
 import {ServerMapPolygon} from "../../../../../shared/types/data/Map/MapTypes";
 import {CasesApi} from "../../../api/CasesApi/CasesApi";
 import {
+  ServerDailyCasesData,
   ServerTimeSeriesCasesData,
   ServerTimeSeriesCasesDataObject
 } from "../../../../../shared/types/data/Cases/CasesTypes";
@@ -56,27 +57,76 @@ function* initialize(action: MapPageContainerInitializeAction): any {
 }
 
 function* handleRegionChange(action: MapPageContainerHandleRegionChangeAction): any {
-  // const previousState: MapPageContainerState = yield select(getMapPageContainerStateSelector);
-  // const matchingData: MapPolygon = previousState.mapPolygonData.find(
-  //   polygon => JSON.stringify(polygon.name) === JSON.stringify(action.event.name)
+  const previousState: MapPageContainerState = yield select(getMapPageContainerStateSelector);
+  const newName: Array<string> = [...action.event.name];
+  newName.shift();
+  // const matchingMapPolygon: MapPolygon = previousState.mapPolygonData.find(
+  //   polygon => JSON.stringify(polygon.name) === JSON.stringify(newName)
   // );
-  // yield put({
-  //   type: MapPageContainerActionTypes.SET_MAP_PAGE_CONTAINER_STATE,
-  //   state: {
-  //     ...previousState,
-  //     currentCountryName: action.event.name[action.event.name.length - 1],
-  //     currentCountryCode: action.event.countryCode ? action.event.countryCode : previousState.currentCountryCode,
-  //     confirmedCasesCount:
-  //       action.event.countryCode === "World"
-  //         ? previousState.worldConfirmedCasesCount
-  //         : matchingData.confirmedCasesCount,
-  //     recoveredCasesCount:
-  //       action.event.countryCode === "World"
-  //         ? previousState.worldRecoveredCasesCount
-  //         : matchingData.recoveredCasesCount,
-  //     deathsCount: action.event.countryCode === "World" ? previousState.worldDeathsCount : matchingData.deathsCount,
-  //   },
-  // });
+
+  // const displayedConfirmedCasesCount: number =
+  // console.log(casesData);
+  let newDisplayedConfirmedCasesCount: number = 0;
+  let newDisplayedDeathsCount: number = 0;
+  let newDisplayedRecoveredCasesCount: number = 0;
+  let newRegionSelectData: BreadCrumbItem = previousState.regionSelectData;
+
+
+  const isWorld: boolean = newName.length === 0;
+  if (isWorld) {
+    const worldDataAtDate: ServerDailyCasesData = previousState.worldCasesData.data[previousState.currentDateString];
+    newDisplayedConfirmedCasesCount = worldDataAtDate.confirmedCases;
+    newDisplayedDeathsCount = worldDataAtDate.deaths;
+    newDisplayedRecoveredCasesCount = worldDataAtDate.recoveredCases
+  } else {
+    const layer: number = newName.length;
+    const casesData: ServerTimeSeriesCasesData = previousState.casesData[JSON.stringify(newName)];
+    const mapPolygonsData: Array<ServerMapPolygon> = yield call(MapApi.getMapLayer1Data, newName);
+    if (casesData) {
+      const casesDataAtDate: ServerDailyCasesData = casesData.data[previousState.currentDateString];
+      newDisplayedConfirmedCasesCount = casesDataAtDate.confirmedCases;
+      newDisplayedDeathsCount = casesDataAtDate.deaths;
+      newDisplayedRecoveredCasesCount = casesDataAtDate.recoveredCases;
+      const modifiedRegionSelectData: BreadCrumbItem = {
+        ...newRegionSelectData,
+        childElements: []
+      };
+      let regionSelectData: BreadCrumbItem = newRegionSelectData;
+      newName.forEach((name, index) => {
+
+        const nameArray: Array<string> = ["World"];
+        for (let i = 0; i <= index; i++) {
+          nameArray.push(name);
+        }
+        const matchingRegionSelectData: BreadCrumbItem = regionSelectData.childElements.find(childElement => JSON.stringify(childElement.name) === JSON.stringify(nameArray));
+        if (matchingRegionSelectData) {
+          if (matchingRegionSelectData.hasChildren && matchingRegionSelectData.childElements.length === 0) {
+            matchingRegionSelectData.childElements = mapPolygonsData.map(mapPolygonData => {
+              return {
+                name: ["World", ...mapPolygonData.name],
+                countryCode: matchingRegionSelectData.countryCode,
+                hasChildren: mapPolygonData.hasChildren && previousState?.casesData[JSON.stringify(mapPolygonData.name)]?.hasChildren || false,
+                childElements: []
+              }
+            })
+          }
+          regionSelectData = matchingRegionSelectData;
+        }
+      });
+    }
+  }
+  
+  yield put({
+    type: MapPageContainerActionTypes.SET_MAP_PAGE_CONTAINER_STATE,
+    state: {
+      ...previousState,
+      displayedConfirmedCasesCount: newDisplayedConfirmedCasesCount,
+      displayedDeathsCount: newDisplayedDeathsCount,
+      displayedRecoveredCasesCount: newDisplayedRecoveredCasesCount,
+      currentName: newName,
+      regionSelectData: newRegionSelectData,
+    },
+  });
 }
 
 const getInitialMapPolygonData = (layer0MapData: Array<ServerMapPolygon>, casesData: ServerTimeSeriesCasesDataObject, currentDateString: string): Array<MapPolygon> => {
