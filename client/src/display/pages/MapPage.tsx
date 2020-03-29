@@ -81,8 +81,8 @@ const MapPage: React.FC<MapPageProps> = props => {
     handleRegionSelect(e);
   };
 
-  const countryCode: string = countries.getAlpha3Code(name[0], "en");
-  const countryName: string = countries.getName(countryCode, language);
+  const countryCode: string = countries.getAlpha2Code(name[0], "en");
+  const countryName: string = name.length > 0 ? name[name.length - 1] : countries.getName(countryCode, language);
   return (
     <StyledMapPage className={"map-page"}>
       <RegionSelectBreadcrumbs data={regionSelectData} handleMenuItemSelect={handleMenuItemSelect} />
