@@ -22,6 +22,7 @@ export interface ListMenuEventProps {
 export interface ListMenuItem {
   name: Array<string>;
   countryCode?: string;
+  hasChildren: boolean;
   childElements: Array<ListMenuItem>;
 }
 
@@ -56,17 +57,17 @@ const StyledMenuButton = styled.div`
 `;
 
 const ListMenu: React.FC<ListMenuProps> = props => {
-  const { childElements, name, handleListMenuItemSelect } = props;
+  const { childElements, name, handleListMenuItemSelect, hasChildren } = props;
 
   const [anchorElement, setAnchorElement] = React.useState<Element>(null);
 
   const theme: Theme = createMuiTheme();
-  const isLeaf: boolean = childElements.length === 0;
-  if (isLeaf) {
+  if (hasChildren) {
     theme.typography.h6 = {
       fontSize: "26px",
       lineHeight: "30px",
       fontWeight: 300,
+      textDecoration: "underline",
       "@media (min-width:710px) and (max-width: 950px)": {
         fontSize: "20x",
         lineHeight: "20px",
@@ -81,7 +82,6 @@ const ListMenu: React.FC<ListMenuProps> = props => {
       fontSize: "26px",
       lineHeight: "30px",
       fontWeight: 300,
-      textDecoration: "underline",
       "@media (min-width:710px) and (max-width: 950px)": {
         fontSize: "20x",
         lineHeight: "20px",
