@@ -56,22 +56,7 @@ function* initialize(action: MapPageContainerInitializeAction): any {
 }
 
 function* handleRegionChange(action: MapPageContainerHandleRegionChangeAction): any {
-  const previousState: MapPageContainerState = yield select(getMapPageContainerStateSelector);
-  const newName: Array<string> = [...action.event.name];
-  newName.shift();
-  let newDisplayedConfirmedCasesCount: number = 0;
-  let newDisplayedDeathsCount: number = 0;
-  let newDisplayedRecoveredCasesCount: number = 0;
-  let newRegionSelectData: BreadCrumbItem = previousState.regionSelectData;
-  let newMapPolygonData: Array<MapPolygon> = previousState.mapPolygonData;
-
-  const isWorld: boolean = newName.length === 0;
-  const maxInternalId: number = Math.max(...previousState.mapPolygonData.map(data => data.internalId)) + 1;
-  if (isWorld) {
-    const worldDataAtDate: ServerDailyCasesData = previousState.worldCasesData.data[previousState.currentDateString];
-    newDisplayedConfirmedCasesCount = worldDataAtDate.confirmedCases;
-    newDisplayedDeathsCount = worldDataAtDate.deaths;
-    newDisplayedRecoveredCasesCount = worldDataAtDate.recoveredCases;
+  const resetMapPolygons = (): void => {
     newMapPolygonData = newMapPolygonData.map((mapPolygon, index) => {
       const level: number = mapPolygon.name.length;
       if (level === 1) {
@@ -100,6 +85,25 @@ function* handleRegionChange(action: MapPageContainerHandleRegionChangeAction): 
         }
       }
     });
+  };
+  const previousState: MapPageContainerState = yield select(getMapPageContainerStateSelector);
+  const newName: Array<string> = [...action.event.name];
+  newName.shift();
+  let newDisplayedConfirmedCasesCount: number = 0;
+  let newDisplayedDeathsCount: number = 0;
+  let newDisplayedRecoveredCasesCount: number = 0;
+  let newRegionSelectData: BreadCrumbItem = previousState.regionSelectData;
+  let newMapPolygonData: Array<MapPolygon> = previousState.mapPolygonData;
+
+  const isWorld: boolean = newName.length === 0;
+  const maxInternalId: number = Math.max(...previousState.mapPolygonData.map(data => data.internalId)) + 1;
+
+  if (isWorld) {
+    const worldDataAtDate: ServerDailyCasesData = previousState.worldCasesData.data[previousState.currentDateString];
+    newDisplayedConfirmedCasesCount = worldDataAtDate.confirmedCases;
+    newDisplayedDeathsCount = worldDataAtDate.deaths;
+    newDisplayedRecoveredCasesCount = worldDataAtDate.recoveredCases;
+    resetMapPolygons();
   } else {
     const casesData: ServerTimeSeriesCasesData = previousState.casesData[JSON.stringify(newName)];
     const layer: number = newName.length;
@@ -191,6 +195,8 @@ function* handleRegionChange(action: MapPageContainerHandleRegionChangeAction): 
         }
       });
       newMapPolygonData = [...newMapPolygonData, ...mapPolygonsToAdd];
+    } else {
+      resetMapPolygons();
     }
 
     //Breadcrumbs processing
