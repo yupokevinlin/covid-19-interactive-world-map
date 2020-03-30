@@ -1,16 +1,15 @@
 import { call, put, select, takeEvery } from "redux-saga/effects";
 import moment, {Moment} from "moment";
-import { GetMapPolygonReturnData, MapPageContainerActionTypes, MapPageContainerState } from "./types";
+import { MapPageContainerActionTypes, MapPageContainerState } from "./types";
 import { MapPageContainerHandleRegionChangeAction, MapPageContainerInitializeAction } from "./action";
 import { MapPolygon } from "../../../display/components/ESRIMap/ESRIMap";
-import { CountryOutline } from "../../../api/MapApi/types";
 import { MapApi } from "../../../api/MapApi/MapApi";
 import { BreadCrumbItem } from "../../../display/components/RegionSelectBreadcrumbs/RegionSelectBreadcrumbs";
 import { Store } from "../../store";
 import {ServerMapPolygon} from "../../../../../shared/types/data/Map/MapTypes";
 import {CasesApi} from "../../../api/CasesApi/CasesApi";
 import {
-  ServerDailyCasesData,
+  ServerDailyCasesData, ServerDailyCasesDataObject,
   ServerTimeSeriesCasesData,
   ServerTimeSeriesCasesDataObject
 } from "../../../../../shared/types/data/Cases/CasesTypes";
@@ -60,40 +59,148 @@ function* handleRegionChange(action: MapPageContainerHandleRegionChangeAction): 
   const previousState: MapPageContainerState = yield select(getMapPageContainerStateSelector);
   const newName: Array<string> = [...action.event.name];
   newName.shift();
-  // const matchingMapPolygon: MapPolygon = previousState.mapPolygonData.find(
-  //   polygon => JSON.stringify(polygon.name) === JSON.stringify(newName)
-  // );
-
-  // const displayedConfirmedCasesCount: number =
-  // console.log(casesData);
   let newDisplayedConfirmedCasesCount: number = 0;
   let newDisplayedDeathsCount: number = 0;
   let newDisplayedRecoveredCasesCount: number = 0;
   let newRegionSelectData: BreadCrumbItem = previousState.regionSelectData;
-
+  let newMapPolygonData: Array<MapPolygon> = previousState.mapPolygonData;
 
   const isWorld: boolean = newName.length === 0;
+  const maxInternalId: number = Math.max(...previousState.mapPolygonData.map(data => data.internalId)) + 1;
   if (isWorld) {
     const worldDataAtDate: ServerDailyCasesData = previousState.worldCasesData.data[previousState.currentDateString];
     newDisplayedConfirmedCasesCount = worldDataAtDate.confirmedCases;
     newDisplayedDeathsCount = worldDataAtDate.deaths;
-    newDisplayedRecoveredCasesCount = worldDataAtDate.recoveredCases
+    newDisplayedRecoveredCasesCount = worldDataAtDate.recoveredCases;
+    newMapPolygonData = newMapPolygonData.map((mapPolygon, index) => {
+      const level: number = mapPolygon.name.length;
+      if (level === 1) {
+        if (mapPolygon.hidden) {
+          return {
+            ...mapPolygon,
+            hidden: false,
+            internalId: maxInternalId + index
+          }
+        } else {
+          return {
+            ...mapPolygon
+          }
+        }
+      } else {
+        if (mapPolygon.hidden) {
+          return {
+            ...mapPolygon
+          }
+        } else {
+          return {
+            ...mapPolygon,
+            hidden: true,
+            internalId: maxInternalId + index
+          }
+        }
+      }
+    });
   } else {
-    const layer: number = newName.length;
     const casesData: ServerTimeSeriesCasesData = previousState.casesData[JSON.stringify(newName)];
-    const mapPolygonsData: Array<ServerMapPolygon> = yield call(MapApi.getMapLayer1Data, newName);
+    const layer: number = newName.length;
+    const serverMapPolygonsData: Array<ServerMapPolygon> = yield call(MapApi.getMapLayer1Data, newName); //TODO map polygons should be loaded differently for level 2.
+
+    //Map processing
+    if (action.event.hasChildren) {
+      let modifiedCount: number = 1;
+      newMapPolygonData = newMapPolygonData.map((mapPolygon, index) => {
+        const level: number = mapPolygon.name.length;
+        if (mapPolygon.name[0] === newName[0]) {
+          if (level <= layer) {
+            modifiedCount++;
+            return {
+              ...mapPolygon,
+              hidden: true,
+              internalId: maxInternalId + index
+            }
+          } else {
+            if (mapPolygon.hidden) {
+              modifiedCount++;
+              return {
+                ...mapPolygon,
+                hidden: false,
+                internalId: maxInternalId + index
+              }
+            } else {
+              return {
+                ...mapPolygon
+              }
+            }
+          }
+        } else {
+          if (level === 1) {
+            if (mapPolygon.hidden) {
+              modifiedCount++;
+              return {
+                ...mapPolygon,
+                hidden: false,
+                internalId: maxInternalId + index
+              }
+            } else {
+              return {
+                ...mapPolygon
+              }
+            }
+          } else {
+            if (mapPolygon.hidden) {
+              return {
+                ...mapPolygon
+              }
+            } else {
+              modifiedCount++;
+              return {
+                ...mapPolygon,
+                hidden: true,
+                internalId: maxInternalId + index
+              }
+            }
+          }
+        }
+      });
+
+      const serverMapPolygonsToAdd: Array<ServerMapPolygon> = serverMapPolygonsData.filter(serveMapPolygonData => {
+        let exists: boolean = false;
+        for (let index = 0; index < newMapPolygonData.length; index++) {
+          if (JSON.stringify(newMapPolygonData[index].name) === JSON.stringify(serveMapPolygonData.name)) {
+            exists = true;
+            break;
+          }
+        }
+        return !exists;
+      });
+
+      const mapPolygonsToAdd: Array<MapPolygon> = serverMapPolygonsToAdd.map((serverMapPolygon, index) => {
+        const matchingCasesData: ServerDailyCasesDataObject = previousState.casesData[JSON.stringify(serverMapPolygon.name)]?.data;
+        return {
+          internalId: maxInternalId + modifiedCount + index,
+          name: serverMapPolygon.name,
+          hasChildren: serverMapPolygon.hasChildren && previousState.casesData[JSON.stringify(serverMapPolygon.name)]?.hasChildren || false,
+          type: serverMapPolygon.type,
+          countryCode: serverMapPolygon.countryCode,
+          displayedConfirmedCasesCount: matchingCasesData ? matchingCasesData[previousState.currentDateString].confirmedCases || 0 : 0,
+          displayedDeathsCount: matchingCasesData ? matchingCasesData[previousState.currentDateString].deaths || 0 : 0,
+          displayedRecoveredCasesCount: matchingCasesData ? matchingCasesData[previousState.currentDateString].recoveredCases || 0 : 0,
+          data: matchingCasesData,
+          geometry: serverMapPolygon.geometry,
+          hidden: false
+        }
+      });
+      newMapPolygonData = [...newMapPolygonData, ...mapPolygonsToAdd];
+    }
+
+    //Breadcrumbs processing
     if (casesData) {
       const casesDataAtDate: ServerDailyCasesData = casesData.data[previousState.currentDateString];
       newDisplayedConfirmedCasesCount = casesDataAtDate.confirmedCases;
       newDisplayedDeathsCount = casesDataAtDate.deaths;
       newDisplayedRecoveredCasesCount = casesDataAtDate.recoveredCases;
-      const modifiedRegionSelectData: BreadCrumbItem = {
-        ...newRegionSelectData,
-        childElements: []
-      };
       let regionSelectData: BreadCrumbItem = newRegionSelectData;
       newName.forEach((name, index) => {
-
         const nameArray: Array<string> = ["World"];
         for (let i = 0; i <= index; i++) {
           nameArray.push(name);
@@ -101,7 +208,7 @@ function* handleRegionChange(action: MapPageContainerHandleRegionChangeAction): 
         const matchingRegionSelectData: BreadCrumbItem = regionSelectData.childElements.find(childElement => JSON.stringify(childElement.name) === JSON.stringify(nameArray));
         if (matchingRegionSelectData) {
           if (matchingRegionSelectData.hasChildren && matchingRegionSelectData.childElements.length === 0) {
-            matchingRegionSelectData.childElements = mapPolygonsData.map(mapPolygonData => {
+            matchingRegionSelectData.childElements = serverMapPolygonsData.map(mapPolygonData => {
               return {
                 name: ["World", ...mapPolygonData.name],
                 countryCode: matchingRegionSelectData.countryCode,
@@ -115,7 +222,7 @@ function* handleRegionChange(action: MapPageContainerHandleRegionChangeAction): 
       });
     }
   }
-  
+
   yield put({
     type: MapPageContainerActionTypes.SET_MAP_PAGE_CONTAINER_STATE,
     state: {
@@ -125,6 +232,7 @@ function* handleRegionChange(action: MapPageContainerHandleRegionChangeAction): 
       displayedRecoveredCasesCount: newDisplayedRecoveredCasesCount,
       currentName: newName,
       regionSelectData: newRegionSelectData,
+      mapPolygonData: newMapPolygonData
     },
   });
 }

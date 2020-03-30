@@ -4,6 +4,7 @@ export interface ServerMapPolygon {
   countryCode: string;
   geometry: Array<Array<[number, number]>>;
   hasChildren: boolean;
+  hidden?: boolean;
 }
 
 export interface ServerMapPolygonsObject {
