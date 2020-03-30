@@ -55,6 +55,7 @@ let map: Map = null;
 let mapView: MapView = null;
 let polygonLayer: FeatureLayer = null;
 let isSmall: boolean = false;
+let localMapPolygons: Array<MapPolygon> = [];
 
 export enum ESRIMapLayerNames {
   polygonLayer = "polygon-layer",
@@ -73,6 +74,7 @@ const ESRIMap: React.FC<ESRIMapProps> = props => {
 
   const prevProps: ESRIMapProps = usePreviousProps<ESRIMapProps>(props);
   useEffect(() => {
+    localMapPolygons = mapPolygons;
     loadModules(
       ["esri/Map", "esri/views/MapView", "esri/layers/FeatureLayer", "esri/widgets/Legend", "esri/widgets/Expand"],
       {
@@ -166,10 +168,14 @@ const ESRIMap: React.FC<ESRIMapProps> = props => {
   };
 
   const updatePolygonLayerData = (): void => {
-    polygonLayer.queryObjectIds().then(oldObjectIds => {
+    polygonLayer.queryFeatures().then(result => {
       const renderer = (polygonLayer.renderer as __esri.ClassBreaksRenderer).clone();
+      const newInternalIds: Array<number> = mapPolygons.map(mapPolygon => mapPolygon.internalId);
+      const oldInternalIds: Array<number> = prevProps ? prevProps.mapPolygons.map(mapPolygon => mapPolygon.internalId) : [];
+      const removeInternalIds: Array<number> = oldInternalIds.filter(id => !newInternalIds.includes(id));
+      const addInternalIds: Array<number> = newInternalIds.filter(id => !oldInternalIds.includes(id));
 
-      const addFeatures: Array<any> = mapPolygons.map(mapPolygon => {
+      const addFeatures: Array<any> = mapPolygons.filter(mapPolygon => !mapPolygon.hidden && addInternalIds.includes(mapPolygon.internalId)).map(mapPolygon => {
         return {
           attributes: {
             name: mapPolygon.name[mapPolygon.name.length - 1],
@@ -188,7 +194,7 @@ const ESRIMap: React.FC<ESRIMapProps> = props => {
         }
       });
 
-      const deleteFeatures: Array<{ objectId: number }> = oldObjectIds.map(oldObjectId => ({ objectId: oldObjectId }));
+      const deleteFeatures: Array<{ objectId: number }> = result.features.filter(feature => removeInternalIds.includes(feature.attributes.internalId)).map(feature => ({ objectId: feature.attributes.OBJECTID }));
 
       polygonLayer.renderer = renderer;
       polygonLayer
