@@ -34,7 +34,7 @@ function* initialize(action: MapPageContainerInitializeAction): any {
   const worldCases: ServerTimeSeriesCasesData = yield call(CasesApi.getWorldCases);
   const lastDayString: string = Object.keys(worldCases.data)[Object.keys(worldCases.data).length - 1];
   const lastDayArray: Array<string> = lastDayString.split("/");
-  const currentDate: Moment = moment().date(parseInt(lastDayArray[1])).month(parseInt(lastDayArray[0]) - 1).year(parseInt(`20${lastDayArray[2]}`)).startOf("day");
+  const currentDate: Moment = moment(`${lastDayArray[0]}-${lastDayArray[1]}-20${lastDayArray[2]}`, "M-DD-YYYY").startOf("day");
   const currentDateString: string = currentDate.format(CasesApi.dateFormat);
   yield put({
     type: MapPageContainerActionTypes.SET_MAP_PAGE_CONTAINER_STATE,
