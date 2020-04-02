@@ -196,7 +196,9 @@ function* handleRegionChange(action: MapPageContainerHandleRegionChangeAction): 
       });
       newMapPolygonData = [...newMapPolygonData, ...mapPolygonsToAdd];
     } else {
-      resetMapPolygons();
+      if (layer === 1) {
+        resetMapPolygons();
+      }
     }
 
     //Breadcrumbs processing
