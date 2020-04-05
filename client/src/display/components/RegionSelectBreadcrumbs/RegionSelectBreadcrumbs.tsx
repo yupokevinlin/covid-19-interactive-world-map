@@ -54,16 +54,9 @@ const RegionSelectBreadcrumbs: React.FC<RegionSelectBreadcrumbsProps> = props =>
     return listMenuItems;
   };
 
-  let keyIndex: number = 0;
   return (
     <StyledRegionSelectBreadcrumbs className={"bread-crumbs"}>
       {getListMenuItems().map((props, index) => {
-        if (index === 0) {
-          keyIndex = keyIndex + 1;
-        } else {
-          keyIndex = keyIndex + 2;
-        }
-
         const filteredListMenuItem: ListMenuItem = {
           ...props,
           childElements: props.childElements.filter(childElement => childElement.name[childElement.name.length - 1]).sort((a, b) => {
@@ -79,12 +72,12 @@ const RegionSelectBreadcrumbs: React.FC<RegionSelectBreadcrumbsProps> = props =>
           }),
         };
         return index === 0 ? (
-          <ListMenu key={keyIndex} {...filteredListMenuItem} handleListMenuItemSelect={handleMenuItemSelect} />
+          <ListMenu key={`${index}-menu`} {...filteredListMenuItem} handleListMenuItemSelect={handleMenuItemSelect} />
         ) : (
-          <React.Fragment>
-            <NavigateNextIcon key={keyIndex} fontSize="small" />
+          <React.Fragment key={index}>
+            <NavigateNextIcon key={`${index}-icon`} fontSize="small" />
             <ListMenu
-              key={keyIndex + 1}
+              key={`${index}-menu`}
               {...filteredListMenuItem}
               handleListMenuItemSelect={handleMenuItemSelect}
             />
