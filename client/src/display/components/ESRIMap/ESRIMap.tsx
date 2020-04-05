@@ -240,6 +240,7 @@ const ESRIMap: React.FC<ESRIMapProps> = props => {
             mapView.goTo(feature.geometry.extent, {
               duration: 1000
             });
+            mapView.popup.visible = false;
           }
         }
       });
