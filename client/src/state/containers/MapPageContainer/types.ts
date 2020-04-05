@@ -4,6 +4,7 @@ import {
   ServerTimeSeriesCasesData,
   ServerTimeSeriesCasesDataObject
 } from "../../../../../shared/types/data/Cases/CasesTypes";
+import {ListMenuSelectEvent} from "../../../display/components/ListMenu/ListMenuItem/ListMenuItem";
 
 export interface MapPageContainerState {
   isLoaded: boolean;
@@ -33,3 +34,5 @@ export interface GetMapPolygonReturnData {
   worldRecoveredCasesCount: number;
   worldDeathsCount: number;
 }
+
+export type RegionChangeEvent = ListMenuSelectEvent;

@@ -1,4 +1,4 @@
-import { MapPageContainerActionTypes, MapPageContainerState } from "./types";
+import {MapPageContainerActionTypes, MapPageContainerState, RegionChangeEvent} from "./types";
 import { CountDisplayButtonClickEvent } from "../../../display/components/CountDisplayButton/CountDisplayButton";
 import { ListMenuSelectEvent } from "../../../display/components/ListMenu/ListMenuItem/ListMenuItem";
 
@@ -45,9 +45,9 @@ export const handleCountDisplayTypeChange = (
 
 export interface MapPageContainerHandleRegionChangeAction {
   type: typeof MapPageContainerActionTypes.HANDLE_REGION_CHANGE;
-  event: ListMenuSelectEvent;
+  event: RegionChangeEvent;
 }
-export const handleRegionChange = (event: ListMenuSelectEvent): MapPageContainerHandleRegionChangeAction => {
+export const handleRegionChange = (event: RegionChangeEvent): MapPageContainerHandleRegionChangeAction => {
   return {
     type: MapPageContainerActionTypes.HANDLE_REGION_CHANGE,
     event: event,
