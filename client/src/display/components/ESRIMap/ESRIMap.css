@@ -43,6 +43,9 @@
 .esri-legend__layer-cell {
   padding: 2px 4px !important;
 }
+.esri-popup__content {
+  height: 100px;
+}
 
 @media (max-width: 710px) {
   .esri-legend__layer-body {
