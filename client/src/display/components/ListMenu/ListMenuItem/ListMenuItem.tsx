@@ -11,16 +11,22 @@ export interface ListMenuItemDataProps {
 export interface ListMenuItemStyleProps {}
 
 export interface ListMenuItemEventProps {
-  handleListMenuItemClick(e: ListMenuItemObject): void;
+  handleListMenuItemClick(e: ListMenuSelectEvent): void;
 }
 
-export type ListMenuSelectEvent = ListMenuItemObject;
+export interface ListMenuSelectEvent {
+  name: Array<string>;
+  hasChildren: boolean;
+}
 
 const ListMenuItem: React.FC<ListMenuItemProps> = props => {
   const { item, handleListMenuItemClick } = props;
 
   const onClick = (e: React.MouseEvent<HTMLElement>): void => {
-    handleListMenuItemClick(item);
+    handleListMenuItemClick({
+      name: item.name,
+      hasChildren: item.hasChildren
+    });
   };
 
   return <ListItemText primary={item.name[item.name.length - 1]} onClick={onClick} />;
