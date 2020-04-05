@@ -9,6 +9,6 @@ export enum PageWrapperContainerActionTypes {
 }
 
 export enum PageName {
-  Intro = "Intro",
-  Map = "Map"
+  Home = "Home",
+  CurrentMap = "Map"
 }

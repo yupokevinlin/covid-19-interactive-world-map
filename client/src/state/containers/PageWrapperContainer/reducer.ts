@@ -2,7 +2,7 @@ import {PageName, PageWrapperContainerActionTypes, PageWrapperContainerState} fr
 import {PageWrapperContainerAction} from "./actions";
 
 export const initialState: PageWrapperContainerState = {
-  currentPage: PageName.Intro
+  currentPage: PageName.Home
 };
 
 export const reducer = (

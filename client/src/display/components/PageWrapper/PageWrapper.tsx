@@ -3,15 +3,11 @@ import { makeStyles, Theme, useTheme } from "@material-ui/core/styles";
 import Drawer from "@material-ui/core/Drawer";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
-import List from "@material-ui/core/List";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Typography from "@material-ui/core/Typography";
 import Divider from "@material-ui/core/Divider";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
 import styled from "styled-components";
 import { ClassNameMap } from "@material-ui/styles";
 import Spacer from "../Spacer/Spacer";
@@ -22,18 +18,12 @@ export type PageWrapperProps = PageWrapperDataProps & PageWrapperStyleProps & Pa
 
 export interface PageWrapperDataProps {
   title?: string;
-  menuItems?: Array<MenuItem>;
+  menuItems: JSX.Element;
 }
 
 export interface PageWrapperStyleProps {}
 
 export interface PageWrapperEventProps {}
-
-export interface MenuItem {
-  title: string;
-  icon: JSX.Element;
-  clickHandler(): void;
-}
 
 const StyledPageWrapper = styled.div`
   height: 100%;
@@ -115,14 +105,9 @@ const PageWrapper: React.FC<PageWrapperProps> = props => {
     <React.Fragment>
       <div className={classes.toolbar} />
       <Divider />
-      <List>
-        {menuItems.map((item, index) => (
-          <ListItem button key={index} onClick={item.clickHandler}>
-            <ListItemIcon>{item.icon}</ListItemIcon>
-            <ListItemText primary={item.title} />
-          </ListItem>
-        ))}
-      </List>
+      {
+        menuItems
+      }
     </React.Fragment>
   );
 
