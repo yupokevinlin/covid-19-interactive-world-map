@@ -79,7 +79,7 @@ const MapPage: React.FC<MapPageProps> = props => {
     handleCountDisplayTypeChange(e);
   };
 
-  const handleRegionSelectInterceptor= (e: ListMenuSelectEvent): void => {
+  const handleRegionSelectInterceptor = (e: ListMenuSelectEvent): void => {
     handleRegionSelect(e);
     setCurrentRegion([...e.name]);
   };
@@ -90,7 +90,7 @@ const MapPage: React.FC<MapPageProps> = props => {
     <StyledMapPage className={"map-page"}>
       <RegionSelectBreadcrumbs data={regionSelectData} currentRegion={currentRegion} handleMenuItemSelect={handleRegionSelectInterceptor} />
       <StyledMapContainer>
-        <ESRIMap mapPolygons={mapPolygonData} displayedLayer={layer} handleRegionChange={handleRegionSelectInterceptor}/>
+        <ESRIMap mapPolygons={mapPolygonData} displayedLayer={layer} handleRegionChange={handleRegionSelectInterceptor} handleMapPolygonClick={handleRegionSelectInterceptor}/>
       </StyledMapContainer>
       <RegionDisplayBar countryCode={countryCode} countryName={countryName} />
       <StyledCountDisplayButtonListWrapper className={"count-display-buttons-wrapper"}>

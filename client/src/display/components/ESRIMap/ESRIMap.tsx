@@ -36,6 +36,7 @@ export interface ESRIMapStyleProps {}
 
 export interface ESRIMapEventProps {
   handleRegionChange(e: RegionChangeEvent);
+  handleMapPolygonClick(e: RegionChangeEvent);
 }
 
 export interface MapPolygon {
@@ -74,7 +75,7 @@ export enum ESRIMapModeNames {
 }
 
 const ESRIMap: React.FC<ESRIMapProps> = props => {
-  const { initialBaseMap = "streets", mapPolygons = [], displayedLayer, handleRegionChange } = props;
+  const { initialBaseMap = "streets", mapPolygons = [], displayedLayer, handleRegionChange, handleMapPolygonClick } = props;
 
   const mapRef: React.MutableRefObject<HTMLDivElement> = useRef();
 
@@ -148,6 +149,10 @@ const ESRIMap: React.FC<ESRIMapProps> = props => {
                   if (feature.attributes.OBJECTID === objectId) {
                     const internalId: number = feature.attributes.internalId;
                     const mapPolygon: MapPolygon = localMapPolygons.find(icon => icon.internalId === internalId);
+                    handleMapPolygonClick({
+                      name: ["World", ...mapPolygon.name],
+                      hasChildren: false
+                    });
                     mapView.popup.location = event.mapPoint;
                     const element: HTMLElement = document.createElement("div");
                     render(<MapPolygonClickPopup name={mapPolygon.name} confirmedCases={mapPolygon.displayedConfirmedCasesCount} deaths={mapPolygon.displayedDeathsCount} recoveredCases={mapPolygon.displayedRecoveredCasesCount} hasChildren={mapPolygon.hasChildren} handleRegionChange={handleRegionChangeInterceptor}/>, element);
