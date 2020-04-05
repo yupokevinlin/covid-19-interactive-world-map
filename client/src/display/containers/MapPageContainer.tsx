@@ -2,7 +2,11 @@ import React, { useEffect } from "react";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { Dispatch } from "redux";
 import MapPage from "../pages/MapPage";
-import { MapPageContainerActionTypes, MapPageContainerState } from "../../state/containers/MapPageContainer/types";
+import {
+  MapPageContainerActionTypes,
+  MapPageContainerState,
+  RegionChangeEvent
+} from "../../state/containers/MapPageContainer/types";
 import { Store } from "../../state/store";
 import { CountDisplayButtonClickEvent } from "../components/CountDisplayButton/CountDisplayButton";
 import { ListMenuSelectEvent } from "../components/ListMenu/ListMenuItem/ListMenuItem";
@@ -27,7 +31,7 @@ const MapPageContainer: React.FC<MapPageContainerProps> = props => {
     });
   };
 
-  const handleRegionSelect = (event: ListMenuSelectEvent): void => {
+  const handleRegionSelect = (event: RegionChangeEvent): void => {
     dispatch({
       type: MapPageContainerActionTypes.HANDLE_REGION_CHANGE,
       event: event,

@@ -74,7 +74,7 @@ const MapPolygonClickPopup: React.FC<MapPolygonClickPopupProps> = (props) => {
   const handleClick = (): void => {
     handleRegionChange({
       name: ["World", ...name],
-      hasChildren: hasChildren
+      hasChildren: hasChildren,
     });
   };
 

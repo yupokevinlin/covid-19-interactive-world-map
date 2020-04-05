@@ -6,6 +6,7 @@ import RegionDisplayBar from "../components/RegionDisplayBar/RegionDisplayBar";
 import RegionSelectBreadcrumbs, { BreadCrumbItem } from "../components/RegionSelectBreadcrumbs/RegionSelectBreadcrumbs";
 import { ListMenuSelectEvent } from "../components/ListMenu/ListMenuItem/ListMenuItem";
 import countries from "i18n-iso-countries";
+import {RegionChangeEvent} from "../../state/containers/MapPageContainer/types";
 countries.registerLocale(require("i18n-iso-countries/langs/en.json"));
 
 export type MapPageProps = MapPageDataProps & MapPageStyleProps & MapPageEventProps;
@@ -26,7 +27,12 @@ export interface MapPageStyleProps {}
 
 export interface MapPageEventProps {
   handleCountDisplayTypeChange(e: CountDisplayButtonClickEvent): void;
-  handleRegionSelect(e: ListMenuSelectEvent): void;
+  handleRegionSelect(e: RegionChangeEvent): void;
+}
+
+export interface CurrentRegion {
+  name: Array<string>;
+  moveMap: boolean;
 }
 
 export const StyledMapPage = styled.div`
@@ -75,24 +81,35 @@ const MapPage: React.FC<MapPageProps> = props => {
     handleRegionSelect,
   } = props;
 
-  const [currentRegion, setCurrentRegion] = useState<Array<string>>(["World"]);
+  const [currentRegion, setCurrentRegion] = useState<CurrentRegion>({name: ["World"], moveMap: false});
 
   const handleCountDisplayButtonClick = (e: CountDisplayButtonClickEvent): void => {
     handleCountDisplayTypeChange(e);
   };
 
-  const handleRegionSelectInterceptor = (e: ListMenuSelectEvent): void => {
+  const handleRegionSelectInterceptor = (e: RegionChangeEvent): void => {
+    setCurrentRegion({
+      name: [...e.name],
+      moveMap: false
+    });
     handleRegionSelect(e);
-    setCurrentRegion([...e.name]);
+  };
+
+  const handleMenuItemSelect = (e: ListMenuSelectEvent): void => {
+    setCurrentRegion({
+      name: [...e.name],
+      moveMap: true
+    });
+    handleRegionSelect(e);
   };
 
   const countryCode: string = countries.getAlpha2Code(name[0], "en");
   const countryName: string = name.length > 0 ? name[name.length - 1] : countries.getName(countryCode, language);
   return (
     <StyledMapPage className={"map-page"}>
-      <RegionSelectBreadcrumbs data={regionSelectData} currentRegion={currentRegion} handleMenuItemSelect={handleRegionSelectInterceptor} />
+      <RegionSelectBreadcrumbs data={regionSelectData} currentRegion={currentRegion.name} handleMenuItemSelect={handleMenuItemSelect} />
       <StyledMapContainer>
-        <ESRIMap mapPolygons={mapPolygonData} displayedLayer={layer} handleRegionChange={handleRegionSelectInterceptor} handleMapPolygonClick={handleRegionSelectInterceptor} enableMapPopup={enableMapPopup}/>
+        <ESRIMap mapPolygons={mapPolygonData} moveMap={currentRegion.moveMap} currentRegion={currentRegion.name} displayedLayer={layer} handleRegionChange={handleRegionSelectInterceptor} handleMapPolygonClick={handleRegionSelectInterceptor} enableMapPopup={enableMapPopup}/>
       </StyledMapContainer>
       <RegionDisplayBar countryCode={countryCode} countryName={countryName} />
       <StyledCountDisplayButtonListWrapper className={"count-display-buttons-wrapper"}>

@@ -31,6 +31,8 @@ export interface ESRIMapDataProps {
   mapPolygons: Array<MapPolygon>;
   displayedLayer: ESRIMapModeNames;
   enableMapPopup: boolean;
+  moveMap: boolean;
+  currentRegion: Array<string>;
 }
 
 export interface ESRIMapStyleProps {}
@@ -76,7 +78,7 @@ export enum ESRIMapModeNames {
 }
 
 const ESRIMap: React.FC<ESRIMapProps> = props => {
-  const { initialBaseMap = "streets", mapPolygons = [], displayedLayer, enableMapPopup, handleRegionChange, handleMapPolygonClick } = props;
+  const { initialBaseMap = "streets", mapPolygons = [], displayedLayer, enableMapPopup, currentRegion, moveMap, handleRegionChange, handleMapPolygonClick } = props;
 
   const mapRef: React.MutableRefObject<HTMLDivElement> = useRef();
 
@@ -104,6 +106,9 @@ const ESRIMap: React.FC<ESRIMapProps> = props => {
           if (polygonLayer) {
             updatePolygonLayerRenderer();
           }
+        }
+        if (moveMap) {
+          updatePolygonLayerView(prevProps.mapPolygons);
         }
       }
       return cleanUp;
@@ -152,7 +157,7 @@ const ESRIMap: React.FC<ESRIMapProps> = props => {
                     const mapPolygon: MapPolygon = localMapPolygons.find(icon => icon.internalId === internalId);
                     handleMapPolygonClick({
                       name: ["World", ...mapPolygon.name],
-                      hasChildren: false
+                      hasChildren: false,
                     });
                     if (enableMapPopup) {
                       mapView.popup.location = event.mapPoint;
@@ -224,6 +229,25 @@ const ESRIMap: React.FC<ESRIMapProps> = props => {
       }
     }
     polygonLayer.renderer = renderer;
+  };
+
+  const updatePolygonLayerView = (prevMapPolygons: Array<MapPolygon>): void => {
+    const name: Array<string> = currentRegion;
+    name.shift();
+    const mapPolygon: MapPolygon = prevMapPolygons.find(mapPolygon => JSON.stringify(mapPolygon.name) === JSON.stringify(name));
+    if (mapPolygon) {
+      polygonLayer.queryFeatures().then((featureRsp) => {
+        const features: Array<any> = featureRsp.features;
+        for (let i = 0; i < features.length; i++) {
+          const feature: any = features[i];
+          if (feature.attributes.internalId === mapPolygon.internalId) {
+            mapView.goTo(feature.geometry.extent, {
+              duration: 1000
+            });
+          }
+        }
+      });
+    }
   };
 
   const updatePolygonLayerData = (): void => {
