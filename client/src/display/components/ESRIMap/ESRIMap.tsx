@@ -209,22 +209,18 @@ const ESRIMap: React.FC<ESRIMapProps> = props => {
       case ESRIMapModeNames.confirmedCases: {
         renderer.field = "confirmedCases";
         renderer.classBreakInfos = generateLogarithmicClassStep(7, MapConfirmedCasesClassBreakColors, [
-          0,
-          1.5,
-          4,
-          5.5,
-          8,
+          0, 1.5, 4, 5.5, 7
         ]);
         break;
       }
       case ESRIMapModeNames.recoveredCases: {
         renderer.field = "recoveredCases";
-        renderer.classBreakInfos = generateLogarithmicClassStep(7, MapRecoveredCasesClassBreakColors, [0, 2, 4, 6, 8]);
+        renderer.classBreakInfos = generateLogarithmicClassStep(7, MapRecoveredCasesClassBreakColors, [0, 1.5, 3, 5, 7]);
         break;
       }
       case ESRIMapModeNames.deaths: {
         renderer.field = "deaths";
-        renderer.classBreakInfos = generateLogarithmicClassStep(7, MapDeathsClassBreakColors, [0, 2, 4, 6, 8]);
+        renderer.classBreakInfos = generateLogarithmicClassStep(7, MapDeathsClassBreakColors, [0, 1.5, 3, 5, 7]);
         break;
       }
     }
@@ -339,7 +335,7 @@ const ESRIMap: React.FC<ESRIMapProps> = props => {
         },
       },
       defaultLabel: "no data",
-      classBreakInfos: generateLogarithmicClassStep(7, MapConfirmedCasesClassBreakColors, [0, 1.5, 4, 5.5, 8]),
+      classBreakInfos: generateLogarithmicClassStep(7, MapConfirmedCasesClassBreakColors, [0, 1.5, 4, 5.5, 7]),
     };
 
     return new FeatureLayer({
