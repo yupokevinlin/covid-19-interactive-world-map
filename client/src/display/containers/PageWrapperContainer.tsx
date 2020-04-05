@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import PageWrapper from "../components/PageWrapper/PageWrapper";
-import InboxIcon from "@material-ui/icons/MoveToInbox";
-import MailIcon from "@material-ui/icons/Mail";
+import HomeIcon from "@material-ui/icons/Home";
+import MapIcon from "@material-ui/icons/Map";
 import MapPageContainer from "./MapPageContainer";
 import {PageName} from "../../state/containers/PageWrapperContainer/types";
 import List from "@material-ui/core/List";
@@ -22,13 +22,13 @@ const PageWrapperContainer: React.FC<PageWrapperContainerProps> = props => {
     <List>
       <ListItem button component={Link} to={"/"} onClick={() => {setTitle(PageName.Home);}}>
         <ListItemIcon>
-          <MailIcon/>
+          <HomeIcon/>
         </ListItemIcon>
         <ListItemText primary={PageName.Home} />
       </ListItem>
       <ListItem button component={Link} to={"/map"} onClick={() => {setTitle(PageName.CurrentMap);}}>
         <ListItemIcon>
-          <MailIcon/>
+          <MapIcon/>
         </ListItemIcon>
         <ListItemText primary={PageName.CurrentMap} />
       </ListItem>
