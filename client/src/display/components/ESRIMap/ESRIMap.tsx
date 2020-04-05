@@ -30,6 +30,7 @@ export interface ESRIMapDataProps {
   initialBaseMap?: string;
   mapPolygons: Array<MapPolygon>;
   displayedLayer: ESRIMapModeNames;
+  enableMapPopup: boolean;
 }
 
 export interface ESRIMapStyleProps {}
@@ -75,7 +76,7 @@ export enum ESRIMapModeNames {
 }
 
 const ESRIMap: React.FC<ESRIMapProps> = props => {
-  const { initialBaseMap = "streets", mapPolygons = [], displayedLayer, handleRegionChange, handleMapPolygonClick } = props;
+  const { initialBaseMap = "streets", mapPolygons = [], displayedLayer, enableMapPopup, handleRegionChange, handleMapPolygonClick } = props;
 
   const mapRef: React.MutableRefObject<HTMLDivElement> = useRef();
 
@@ -153,12 +154,14 @@ const ESRIMap: React.FC<ESRIMapProps> = props => {
                       name: ["World", ...mapPolygon.name],
                       hasChildren: false
                     });
-                    mapView.popup.location = event.mapPoint;
-                    const element: HTMLElement = document.createElement("div");
-                    render(<MapPolygonClickPopup name={mapPolygon.name} confirmedCases={mapPolygon.displayedConfirmedCasesCount} deaths={mapPolygon.displayedDeathsCount} recoveredCases={mapPolygon.displayedRecoveredCasesCount} hasChildren={mapPolygon.hasChildren} handleRegionChange={handleRegionChangeInterceptor}/>, element);
-                    mapView.popup.content = element;
-                    mapView.popup.title = mapPolygon.name[mapPolygon.name.length - 1];
-                    mapView.popup.visible = true;
+                    if (enableMapPopup) {
+                      mapView.popup.location = event.mapPoint;
+                      const element: HTMLElement = document.createElement("div");
+                      render(<MapPolygonClickPopup name={mapPolygon.name} confirmedCases={mapPolygon.displayedConfirmedCasesCount} deaths={mapPolygon.displayedDeathsCount} recoveredCases={mapPolygon.displayedRecoveredCasesCount} hasChildren={mapPolygon.hasChildren} handleRegionChange={handleRegionChangeInterceptor}/>, element);
+                      mapView.popup.content = element;
+                      mapView.popup.title = mapPolygon.name[mapPolygon.name.length - 1];
+                      mapView.popup.visible = true;
+                    }
                     break;
                   }
                 }

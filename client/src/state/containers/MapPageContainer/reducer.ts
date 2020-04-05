@@ -18,10 +18,12 @@ export const initialState: MapPageContainerState = {
   regionSelectData: {
     name: ["World"],
     childElements: [],
+    hasChildren: true
   },
   currentLayer: ESRIMapModeNames.confirmedCases,
   currentName: [],
-  currentDateString: ""
+  currentDateString: "",
+  enableMapPopup: true
 };
 
 export const reducer = (

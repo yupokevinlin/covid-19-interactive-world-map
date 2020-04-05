@@ -47,6 +47,7 @@ const MapPageContainer: React.FC<MapPageContainerProps> = props => {
         name={state.currentName}
         mapPolygonData={state.mapPolygonData}
         regionSelectData={state.regionSelectData}
+        enableMapPopup={state.enableMapPopup}
         handleCountDisplayTypeChange={handleCountDisplayTypeChange}
         handleRegionSelect={handleRegionSelect}
       />

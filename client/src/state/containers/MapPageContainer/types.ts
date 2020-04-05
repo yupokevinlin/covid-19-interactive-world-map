@@ -19,6 +19,7 @@ export interface MapPageContainerState {
   currentLayer: ESRIMapModeNames;
   currentName: Array<string>;
   currentDateString: string;
+  enableMapPopup: boolean;
 }
 
 export enum MapPageContainerActionTypes {

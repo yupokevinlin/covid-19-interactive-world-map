@@ -19,6 +19,7 @@ export interface MapPageDataProps {
   layer: ESRIMapModeNames;
   regionSelectData: BreadCrumbItem;
   mapPolygonData: Array<MapPolygon>;
+  enableMapPopup: boolean;
 }
 
 export interface MapPageStyleProps {}
@@ -69,6 +70,7 @@ const MapPage: React.FC<MapPageProps> = props => {
     layer,
     regionSelectData,
     mapPolygonData,
+    enableMapPopup,
     handleCountDisplayTypeChange,
     handleRegionSelect,
   } = props;
@@ -90,7 +92,7 @@ const MapPage: React.FC<MapPageProps> = props => {
     <StyledMapPage className={"map-page"}>
       <RegionSelectBreadcrumbs data={regionSelectData} currentRegion={currentRegion} handleMenuItemSelect={handleRegionSelectInterceptor} />
       <StyledMapContainer>
-        <ESRIMap mapPolygons={mapPolygonData} displayedLayer={layer} handleRegionChange={handleRegionSelectInterceptor} handleMapPolygonClick={handleRegionSelectInterceptor}/>
+        <ESRIMap mapPolygons={mapPolygonData} displayedLayer={layer} handleRegionChange={handleRegionSelectInterceptor} handleMapPolygonClick={handleRegionSelectInterceptor} enableMapPopup={enableMapPopup}/>
       </StyledMapContainer>
       <RegionDisplayBar countryCode={countryCode} countryName={countryName} />
       <StyledCountDisplayButtonListWrapper className={"count-display-buttons-wrapper"}>
