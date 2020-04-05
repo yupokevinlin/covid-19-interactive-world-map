@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import ESRIMap, { ESRIMapModeNames, MapPolygon } from "../components/ESRIMap/ESRIMap";
 import styled from "styled-components";
 import CountDisplayButton, { CountDisplayButtonClickEvent } from "../components/CountDisplayButton/CountDisplayButton";
@@ -73,21 +73,24 @@ const MapPage: React.FC<MapPageProps> = props => {
     handleRegionSelect,
   } = props;
 
+  const [currentRegion, setCurrentRegion] = useState<Array<string>>(["World"]);
+
   const handleCountDisplayButtonClick = (e: CountDisplayButtonClickEvent): void => {
     handleCountDisplayTypeChange(e);
   };
 
-  const handleMenuItemSelect = (e: ListMenuSelectEvent): void => {
+  const handleRegionSelectInterceptor= (e: ListMenuSelectEvent): void => {
     handleRegionSelect(e);
+    setCurrentRegion([...e.name]);
   };
 
   const countryCode: string = countries.getAlpha2Code(name[0], "en");
   const countryName: string = name.length > 0 ? name[name.length - 1] : countries.getName(countryCode, language);
   return (
     <StyledMapPage className={"map-page"}>
-      <RegionSelectBreadcrumbs data={regionSelectData} handleMenuItemSelect={handleMenuItemSelect} />
+      <RegionSelectBreadcrumbs data={regionSelectData} currentRegion={currentRegion} handleMenuItemSelect={handleRegionSelectInterceptor} />
       <StyledMapContainer>
-        <ESRIMap mapPolygons={mapPolygonData} displayedLayer={layer} />
+        <ESRIMap mapPolygons={mapPolygonData} displayedLayer={layer} handleRegionChange={handleRegionSelectInterceptor}/>
       </StyledMapContainer>
       <RegionDisplayBar countryCode={countryCode} countryName={countryName} />
       <StyledCountDisplayButtonListWrapper className={"count-display-buttons-wrapper"}>

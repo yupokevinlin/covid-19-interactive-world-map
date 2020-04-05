@@ -10,6 +10,7 @@ export type RegionSelectBreadcrumbsProps = RegionSelectBreadcrumbsDataProps &
 
 export interface RegionSelectBreadcrumbsDataProps {
   data: BreadCrumbItem;
+  currentRegion: Array<string>;
 }
 
 export interface RegionSelectBreadcrumbsStyleProps {}
@@ -36,14 +37,12 @@ const StyledRegionSelectBreadcrumbs = styled.div`
 `;
 
 const RegionSelectBreadcrumbs: React.FC<RegionSelectBreadcrumbsProps> = props => {
-  const { data, handleMenuItemSelect } = props;
-
-  const [currentPosition, setCurrentPosition] = useState<Array<string>>(data.name);
+  const { data, currentRegion, handleMenuItemSelect } = props;
 
   const listMenuItems: Array<ListMenuItem> = [];
   const getListMenuItems = (): Array<ListMenuItem> => {
-    for (let index = 0; index < currentPosition.length; index++) {
-      const elementName: string = currentPosition[index];
+    for (let index = 0; index < currentRegion.length; index++) {
+      const elementName: string = currentRegion[index];
       if (index === 0) {
         listMenuItems.push(data);
       } else {
@@ -53,13 +52,6 @@ const RegionSelectBreadcrumbs: React.FC<RegionSelectBreadcrumbsProps> = props =>
       }
     }
     return listMenuItems;
-  };
-
-  const handleListMenuItemSelect = (e: ListMenuSelectEvent): void => {
-    setCurrentPosition([...e.name]);
-    if (handleMenuItemSelect) {
-      handleMenuItemSelect(e);
-    }
   };
 
   let keyIndex: number = 0;
@@ -87,14 +79,14 @@ const RegionSelectBreadcrumbs: React.FC<RegionSelectBreadcrumbsProps> = props =>
           }),
         };
         return index === 0 ? (
-          <ListMenu key={keyIndex} {...filteredListMenuItem} handleListMenuItemSelect={handleListMenuItemSelect} />
+          <ListMenu key={keyIndex} {...filteredListMenuItem} handleListMenuItemSelect={handleMenuItemSelect} />
         ) : (
           <React.Fragment>
             <NavigateNextIcon key={keyIndex} fontSize="small" />
             <ListMenu
               key={keyIndex + 1}
               {...filteredListMenuItem}
-              handleListMenuItemSelect={handleListMenuItemSelect}
+              handleListMenuItemSelect={handleMenuItemSelect}
             />
           </React.Fragment>
         );
