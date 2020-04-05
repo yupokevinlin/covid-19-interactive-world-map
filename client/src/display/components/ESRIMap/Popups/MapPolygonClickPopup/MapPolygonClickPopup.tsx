@@ -59,11 +59,6 @@ const MapPolygonClickPopup: React.FC<MapPolygonClickPopupProps> = (props) => {
   } = props;
 
   const theme: Theme = createMuiTheme();
-  theme.typography.overline = {
-    fontSize: "14px",
-    lineHeight: "20px",
-    height: "20px",
-  };
   theme.typography.subtitle1 = {
     fontSize: "16px",
     lineHeight: "20px",
@@ -82,7 +77,7 @@ const MapPolygonClickPopup: React.FC<MapPolygonClickPopupProps> = (props) => {
     <StyledMapPolygonClickPopup className={"map-polygon-popup"}>
       <ThemeProvider theme={theme}>
         <StyledDisplayRow>
-          <Typography variant="overline" noWrap>
+          <Typography variant="subtitle1" noWrap>
             Confirmed Cases
           </Typography>
           <Typography variant="subtitle1" noWrap>
@@ -90,7 +85,7 @@ const MapPolygonClickPopup: React.FC<MapPolygonClickPopupProps> = (props) => {
           </Typography>
         </StyledDisplayRow>
         <StyledDisplayRow>
-          <Typography variant="overline" noWrap>
+          <Typography variant="subtitle1" noWrap>
             Deaths
           </Typography>
           <Typography variant="subtitle1" noWrap>
@@ -98,7 +93,7 @@ const MapPolygonClickPopup: React.FC<MapPolygonClickPopupProps> = (props) => {
           </Typography>
         </StyledDisplayRow>
         <StyledDisplayRow>
-        <Typography variant="overline" noWrap>
+        <Typography variant="subtitle1" noWrap>
           Recovered Cases
         </Typography>
         <Typography variant="subtitle1" noWrap>
