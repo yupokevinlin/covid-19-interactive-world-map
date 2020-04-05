@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from "react";
+import {render} from "react-dom";
 import styled from "styled-components";
 import { loadModules } from "esri-loader";
 import "./ESRIMap.css";
@@ -19,6 +20,9 @@ import Legend = __esri.Legend;
 import ReactResizeDetector from "react-resize-detector";
 import { MathUtils } from "../../../helper/MathUtils";
 import {ServerDailyCasesDataObject} from "../../../../../shared/types/data/Cases/CasesTypes";
+import MapPolygonClickPopup from "./Popups/MapPolygonClickPopup/MapPolygonClickPopup";
+import {RegionChangeEvent} from "../../../state/containers/MapPageContainer/types";
+import {handleRegionChange} from "../../../state/containers/MapPageContainer/action";
 
 export type ESRIMapProps = ESRIMapDataProps & ESRIMapStyleProps & ESRIMapEventProps;
 
@@ -30,7 +34,9 @@ export interface ESRIMapDataProps {
 
 export interface ESRIMapStyleProps {}
 
-export interface ESRIMapEventProps {}
+export interface ESRIMapEventProps {
+  handleRegionChange(e: RegionChangeEvent);
+}
 
 export interface MapPolygon {
   internalId: number;
@@ -68,7 +74,7 @@ export enum ESRIMapModeNames {
 }
 
 const ESRIMap: React.FC<ESRIMapProps> = props => {
-  const { initialBaseMap = "streets", mapPolygons = [], displayedLayer } = props;
+  const { initialBaseMap = "streets", mapPolygons = [], displayedLayer, handleRegionChange } = props;
 
   const mapRef: React.MutableRefObject<HTMLDivElement> = useRef();
 
@@ -76,14 +82,14 @@ const ESRIMap: React.FC<ESRIMapProps> = props => {
   useEffect(() => {
     localMapPolygons = mapPolygons;
     loadModules(
-      ["esri/Map", "esri/views/MapView", "esri/layers/FeatureLayer", "esri/widgets/Legend", "esri/widgets/Expand"],
+      ["esri/Map", "esri/views/MapView", "esri/layers/FeatureLayer", "esri/widgets/Legend", "esri/geometry/Point",],
       {
         css: true,
       }
-    ).then(([Map, MapView, FeatureLayer, Legend, Expand]) => {
+    ).then(([Map, MapView, FeatureLayer, Legend, Point]) => {
       isSmall = window.innerWidth <= 710;
       if (!map) {
-        initialize(Map, MapView, FeatureLayer, Legend, Expand);
+        initialize(Map, MapView, FeatureLayer, Legend, Point);
       }
 
       if (prevProps) {
@@ -102,7 +108,12 @@ const ESRIMap: React.FC<ESRIMapProps> = props => {
     });
   }, [mapPolygons, displayedLayer]);
 
-  const initialize = (Map, MapView, FeatureLayer, Legend, Expand): void => {
+  const handleRegionChangeInterceptor = (e: RegionChangeEvent) => {
+    handleRegionChange(e);
+    mapView.popup.visible = false;
+  };
+
+  const initialize = (Map, MapView, FeatureLayer, Legend, Point): void => {
     map = new Map({
       basemap: initialBaseMap,
     });
@@ -115,6 +126,46 @@ const ESRIMap: React.FC<ESRIMapProps> = props => {
       ui: {
         components: ["attribution", "zoom", "compass"],
       },
+    });
+    mapView.popup.collapseEnabled = false;
+    mapView.popup.dockOptions = {
+      position: "top-right"
+    };
+
+    mapView.on("click", (event) => {
+      mapView.popup.visible = false;
+      mapView.hitTest(event).then((rsp => {
+        const hitResults: Array<any> = rsp.results;
+        hitResults.forEach(result => {
+          const sourceLayerName: string = result.graphic.sourceLayer.id;
+          switch (sourceLayerName) {
+            case ESRIMapLayerNames.polygonLayer: {
+              const objectId: number = result.graphic.attributes.OBJECTID;
+              polygonLayer.queryFeatures().then((featureRsp) => {
+                const features: Array<any> = featureRsp.features;
+                for (let i = 0; i < features.length; i++) {
+                  const feature: any = features[i];
+                  if (feature.attributes.OBJECTID === objectId) {
+                    const internalId: number = feature.attributes.internalId;
+                    const mapPolygon: MapPolygon = localMapPolygons.find(icon => icon.internalId === internalId);
+                    mapView.popup.location = event.mapPoint;
+                    const element: HTMLElement = document.createElement("div");
+                    render(<MapPolygonClickPopup name={mapPolygon.name} confirmedCases={mapPolygon.displayedConfirmedCasesCount} deaths={mapPolygon.displayedDeathsCount} recoveredCases={mapPolygon.displayedRecoveredCasesCount} hasChildren={mapPolygon.hasChildren} handleRegionChange={handleRegionChangeInterceptor}/>, element);
+                    mapView.popup.content = element;
+                    mapView.popup.title = mapPolygon.name[mapPolygon.name.length - 1];
+                    mapView.popup.visible = true;
+                    break;
+                  }
+                }
+              });
+              break;
+            }
+            default: {
+              break;
+            }
+          }
+        });
+      }));
     });
 
     polygonLayer = getPolygonLayer(FeatureLayer);
