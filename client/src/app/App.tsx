@@ -23,9 +23,7 @@ const App: React.FC<AppProps> = props => {
     <Provider store={configureStore()}>
       <StyledApp className={"app"}>
         <ThemeProvider theme={theme}>
-          <PageWrapperContainer>
-            <MapPageContainer />
-          </PageWrapperContainer>
+          <PageWrapperContainer/>
         </ThemeProvider>
       </StyledApp>
     </Provider>
