@@ -11,6 +11,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import { Router, Route, Link } from "react-router-dom";
 import { createBrowserHistory } from "history";
 import HomePageContainer from "./HomePageContainer";
+import {reloadMap} from "../components/ESRIMap/ESRIMap";
 
 export interface PageWrapperContainerProps {}
 
@@ -20,7 +21,7 @@ const PageWrapperContainer: React.FC<PageWrapperContainerProps> = props => {
   const [title, setTitle] = useState<string>(PageName.Home);
   const menuItems: JSX.Element = (
     <List>
-      <ListItem button component={Link} to={"/"} onClick={() => {setTitle(PageName.Home);}}>
+      <ListItem button component={Link} to={"/"} onClick={() => {setTitle(PageName.Home); reloadMap();}}>
         <ListItemIcon>
           <HomeIcon/>
         </ListItemIcon>

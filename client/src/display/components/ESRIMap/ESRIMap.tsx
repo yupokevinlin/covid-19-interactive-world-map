@@ -77,6 +77,15 @@ export enum ESRIMapModeNames {
   deaths = "Deaths",
 }
 
+
+export const reloadMap = (): void => {
+  map = null;
+  mapView = null;
+  polygonLayer = null;
+  isSmall = false;
+  localMapPolygons = [];
+};
+
 const ESRIMap: React.FC<ESRIMapProps> = props => {
   const { initialBaseMap = "streets", mapPolygons = [], displayedLayer, enableMapPopup, currentRegion, moveMap, handleRegionChange, handleMapPolygonClick } = props;
 
