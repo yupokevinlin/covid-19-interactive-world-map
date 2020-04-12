@@ -4,7 +4,8 @@
   "description": "An interactive map and dashboard for the COVID-19 outbreak.",
   "main": "index.js",
   "scripts": {
-    "start": "concurrently \"npm --prefix ./server/ run start\" \"npm --prefix ./client/ run start\""
+    "start": "concurrently \"npm --prefix ./server/ run start\" \"npm --prefix ./client/ run start\"",
+    "prod": "npm --prefix ./client/ run build && npm --prefix ./server/ run start"
   },
   "keywords": [],
   "author": "Kevin Lin",
