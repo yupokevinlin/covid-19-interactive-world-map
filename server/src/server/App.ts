@@ -2,7 +2,7 @@ import ExpressServer from "./ExpressServer";
 
 export class App {
   public static async createApp() {
-    const port: number = 8000;
+    const port: number = 80;
     const expressServer: ExpressServer = new ExpressServer();
     await expressServer.setup(port);
     App.handleExit(expressServer);
