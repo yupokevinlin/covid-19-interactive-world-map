@@ -1,4 +1,5 @@
 import * as express from "express";
+import * as path from "path";
 import { Express } from "express";
 import { Server } from "http";
 import * as compress from "compression";
@@ -15,6 +16,8 @@ export class ExpressServer {
   public async setup(port: number) {
     const server = express();
     this.setupStandardMiddlewares(server);
+    this.addStaticFiles(server);
+    this.addPage(server);
     this.httpServer = this.listen(server, port);
     this.server = server;
     this.addEndPoints(server);
@@ -36,8 +39,17 @@ export class ExpressServer {
     server.use(compress());
   }
 
+  private addStaticFiles(server: Express) {
+    server.use(express.static(path.join(__dirname, "../../../client/build")));
+  }
+
+  private addPage(server: Express) {
+    server.get("*", function(req, rsp) {
+      rsp.sendFile(path.join(__dirname, "../../../client/build/index.html"));
+    });
+  }
+
   private addEndPoints(server: Express) {
-    server.get("/", function(req, rsp) {rsp.send("Server is Running!");});
     server.get("/api/map/layer0", MapEndPoints.getMayLayer0Polygons);
     server.get("/api/map/layer1/:name", MapEndPoints.getMayLayer1Polygons);
     server.get("/api/map/layer2/:name", MapEndPoints.getMayLayer2Polygons);
