@@ -29,11 +29,4 @@ export enum MapPageContainerActionTypes {
   HANDLE_REGION_CHANGE = "map.page.HANDLE_REGION_CHANGE",
 }
 
-export interface GetMapPolygonReturnData {
-  mapPolygon: Array<MapPolygon>;
-  worldConfirmedCasesCount: number;
-  worldRecoveredCasesCount: number;
-  worldDeathsCount: number;
-}
-
 export type RegionChangeEvent = ListMenuSelectEvent;
