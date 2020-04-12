@@ -44,7 +44,7 @@ export class ExpressServer {
   }
 
   private addPage(server: Express) {
-    server.get("*", function(req, rsp) {
+    server.get(["/", "/map"], function(req, rsp) {
       rsp.sendFile(path.join(__dirname, "../../../client/build/index.html"));
     });
   }
