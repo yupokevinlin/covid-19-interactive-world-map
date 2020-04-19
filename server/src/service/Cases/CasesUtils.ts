@@ -271,8 +271,8 @@ export namespace CasesUtils {
     taiwanData.forEach(data => {
       const districtName: string = taiwanDistrictTranslation[data["縣市"]];
       const confirmedCases: number = parseInt(data["確定病例數"]);
-      const week: number = parseInt(data["診斷週別"]);
-      const year: number = parseInt(data["診斷年份"]);
+      const week: number = parseInt(data["發病週別"]);
+      const year: number = parseInt(data["發病年份"]);
       if (!taiwanDataObject[districtName]) {
         taiwanDataObject[districtName] = [];
       }
