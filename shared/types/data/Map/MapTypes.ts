@@ -1,10 +1,9 @@
 export interface ServerMapPolygon {
   name: Array<string>;
-  type: string;
+  hierarchicalName: string;
   countryCode: string;
   geometry: Array<Array<[number, number]>>;
   hasChildren: boolean;
-  hidden?: boolean;
 }
 
 export interface ServerMapPolygonsObject {

@@ -12,112 +12,86 @@ export namespace MapUtils {
       geometry;
   };
 
+  export const getHierarchicalName = (name: Array<string>): string => {
+    return name.join(".");
+  };
+
   export const convertMapData = (): void => {
     const layer0Features: Array<any> = mapLayer0.features;
-    const layer0: Array<ServerMapPolygon> = layer0Features.map(feature => {
+    const layer0CountriesWithChildren: Array<string> = ["Australia", "Canada", "China", "United States of America"];
+    const layer0: Array<ServerMapPolygon> = layer0Features.filter(feature => countries.getName(feature.properties.GID_0, "en")).map(feature => {
       const countryCode: string = feature.properties.GID_0;
       const countryName: string = countries.getName(feature.properties.GID_0, "en");
-      const name: Array<string> = [countryName];
-      const type: string = "Country";
+      const name: Array<string> = ["World", countryName];
+      const hierarchicalName: string = getHierarchicalName(name);
       const geometry: Array<Array<[number, number]>> = getGeometryFromGADMGeometry(feature.geometry.coordinates, feature.geometry.type);
+      const hasChildren: boolean = layer0CountriesWithChildren.includes(countryName);
       return {
         name: name,
-        type: type,
+        hierarchicalName: hierarchicalName,
         countryCode: countryCode,
         geometry: geometry,
-        hasChildren: false
+        hasChildren: hasChildren,
       };
-    });
-    const layer1Features: Array<any> = mapLayer1.features;
-    const layer1: Array<ServerMapPolygon> = layer1Features.map(feature => {
-      const countryCode: string = feature.properties.GID_0;
-      const countryName: string = countries.getName(feature.properties.GID_0, "en");
-      const name: Array<string> = [countryName, feature.properties.NAME_1];
-      const type: string = feature.ENGTYPE_1;
-      const geometry: Array<Array<[number, number]>> = getGeometryFromGADMGeometry(feature.geometry.coordinates, feature.geometry.type);
-      return {
-        name: name,
-        type: type,
-        countryCode: countryCode,
-        geometry: geometry,
-        hasChildren: false
-      };
-    }).filter(layer => layer.name[0] !== "Taiwan");
-    const layer2Features: Array<any> = mapLayer2.features;
-    const layer2: Array<ServerMapPolygon> = layer2Features.map(feature => {
-      if (feature.properties.NAME_0 === "Taiwan") {
-        const countryCode: string = feature.properties.GID_0;
-        const countryName: string = countries.getName(feature.properties.GID_0, "en");
-        const name: Array<string> = [countryName, feature.properties.NAME_2];
-        const type: string = feature.properties.ENGTYPE_2;
-        const geometry: Array<Array<[number, number]>> = getGeometryFromGADMGeometry(feature.geometry.coordinates, feature.geometry.type);
-        layer1.push({
-          name: name,
-          type: type,
-          countryCode: countryCode,
-          geometry: geometry,
-          hasChildren: false
-        });
-      }
-      const countryCode: string = feature.properties.GID_0;
-      const countryName: string = countries.getName(feature.properties.GID_0, "en");
-      const name: Array<string> = [countryName, feature.properties.NAME_1, feature.properties.NAME_2];
-      const type: string = feature.properties.ENGTYPE_2;
-      const geometry: Array<Array<[number, number]>> = getGeometryFromGADMGeometry(feature.geometry.coordinates, feature.geometry.type);
-      return {
-        name: name,
-        type: type,
-        countryCode: countryCode,
-        geometry: geometry,
-        hasChildren: false
-      };
-    }).filter(layer => layer.name[0] !== "Taiwan");
-    const processedLayer0: Array<ServerMapPolygon> = layer0.map(layer => {
-      let hasChildren: boolean = false;
-      layer1.forEach(childLayer => {
-        if (JSON.stringify([childLayer.name[0]]) === JSON.stringify(layer.name)) {
-          hasChildren = true;
-        }
-      });
-      return {
-        ...layer,
-        hasChildren: hasChildren
-      }
-    });
-    const processedLayer1: Array<ServerMapPolygon> = layer1.map(layer => {
-      let hasChildren: boolean = false;
-      layer2.forEach(childLayer => {
-        if (JSON.stringify([childLayer.name[0], childLayer.name[1]]) === JSON.stringify(layer.name)) {
-          hasChildren = true;
-        }
-      });
-      return {
-        ...layer,
-        hasChildren: hasChildren
-      }
     });
 
+    const layer1Features: Array<any> = mapLayer1.features;
+    const layer1CountriesWithChildren: Array<string> = ["United States of America"];
+    const layer1: Array<ServerMapPolygon> = layer1Features.filter(feature => countries.getName(feature.properties.GID_0, "en")).map(feature => {
+      const countryCode: string = feature.properties.GID_0;
+      const countryName: string = countries.getName(feature.properties.GID_0, "en");
+      const name: Array<string> = ["World", countryName, feature.properties.NAME_1];
+      const hierarchicalName: string = getHierarchicalName(name);
+      const geometry: Array<Array<[number, number]>> = getGeometryFromGADMGeometry(feature.geometry.coordinates, feature.geometry.type);
+      const hasChildren: boolean = layer1CountriesWithChildren.includes(countryName);
+      return {
+        name: name,
+        hierarchicalName: hierarchicalName,
+        countryCode: countryCode,
+        geometry: geometry,
+        hasChildren: hasChildren,
+      };
+    });
+    const layer2Features: Array<any> = mapLayer2.features;
+    const layer2CountriesWithChildren: Array<string> = [];
+    const layer2: Array<ServerMapPolygon> = layer2Features.filter(feature => countries.getName(feature.properties.GID_0, "en")).map(feature => {
+      const countryCode: string = feature.properties.GID_0;
+      const countryName: string = countries.getName(feature.properties.GID_0, "en");
+      const name: Array<string> = ["World", countryName, feature.properties.NAME_1, feature.properties.NAME_2];
+      const hierarchicalName: string = getHierarchicalName(name);
+      const geometry: Array<Array<[number, number]>> = getGeometryFromGADMGeometry(feature.geometry.coordinates, feature.geometry.type);
+      const hasChildren: boolean = layer2CountriesWithChildren.includes(countryName);
+      return {
+        name: name,
+        hierarchicalName: hierarchicalName,
+        countryCode: countryCode,
+        geometry: geometry,
+        hasChildren: hasChildren,
+      };
+    });
 
     const layer1Object: ServerMapPolygonsObject = {};
-    processedLayer1.forEach(layer => {
-      const layerName: string = JSON.stringify([layer.name[0]]);
-      if (!layer1Object[layerName]) {
-        layer1Object[layerName] = [layer];
+    layer1.forEach(layer => {
+      const layerName: Array<string> = [layer.name[0], layer.name[1]];
+      const layerHierarchicalName: string = getHierarchicalName(layerName);
+      if (!layer1Object[layerHierarchicalName]) {
+        layer1Object[layerHierarchicalName] = [layer];
       } else {
-        layer1Object[layerName].push(layer);
+        layer1Object[layerHierarchicalName].push(layer);
       }
     });
     const layer2Object: ServerMapPolygonsObject = {};
     layer2.forEach(layer => {
-      const layerName: string = JSON.stringify([layer.name[0], layer.name[1]]);
-      if (!layer2Object[layerName]) {
-        layer2Object[layerName] = [layer];
+      const layerName: Array<string> = [layer.name[0], layer.name[1], layer.name[2]];
+      const layerHierarchicalName: string = getHierarchicalName(layerName);
+      if (!layer2Object[layerHierarchicalName]) {
+        layer2Object[layerHierarchicalName] = [layer];
       } else {
-        layer2Object[layerName].push(layer);
+        layer2Object[layerHierarchicalName].push(layer);
       }
     });
 
-    fs.writeFile("C:\\Private Repository\\covid-19-interactive-world-map\\data\\map\\gadm\\gadm36_0_processed_array.json", JSON.stringify(processedLayer0), () => {});
+    fs.writeFile("C:\\Private Repository\\covid-19-interactive-world-map\\data\\map\\gadm\\gadm36_0_processed_array.json", JSON.stringify(layer0), () => {});
     fs.writeFile("C:\\Private Repository\\covid-19-interactive-world-map\\data\\map\\gadm\\gadm36_1_processed_object.json", JSON.stringify(layer1Object), () => {});
     fs.writeFile("C:\\Private Repository\\covid-19-interactive-world-map\\data\\map\\gadm\\gadm36_2_processed_object.json", JSON.stringify(layer2Object), () => {});
   };
