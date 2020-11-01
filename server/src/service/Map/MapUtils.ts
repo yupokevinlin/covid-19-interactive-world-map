@@ -3,6 +3,7 @@ const mapLayer0: any = require("../../../../data/map/gadm/gadm36_0-simplified.js
 const mapLayer1: any = require("../../../../data/map/gadm/gadm36_1-simplified.json");
 const mapLayer2: any = require("../../../../data/map/gadm/gadm36_2-simplified.json");
 import * as fs from "fs";
+import {getHierarchicalName} from "../../../../shared/helpers/General";
 const countries = require("i18n-iso-countries");
 
 export namespace MapUtils {
@@ -10,10 +11,6 @@ export namespace MapUtils {
     return type === "MultiPolygon" ?
       geometry.map((e: Array<Array<Array<[number, number]>>>) => (e[0].map((e: Array<[number, number]>) => e.map((e: [number, number]) => e)))) :
       geometry;
-  };
-
-  export const getHierarchicalName = (name: Array<string>): string => {
-    return name.join(".");
   };
 
   export const convertMapData = (): void => {
