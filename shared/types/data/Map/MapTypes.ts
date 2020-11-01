@@ -7,5 +7,5 @@ export interface ServerMapPolygon {
 }
 
 export interface ServerMapPolygonsObject {
-  [name: string]: Array<ServerMapPolygon>;
+  [hierarchicalName: string]: Array<ServerMapPolygon>;
 }
