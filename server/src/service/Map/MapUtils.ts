@@ -14,11 +14,15 @@ export namespace MapUtils {
   };
 
   export const convertMapData = (): void => {
+    const featureFilterCallback = (feature: any): boolean => {
+      return countries.getName(feature.properties.GID_0, "en");
+    };
     const layer0Features: Array<any> = mapLayer0.features;
     const layer0CountriesWithChildren: Array<string> = ["Australia", "Canada", "China", "United States of America"];
-    const layer0: Array<ServerMapPolygon> = layer0Features.filter(feature => countries.getName(feature.properties.GID_0, "en")).map(feature => {
+    const layer0: Array<ServerMapPolygon> = layer0Features.filter((feature) => countries.getName(feature.properties.GID_0, "en") || feature.properties.NAME_0 === "Kosovo").map(feature => {
       const countryCode: string = feature.properties.GID_0;
-      const countryName: string = countries.getName(feature.properties.GID_0, "en");
+      const countryName: string = countries.getName(feature.properties.GID_0, "en") || feature.properties.NAME_0;
+
       const name: Array<string> = ["World", countryName];
       const hierarchicalName: string = getHierarchicalName(name);
       const geometry: Array<Array<[number, number]>> = getGeometryFromGADMGeometry(feature.geometry.coordinates, feature.geometry.type);
@@ -34,7 +38,7 @@ export namespace MapUtils {
 
     const layer1Features: Array<any> = mapLayer1.features;
     const layer1CountriesWithChildren: Array<string> = ["United States of America"];
-    const layer1: Array<ServerMapPolygon> = layer1Features.filter(feature => countries.getName(feature.properties.GID_0, "en")).map(feature => {
+    const layer1: Array<ServerMapPolygon> = layer1Features.filter(featureFilterCallback).map(feature => {
       const countryCode: string = feature.properties.GID_0;
       const countryName: string = countries.getName(feature.properties.GID_0, "en");
       const name: Array<string> = ["World", countryName, feature.properties.NAME_1];
@@ -51,7 +55,7 @@ export namespace MapUtils {
     });
     const layer2Features: Array<any> = mapLayer2.features;
     const layer2CountriesWithChildren: Array<string> = [];
-    const layer2: Array<ServerMapPolygon> = layer2Features.filter(feature => countries.getName(feature.properties.GID_0, "en")).map(feature => {
+    const layer2: Array<ServerMapPolygon> = layer2Features.filter(featureFilterCallback).map(feature => {
       const countryCode: string = feature.properties.GID_0;
       const countryName: string = countries.getName(feature.properties.GID_0, "en");
       const name: Array<string> = ["World", countryName, feature.properties.NAME_1, feature.properties.NAME_2];
