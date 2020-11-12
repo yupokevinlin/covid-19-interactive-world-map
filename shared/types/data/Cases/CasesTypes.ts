@@ -1,30 +1,20 @@
+export interface ServerCasesData {
+  name: Array<string>;
+  hierarchicalName: string;
+  countryCode: string;
+  data: ServerDailyCasesDataObject;
+}
+
 export interface ServerDailyCasesDataObject {
   [date: string]: ServerDailyCasesData;
 }
 
 export interface ServerDailyCasesData {
-  date: string;
-  deaths: number;
-  confirmedCases: number;
-  recoveredCases: number;
+  newCases: number;
+  newRecoveries: number;
+  newDeaths: number;
 }
 
-export interface ServerTimeSeriesCasesData {
-  name: Array<string>;
-  hasChildren: boolean;
-  data: ServerDailyCasesDataObject;
-}
-
-export interface ServerTimeSeriesCasesDataObject {
-  [name: string]: ServerTimeSeriesCasesData;
-}
-
-export interface ServerTaiwanDataObject {
-  [district: string]: Array<ServerTaiwanData>;
-}
-
-export interface ServerTaiwanData {
-  confirmedCases: number;
-  week: number;
-  year: number;
+export interface ServerCasesDataObject {
+  [hierarchicalName: string]: ServerCasesData;
 }
