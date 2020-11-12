@@ -1,588 +1,778 @@
-import {
-  ServerDailyCasesDataObject, ServerTaiwanDataObject,
-  ServerTimeSeriesCasesData,
-  ServerTimeSeriesCasesDataObject
-} from "../../../../shared/types/data/Cases/CasesTypes";
+
 import {Moment} from "moment";
+import {
+  ServerCasesDataObject,
+  ServerDailyCasesDataObject
+} from "../../../../shared/types/data/Cases/CasesTypes";
+import {ServerMapPolygon, ServerMapPolygonsObject} from "../../../../shared/types/data/Map/MapTypes";
+import {getHierarchicalName} from "../../../../shared/helpers/General";
 
 const csv = require("csv-string");
 const axios = require("axios").default;
 const moment = require("moment");
+const mapLayer0: Array<ServerMapPolygon> = require("../../../../data/map/gadm/gadm36_0_processed_array.json");
+const mapLayer1: ServerMapPolygonsObject = require("../../../../data/map/gadm/gadm36_1_processed_object.json");
+const mapLayer2: ServerMapPolygonsObject = require("../../../../data/map/gadm/gadm36_2_processed_object.json");
 
 export namespace CasesUtils {
-  const enableLogs: boolean = false;
-  export let worldData: ServerTimeSeriesCasesData = {
-    name: [],
-    hasChildren: true,
-    data: {}
-  };
-  export let layer0CasesTimeSeries: ServerTimeSeriesCasesDataObject = {};
-  export let layer1CasesTimeSeries: ServerTimeSeriesCasesDataObject = {};
-  export let layer2CasesTimeSeries: ServerTimeSeriesCasesDataObject = {};
-  export const enableLayer2: boolean = false;
-  export const getCasesTimeSeries = async (): Promise<boolean> => {
-    console.log("Getting World Data...");
-    const confirmedCasesUrl: string = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv";
-    const deathsUrl: string = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv";
-    const recoveredCasesUrl: string = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv";
-
-    const confirmedCasesResult: any = await axios.get(confirmedCasesUrl);
-    const confirmedCasesResultCsvString: string = confirmedCasesResult.data;
-    const confirmedCasesResultArray: Array<Array<string>> = csv.parse(confirmedCasesResultCsvString);
-    const deathsResult: any = await axios.get(deathsUrl);
-    const deathsResultCsvString: string = deathsResult.data;
-    const deathsResultArray: Array<Array<string>> = csv.parse(deathsResultCsvString);
-    const recoveredCasesResult: any = await axios.get(recoveredCasesUrl);
-    const recoveredCasesResultCsvString: string = recoveredCasesResult.data;
-    const recoveredCasesResultArray: Array<Array<string>> = csv.parse(recoveredCasesResultCsvString);
-
-    confirmedCasesResultArray.forEach((row, rowIndex) => {
-      if (rowIndex === 0) {
-        const worldDailyCasesData: ServerDailyCasesDataObject = {};
-        for (let columnIndex = 0; columnIndex < row.length; columnIndex++) {
-          if (columnIndex > 3) {
-            const date: string = confirmedCasesResultArray[0][columnIndex];
-            worldDailyCasesData[date] = {
-              date: date,
-              deaths: 0,
-              confirmedCases: 0,
-              recoveredCases: 0,
-            }
-          }
-        }
-        worldData.data = worldDailyCasesData;
-      } else {
-        const name: Array<string> = nameConverter(row[1], row[0]);
-        const nameString: string = JSON.stringify(name);
-        const confirmedCasesRow: Array<string> = row;
-        const deathsRow: Array<string> = deathsResultArray.find(deathsResultRow => deathsResultRow[0] === confirmedCasesRow[0] && deathsResultRow[1] === confirmedCasesRow[1]) || [];
-        const recoveredCasesRow: Array<string> = recoveredCasesResultArray.find(recoveredCasesResultRow => recoveredCasesResultRow[0] === confirmedCasesRow[0] && recoveredCasesResultRow[1] === confirmedCasesRow[1]) || [];
-        const dailyCasesDataObject: ServerDailyCasesDataObject = {};
-        for (let columnIndex = 0; columnIndex < row.length; columnIndex++) {
-          if (columnIndex > 3) {
-            const date: string = confirmedCasesResultArray[0][columnIndex];
-            if (enableLogs) {
-              if (isNaN(parseInt(confirmedCasesRow[columnIndex]))) {
-                console.log(`Confirmed Cases is NaN for ${nameString} at ${date}.`);
-              }
-              if (isNaN(parseInt(deathsRow[columnIndex]))) {
-                console.log(`Deaths is NaN for ${nameString} at ${date}.`);
-              }
-              if (isNaN(parseInt(recoveredCasesRow[columnIndex]))) {
-                console.log(`Recovered Cases is NaN for ${nameString} at ${date}.`);
-              }
-            }
-            dailyCasesDataObject[date] = {
-              date: date,
-              deaths: parseInt(deathsRow[columnIndex]) || 0,
-              confirmedCases: parseInt(confirmedCasesRow[columnIndex]) || 0,
-              recoveredCases: parseInt(recoveredCasesRow[columnIndex]) || 0,
-            }
-          }
-        }
-
-        if (name.length < 3) {
-          const newWorldDataObject: ServerDailyCasesDataObject = {};
-          Object.entries(worldData.data).forEach(([key, entry]) => {
-            newWorldDataObject[key] = {
-              date: entry.date,
-              confirmedCases: entry.confirmedCases + (dailyCasesDataObject[key].confirmedCases || 0),
-              deaths: entry.deaths + (dailyCasesDataObject[key].deaths || 0),
-              recoveredCases: entry.recoveredCases + (dailyCasesDataObject[key].recoveredCases || 0),
-            }
-          });
-          worldData.data = newWorldDataObject;
-        }
-        switch (name.length) {
-          case 1: {
-            if (layer0CasesTimeSeries[nameString]) {
-              const newDailyCasesDataObject: ServerDailyCasesDataObject = {};
-              Object.entries(layer0CasesTimeSeries[nameString].data).forEach(([key, entry]) => {
-                newDailyCasesDataObject[key] = {
-                  date: entry.date,
-                  confirmedCases: entry.confirmedCases + (dailyCasesDataObject[key].confirmedCases || 0),
-                  deaths: entry.deaths + (dailyCasesDataObject[key].deaths || 0),
-                  recoveredCases: entry.recoveredCases + (dailyCasesDataObject[key].recoveredCases || 0),
-                }
-              });
-              layer0CasesTimeSeries[nameString] = {
-                ...layer0CasesTimeSeries[nameString],
-                data: newDailyCasesDataObject
-              };
-            } else {
-              layer0CasesTimeSeries[nameString] = {
-                name: name,
-                hasChildren: false,
-                data: dailyCasesDataObject
-              };
-            }
-            break;
-          }
-          case 2: {
-            layer1CasesTimeSeries[nameString] = {
-              name: name,
-              hasChildren: false,
-              data: dailyCasesDataObject
-            };
-            const parentName: Array<string> = [name[0]];
-            const parentNameString: string = JSON.stringify(parentName);
-            if (layer0CasesTimeSeries[parentNameString]) {
-              const newDailyCasesDataObject: ServerDailyCasesDataObject = {};
-              Object.entries(layer0CasesTimeSeries[parentNameString].data).forEach(([key, entry]) => {
-                newDailyCasesDataObject[key] = {
-                  date: entry.date,
-                  confirmedCases: entry.confirmedCases + (dailyCasesDataObject[key].confirmedCases || 0),
-                  deaths: entry.deaths + (dailyCasesDataObject[key].deaths || 0),
-                  recoveredCases: entry.recoveredCases + (dailyCasesDataObject[key].recoveredCases || 0),
-                }
-              });
-              layer0CasesTimeSeries[parentNameString] = {
-                ...layer0CasesTimeSeries[parentNameString],
-                hasChildren: true,
-                data: newDailyCasesDataObject
-              };
-            } else {
-              layer0CasesTimeSeries[parentNameString] = {
-                name: parentName,
-                hasChildren: true,
-                data: dailyCasesDataObject
-              };
-            }
-            break;
-          }
-          case 3: {
-            if (enableLayer2) {
-              layer0CasesTimeSeries[JSON.stringify([name[0]])] = {
-                ...layer0CasesTimeSeries[JSON.stringify([name[0]])],
-                hasChildren: true
-              };
-              layer0CasesTimeSeries[JSON.stringify([name[0], name[1]])] = {
-                ...layer0CasesTimeSeries[JSON.stringify([name[0], name[1]])],
-                hasChildren: true
-              };
-              layer2CasesTimeSeries[nameString] = {
-                name: name,
-                hasChildren: false,
-                data: dailyCasesDataObject
-              };
-            }
-            break;
-          }
+  export const fetchCasesData = async (): Promise<boolean> => {
+    const data: ServerCasesDataObject = {};
+    const createRegionData = (name: Array<string>, hierarchicalName: string, countryCode: string): void => {
+      if (!data[hierarchicalName]) {
+        data[hierarchicalName] = {
+          name: name,
+          hierarchicalName: hierarchicalName,
+          countryCode: countryCode,
+          data: {},
         }
       }
-    });
-    console.log("Getting World Data Complete!");
-    await getTaiwanData(confirmedCasesResultArray);
-    await fixDataAllDiscrepancies();
-    return true;
-  };
-
-  export const fixDataAllDiscrepancies = async (): Promise<boolean> => {
-    console.log("Fixing Data...");
-    layer0CasesTimeSeries = fixDataDiscrepanciesForTimeSeriesObject(layer0CasesTimeSeries);
-    layer1CasesTimeSeries = fixDataDiscrepanciesForTimeSeriesObject(layer1CasesTimeSeries);
-    layer2CasesTimeSeries = fixDataDiscrepanciesForTimeSeriesObject(layer2CasesTimeSeries);
-    worldData = {
-      name: worldData.name,
-      hasChildren: worldData.hasChildren,
-      data: fixDataDiscrepanciesForDailyDataObject(worldData.data)
     };
-    console.log("Fixing Data Complete!");
-    return true;
-  };
-
-  export const fixDataDiscrepanciesForTimeSeriesObject = (timeSeriesObject: ServerTimeSeriesCasesDataObject): ServerTimeSeriesCasesDataObject => {
-    const newTimeSeriesDataObject: ServerTimeSeriesCasesDataObject = {};
-    Object.entries(timeSeriesObject).forEach(([timeSeriesObjectKey, timeSeriesObjectValue]) => {
-      const name: Array<string> = [...timeSeriesObjectValue.name];
-      const hasChildren: boolean = timeSeriesObjectValue.hasChildren;
-      newTimeSeriesDataObject[timeSeriesObjectKey] = {
-        name: name,
-        hasChildren: hasChildren,
-        data: fixDataDiscrepanciesForDailyDataObject(timeSeriesObjectValue.data)
-      }
-    });
-    return newTimeSeriesDataObject;
-  };
-
-  export const fixDataDiscrepanciesForDailyDataObject = (dailyDataObject: ServerDailyCasesDataObject): ServerDailyCasesDataObject => {
-    const newDailyCasesDataObject: ServerDailyCasesDataObject = {};
-    let currentConfirmed: number = 0;
-    let currentDeaths: number = 0;
-    let currentRecovered: number = 0;
-    Object.entries(dailyDataObject).forEach(([dailyCasesDataKey, dailyCasesDataValue]) => {
-      const date: string = dailyCasesDataValue.date;
-      const confirmedCases: number = Math.max(currentConfirmed, dailyCasesDataValue.confirmedCases);
-      if (confirmedCases > currentConfirmed) {
-        currentConfirmed = confirmedCases;
-      }
-      const deaths: number = Math.max(currentDeaths, dailyCasesDataValue.deaths);
-      if (deaths > currentDeaths) {
-        currentDeaths = deaths;
-      }
-      const recoveredCases: number = Math.max(currentRecovered, dailyCasesDataValue.recoveredCases);
-      if (recoveredCases > currentRecovered) {
-        currentRecovered = recoveredCases;
-      }
-      newDailyCasesDataObject[dailyCasesDataKey] = {
-        date: date,
-        confirmedCases: confirmedCases,
-        deaths: deaths,
-        recoveredCases: recoveredCases
-      }
-    });
-    return newDailyCasesDataObject;
-  };
-
-  export const getTaiwanData = async (confirmedCasesResultArray: Array<Array<string>>): Promise<boolean> => {
-    console.log("Getting Taiwan Data...");
-    const taiwanDataUrl: string = "https://od.cdc.gov.tw/eic/Weekly_Age_County_Gender_19CoV.json";
-    const taiwanDataResponse: any = await axios.get(taiwanDataUrl);
-    const taiwanData: Array<any> = taiwanDataResponse.data;
-    layer0CasesTimeSeries[JSON.stringify(["Taiwan"])] = {
-      ...layer0CasesTimeSeries[JSON.stringify(["Taiwan"])],
-      hasChildren: true
-    };
-    const taiwanDistrictTranslation: any = {
-      "金門縣": "Kinmen",
-      "江縣": "Lienkiang",
-      "高雄市": "Kaohsiung",
-      "新北市": "New Taipei",
-      "台中市": "Taichung",
-      "台南市": "Tainan",
-      "台北市": "Taipei",
-      "彰化縣": "Changhua",
-      "嘉義市": "Chiayi City",
-      "嘉義縣": "Chiayi County",
-      "新竹市": "Hsinchu City",
-      "新竹縣": "Hsinchu County",
-      "花蓮縣": "Hualien",
-      "基隆市": "Keelung",
-      "苗栗縣": "Miaoli",
-      "南投縣": "Nantou",
-      "澎湖縣": "Penghu",
-      "屏東縣": "Pingtung",
-      "臺東縣": "Taitung",
-      "桃園市": "Taoyuan",
-      "宜蘭縣": "Yilan",
-      "雲林縣": "Yunlin",
-    };
-    const taiwanDataObject: ServerTaiwanDataObject = {};
-    taiwanData.forEach(data => {
-      const districtName: string = taiwanDistrictTranslation[data["縣市"]];
-      const confirmedCases: number = parseInt(data["確定病例數"]);
-      const week: number = parseInt(data["發病週別"]);
-      const year: number = parseInt(data["發病年份"]);
-      if (!taiwanDataObject[districtName]) {
-        taiwanDataObject[districtName] = [];
-      }
-      taiwanDataObject[districtName].push({
-        confirmedCases: confirmedCases,
-        week: week,
-        year: year
-      });
-    });
-    Object.entries(taiwanDistrictTranslation).forEach(([key, value]) => {
-      const name: Array<string> = ["Taiwan", value as string];
-      const dataObject: ServerDailyCasesDataObject = {};
-      for (let columnIndex = 0; columnIndex < confirmedCasesResultArray[0].length; columnIndex++) {
-        if (columnIndex > 3) {
-          const date: string = confirmedCasesResultArray[0][columnIndex];
-          dataObject[date] = {
-            date: date,
-            deaths: 0,
-            confirmedCases: 0,
-            recoveredCases: 0,
-          }
+    const createDailyData = (dailyDataObject: ServerDailyCasesDataObject, date: string): void => {
+      if (!dailyDataObject[date]) {
+        dailyDataObject[date] = {
+          newCases: 0,
+          newRecoveries: 0,
+          newDeaths: 0,
         }
       }
-      layer1CasesTimeSeries[JSON.stringify(name)] = {
-        name: name,
-        hasChildren: false,
-        data: dataObject
+    };
+
+    const getName = (country: string, province?: string, county?: string): [Array<string>, string, string] => {
+      const layer0NameConversionObject: any = {
+        "Brunei": "Brunei Darussalam",
+        "Burma": "Myanmar",
+        "Cabo Verde": "Cape Verde",
+        "Congo (Brazzaville)": "Congo",
+        "Congo (Kinshasa)": "Congo, the Democratic Republic of the",
+        "Cote d'Ivoire": "Cote D'Ivoire",
+        "Czechia": "Czech Republic",
+        "East Timor": "Timor-Leste",
+        "Eswatini": "Swaziland",
+        "Gambia, The": "Gambia",
+        "Holy See": "Holy See (Vatican City State)",
+        "Iran": "Iran, Islamic Republic of",
+        "Korea, South": "South Korea",
+        "Laos": "Lao People's Democratic Republic",
+        "Moldova": "Moldova, Republic of",
+        "North Macedonia": "North Macedonia, Republic of",
+        "West Bank and Gaza": "Palestinian Territory, Occupied",
+        "Russia": "Russian Federation",
+        "Syria": "Syrian Arab Republic",
+        "Taiwan*": "Taiwan",
+        "Tanzania": "Tanzania, United Republic of",
+        "US": "United States of America",
       };
-    });
-    const firstDayString: string = confirmedCasesResultArray[0][4];
-    const firstDayStringArray: Array<string> = firstDayString.split("/");
-    const firstDay: Moment = moment().date(parseInt(firstDayStringArray[1])).month(parseInt(firstDayStringArray[0]) - 1).year(parseInt(`20${firstDayStringArray[2]}`)).startOf("day");
-    const lastDayString: string = confirmedCasesResultArray[0][confirmedCasesResultArray[0].length - 1];
-    const lastDayStringArray: Array<string> = lastDayString.split("/");
-    const lastDay: Moment = moment().date(parseInt(lastDayStringArray[1])).month(parseInt(lastDayStringArray[0]) - 1).year(parseInt(`20${firstDayStringArray[2]}`)).startOf("day");
-    Object.entries(taiwanDataObject).forEach(([key, confirmedCasesArray]) => {
-      const name: Array<string> = ["Taiwan", key];
-      const nameString: string = JSON.stringify(name);
-      confirmedCasesArray.forEach((confirmedCase) => {
-        const startDayForCase: Moment = moment().week(confirmedCase.week).year(confirmedCase.year).startOf("week");
-        const isAfterFirstDay: boolean = startDayForCase.diff(firstDay, "days") > 0;
-        if (isAfterFirstDay) {
-          const dayDifference: number = lastDay.diff(startDayForCase, "days");
-          let currentDay: Moment = moment().week(confirmedCase.week).year(confirmedCase.year).startOf("week");
-          for (let dayOffset = 0; dayOffset <= dayDifference; dayOffset++) {
-            const currentDayString: string = currentDay.format("M/D/YY");
-            layer1CasesTimeSeries[nameString].data[currentDayString] = {
-              ...layer1CasesTimeSeries[nameString].data[currentDayString],
-              confirmedCases: layer1CasesTimeSeries[nameString].data[currentDayString].confirmedCases + confirmedCase.confirmedCases
-            };
-            currentDay.add(1, "days");
+      const layer1NameConversionObject: any = {
+        "Quebec": "Québec",
+        "Macau": "Macao",
+        "Tibet": "Xizang",
+      };
+      const layer2NameConversionObject: any = {
+
+      };
+
+      const layer0NamesToIgnore: Array<string> = ["Diamond Princess", "MS Zaandam"];
+      const layer1NamesToIgnore: Array<string> = ["Diamond Princess", "Grand Princess"];
+
+      const getLayer0ConvertedName = (name: string): string => {
+        return !!layer0NameConversionObject[name] ? layer0NameConversionObject[name] : name;
+      };
+
+      const getLayer1ConvertedName = (name: string | undefined): string | undefined => {
+        if (!!name) {
+          return !!layer1NameConversionObject[name] ? layer1NameConversionObject[name] : name;
+        } else {
+          return name;
+        }
+      };
+
+      const getLayer2ConvertedName = (name: string | undefined): string | undefined => {
+        if (!!name) {
+          return !!layer2NameConversionObject[name] ? layer2NameConversionObject[name] : name;
+        } else {
+          return name;
+        }
+      };
+
+      const layer1SpecialProcessor = (convertedCountry: string, convertedProvince: string): ServerMapPolygon | undefined => {
+        switch (convertedCountry) {
+          case "China": {
+            switch (convertedProvince) {
+              case "Hong Kong": {
+                return mapLayer0.find((layer) => layer.hierarchicalName === "World.Hong Kong");
+              }
+              case "Macao": {
+                return mapLayer0.find((layer) => layer.hierarchicalName === "World.Macao");
+              }
+            }
+            break;
+          }
+          case "Denmark": {
+            switch (convertedProvince) {
+              case "Faroe Islands": {
+                return mapLayer0.find((layer) => layer.hierarchicalName === "World.Faroe Islands");
+              }
+              case "Greenland": {
+                return mapLayer0.find((layer) => layer.hierarchicalName === "World.Greenland");
+              }
+            }
+            break;
+          }
+          case "France": {
+            switch (convertedProvince) {
+              case "French Guiana": {
+                return mapLayer0.find((layer) => layer.hierarchicalName === "World.French Guiana");
+              }
+              case "French Polynesia": {
+                return mapLayer0.find((layer) => layer.hierarchicalName === "World.French Polynesia");
+              }
+              case "Guadeloupe": {
+                return mapLayer0.find((layer) => layer.hierarchicalName === "World.Guadeloupe");
+              }
+              case "Martinique": {
+                return mapLayer0.find((layer) => layer.hierarchicalName === "World.Martinique");
+              }
+              case "Mayotte": {
+                return mapLayer0.find((layer) => layer.hierarchicalName === "World.Mayotte");
+              }
+              case "New Caledonia": {
+                return mapLayer0.find((layer) => layer.hierarchicalName === "World.New Caledonia");
+              }
+              case "Reunion": {
+                return mapLayer0.find((layer) => layer.hierarchicalName === "World.Reunion");
+              }
+              case "Saint Barthelemy": {
+                return mapLayer0.find((layer) => layer.hierarchicalName === "World.Saint Barthélemy");
+              }
+              case "Saint Pierre and Miquelon": {
+                return mapLayer0.find((layer) => layer.hierarchicalName === "World.Saint Pierre and Miquelon");
+              }
+              case "St Martin": {
+                return mapLayer0.find((layer) => layer.hierarchicalName === "World.Saint Martin (French part)");
+              }
+            }
+            break;
+          }
+          case "Netherlands": {
+            switch (convertedProvince) {
+              case "Aruba": {
+                return mapLayer0.find((layer) => layer.hierarchicalName === "World.Aruba");
+              }
+              case "Bonaire, Sint Eustatius and Saba": {
+                return mapLayer0.find((layer) => layer.hierarchicalName === "World.Bonaire, Sint Eustatius and Saba");
+              }
+              case "Curacao": {
+                return mapLayer0.find((layer) => layer.hierarchicalName === "World.Curaçao");
+              }
+              case "Sint Maarten": {
+                return mapLayer0.find((layer) => layer.hierarchicalName === "World.Sint Maarten (Dutch part)");
+              }
+            }
+            break;
+          }
+          case "United Kingdom": {
+            switch (convertedProvince) {
+              case "Anguilla": {
+                return mapLayer0.find((layer) => layer.hierarchicalName === "World.Anguilla");
+              }
+              case "Bermuda": {
+                return mapLayer0.find((layer) => layer.hierarchicalName === "World.Bermuda");
+              }
+              case "British Virgin Islands": {
+                return mapLayer0.find((layer) => layer.hierarchicalName === "World.Virgin Islands, British");
+              }
+              case "Cayman Islands": {
+                return mapLayer0.find((layer) => layer.hierarchicalName === "World.Cayman Islands");
+              }
+              case "Channel Islands": {
+                return undefined;
+              }
+              case "Falkland Islands (Malvinas)": {
+                return mapLayer0.find((layer) => layer.hierarchicalName === "World.Falkland Islands (Malvinas)");
+              }
+              case "Gibraltar": {
+                return mapLayer0.find((layer) => layer.hierarchicalName === "World.Gibraltar");
+              }
+              case "Isle of Man": {
+                return mapLayer0.find((layer) => layer.hierarchicalName === "World.Isle of Man");
+              }
+              case "Montserrat": {
+                return mapLayer0.find((layer) => layer.hierarchicalName === "World.Montserrat");
+              }
+              case "Turks and Caicos Islands": {
+                return mapLayer0.find((layer) => layer.hierarchicalName === "World.Turks and Caicos Islands");
+              }
+            }
+            break;
+          }
+          case "United States of America": {
+            switch (convertedProvince) {
+              case "American Samoa": {
+                return mapLayer0.find((layer) => layer.hierarchicalName === "World.American Samoa");
+              }
+              case "Guam": {
+                return mapLayer0.find((layer) => layer.hierarchicalName === "World.Guam");
+              }
+              case "Northern Mariana Islands": {
+                return mapLayer0.find((layer) => layer.hierarchicalName === "World.Northern Mariana Islands");
+              }
+              case "Virgin Islands": {
+                return mapLayer0.find((layer) => layer.hierarchicalName === "World.Virgin Islands, U.S.");
+              }
+              case "Puerto Rico": {
+                return mapLayer0.find((layer) => layer.hierarchicalName === "World.Puerto Rico");
+              }
+            }
+          }
+        }
+        return undefined;
+      };
+
+      const layer2NameCorrector = (convertedCountry: string | undefined, convertedProvince: string | undefined, convertedCounty: string | undefined): string | undefined => {
+        switch (convertedCountry) {
+          case "United States of America": {
+            switch (convertedProvince) {
+              case "Alabama": {
+                switch (convertedCounty) {
+                  case "DeKalb": {
+                    return "De Kalb";
+                  }
+                  case "St. Clair": {
+                    return "Saint Clair";
+                  }
+                }
+              }
+              case "Alaska": {
+                switch (convertedCounty) {
+                  case "Bristol Bay plus Lake and Peninsula": {
+                    return "Bristol Bay";
+                  }
+                }
+              }
+              case "Arkansas": {
+                switch (convertedCounty) {
+                  case "St. Francis": {
+                    return "Saint Francis";
+                  }
+                }
+              }
+              case "Florida": {
+                switch (convertedCounty) {
+                  case "DeSoto": {
+                    return "Desoto";
+                  }
+                  case "St. Johns": {
+                    return "Saint Johns";
+                  }
+                  case "St. Lucie": {
+                    return "Saint Lucie";
+                  }
+                }
+              }
+              case "Illinois": {
+                switch (convertedCounty) {
+                  case "DeKalb": {
+                    return "De Kalb";
+                  }
+                  case "DuPage": {
+                    return "Dupage";
+                  }
+                  case "LaSalle": {
+                    return "La Salle";
+                  }
+                  case "St. Clair": {
+                    return "Saint Clair";
+                  }
+                }
+              }
+              case "Indiana": {
+                switch (convertedCounty) {
+                  case "DeKalb": {
+                    return "De Kalb";
+                  }
+                  case "St. Joseph": {
+                    return "Saint Joseph";
+                  }
+                }
+              }
+              case "Louisiana": {
+                switch (convertedCounty) {
+                  case "LaSalle": {
+                    return "La Salle";
+                  }
+                  case "St. Bernard": {
+                    return "Saint Bernard";
+                  }
+                  case "St. Charles": {
+                    return "Saint Charles";
+                  }
+                  case "St. Helena": {
+                    return "Saint Helena";
+                  }
+                  case "St. James": {
+                    return "Saint James";
+                  }
+                  case "St. John the Baptist": {
+                    return "Saint John the Baptist";
+                  }
+                  case "St. Landry": {
+                    return "Saint Landry";
+                  }
+                  case "St. Martin": {
+                    return "Saint Martin";
+                  }
+                  case "St. Mary": {
+                    return "Saint Mary";
+                  }
+                  case "St. Tammany": {
+                    return "Saint Tammany";
+                  }
+                }
+              }
+              case "Maryland": {
+                switch (convertedCounty) {
+                  case "St. Mary's": {
+                    return "Saint Mary's";
+                  }
+                }
+              }
+              case "Michigan": {
+                switch (convertedCounty) {
+                  case "St. Clair": {
+                    return "Saint Clair";
+                  }
+                  case "St. Joseph": {
+                    return "Saint Joseph";
+                  }
+                }
+              }
+              case "Minnesota": {
+                switch (convertedCounty) {
+                  case "St. Louis": {
+                    return "Saint Louis";
+                  }
+                }
+              }
+              case "Mississippi": {
+                switch (convertedCounty) {
+                  case "DeSoto": {
+                    return "Desoto";
+                  }
+                }
+              }
+              case "Missouri": {
+                switch (convertedCounty) {
+                  case "DeKalb": {
+                    return "De Kalb";
+                  }
+                  case "St. Charles": {
+                    return "Saint Charles";
+                  }
+                  case "St. Clair": {
+                    return "Saint Clair";
+                  }
+                  case "St. Francois": {
+                    return "Saint Francois";
+                  }
+                  case "St. Louis": {
+                    return "Saint Louis";
+                  }
+                  case "Ste. Genevieve": {
+                    return "Sainte Genevieve";
+                  }
+                }
+              }
+              case "New Mexico": {
+                switch (convertedCounty) {
+                  case "De Baca": {
+                    return "Debaca";
+                  }
+                }
+              }
+              case "New York": {
+                switch (convertedCounty) {
+                  case "St. Lawrence": {
+                    return "Saint Lawrence";
+                  }
+                }
+              }
+              case "North Dakota": {
+                switch (convertedCounty) {
+                  case "LaMoure": {
+                    return "Lamoure";
+                  }
+                }
+              }
+              case "Pennsylvania": {
+                switch (convertedCounty) {
+                  case "McKean": {
+                    return "Mc Kean";
+                  }
+                }
+              }
+              case "South Dakota": {
+                switch (convertedCounty) {
+                  case "Oglala Lakota": {
+                    return "Shannon";
+                  }
+                }
+              }
+              case "Texas": {
+                switch (convertedCounty) {
+                  case "DeWitt": {
+                    return "Dewitt";
+                  }
+                }
+              }
+              case "Wisconsin": {
+                switch (convertedCounty) {
+                  case "St. Croix": {
+                    return "Saint Croix";
+                  }
+                }
+              }
+            }
+          }
+        }
+        return convertedCounty;
+      };
+
+      const convertedCountry: string = getLayer0ConvertedName(country);
+      const convertedProvince: string | undefined = getLayer1ConvertedName(province);
+      const convertedCounty: string | undefined = layer2NameCorrector(convertedCountry, convertedProvince, getLayer2ConvertedName(county));
+      if (!!convertedCountry && !convertedProvince && !convertedCounty) {
+        const layer0Name: Array<string> = ["World", convertedCountry];
+        const layer0HierarchicalName: string = getHierarchicalName(layer0Name);
+        const layer0MapPolygon: ServerMapPolygon | undefined = mapLayer0.find((mapLayer) => mapLayer.hierarchicalName === layer0HierarchicalName);
+        if (layer0MapPolygon) {
+          return [layer0MapPolygon.name, layer0MapPolygon.hierarchicalName, layer0MapPolygon.countryCode];
+        } else {
+          if (!layer0NamesToIgnore.includes(convertedCountry)) {
+            console.log(`Unable to find map polygon for country: ${convertedCountry}, province: ${convertedProvince}, county: ${convertedCounty}.`);
+          }
+          return [[], "", ""];
+        }
+      } else {
+        if (!!convertedCountry && !!convertedProvince && !convertedCounty) {
+          const layer0Name: Array<string> = ["World", convertedCountry];
+          const layer0HierarchicalName: string = getHierarchicalName(layer0Name);
+          const layer1Name: Array<string> = ["World", convertedCountry, convertedProvince];
+          const layer1HierarchicalName: string = getHierarchicalName(layer1Name);
+          const layer1MapPolygon: ServerMapPolygon | undefined = mapLayer1[layer0HierarchicalName] ? mapLayer1[layer0HierarchicalName].find((mapLayer) => mapLayer.hierarchicalName === layer1HierarchicalName) : undefined;
+          if (layer1MapPolygon) {
+            return [layer1MapPolygon.name, layer1MapPolygon.hierarchicalName, layer1MapPolygon.countryCode];
+          } else {
+            if (!layer1NamesToIgnore.includes(convertedProvince)) {
+              const specialLayer1MapPolygon: ServerMapPolygon | undefined = layer1SpecialProcessor(convertedCountry, convertedProvince);
+              if (specialLayer1MapPolygon) {
+                return [specialLayer1MapPolygon.name, specialLayer1MapPolygon.hierarchicalName, specialLayer1MapPolygon.countryCode];
+              }
+              console.log(`Unable to find map polygon for country: ${convertedCountry}, province: ${convertedProvince}, county: ${convertedCounty}.`);
+            }
+            return [[], "", ""];
           }
         } else {
-          const allDateDifference: number = lastDay.diff(firstDay, "days");
-          let currentDay: Moment = moment().date(parseInt(firstDayStringArray[1])).month(parseInt(firstDayStringArray[0]) - 1).year(parseInt(`20${firstDayStringArray[2]}`)).startOf("day");
-          for (let dayOffset = 0; dayOffset <= allDateDifference; dayOffset++) {
-            const currentDayString: string = currentDay.format("M/D/YY");
-            layer1CasesTimeSeries[nameString].data[currentDayString] = {
-              ...layer1CasesTimeSeries[nameString].data[currentDayString],
-              confirmedCases: layer1CasesTimeSeries[nameString].data[currentDayString].confirmedCases + confirmedCase.confirmedCases
-            };
-            currentDay.add(1, "days");
+          if (!!convertedCountry && !!convertedProvince && !!convertedCounty) {
+            const layer1Name: Array<string> = ["World", convertedCountry, convertedProvince];
+            const layer1HierarchicalName: string = getHierarchicalName(layer1Name);
+            const layer2Name: Array<string> = ["World", convertedCountry, convertedProvince, convertedCounty];
+            const layer2HierarchicalName: string = getHierarchicalName(layer2Name);
+            const layer2MapPolygon: ServerMapPolygon | undefined = mapLayer2[layer1HierarchicalName] ? mapLayer2[layer1HierarchicalName].find((mapLayer) => mapLayer.hierarchicalName === layer2HierarchicalName) : undefined;
+            if (layer2MapPolygon) {
+              return [layer2MapPolygon.name, layer2MapPolygon.hierarchicalName, layer2MapPolygon.countryCode];
+            } else {
+              console.log(`Unable to find map polygon for country: ${convertedCountry}, province: ${convertedProvince}, county: ${convertedCounty}.`);
+              return [[], "", ""];
+            }
+          }
+          return [[], "", ""];
+        }
+      }
+    };
+
+    const processUsArray = (array: Array<Array<string>>): Array<Array<string>> => {
+      const ignoreUSLayer2 = (convertedProvince: string | undefined, convertedCounty: string | undefined): boolean => {
+        switch (convertedProvince) {
+          case "Alaska": {
+            switch (convertedCounty) {
+              case "Bristol Bay":
+              case "Kusilvak":
+              case "Petersburg":
+              case "Prince of Wales-Hyder":
+              case "Wrangell":
+
+              case "Hoonah-Angoon": //Valid Counties
+              case "Skagway":
+              case "Yakutat": {
+                return true;
+              }
+            }
+          }
+          case "Maryland": {
+            switch (convertedCounty) {
+              case "Baltimore": //Valid Counties
+              case "Baltimore City": {
+                return true;
+              }
+            }
+          }
+          case "Massachusetts": {
+            switch (convertedCounty) {
+              case "Dukes and Nantucket": {
+                return true;
+              }
+            }
+          }
+          case "Michigan": {
+            switch (convertedCounty) {
+              case "Federal Correctional Institution (FCI)":
+              case "Michigan Department of Corrections (MDOC)": {
+                return true;
+              }
+            }
+          }
+          case "Missouri": {
+            switch (convertedCounty) {
+              case "Kansas City":
+
+              case "St. Louis": //Valid Counties
+              case "St. Louis City": {
+                return true;
+              }
+            }
+          }
+          case "Puerto Rico": {
+            return true; //Valid Counties
+          }
+          case "Utah": {
+            switch (convertedCounty) {
+              case "Bear River":
+              case "Central Utah":
+              case "Southeast Utah":
+              case "Southwest Utah":
+              case "TriCounty":
+              case "Weber-Morgan": {
+                return true;
+              }
+            }
+          }
+          case "Virginia": {
+            switch (convertedCounty) {
+              case "Franklin": //Valid Counties
+              case "Franklin City":
+              case "Richmond":
+              case "Richmond City": {
+                return true;
+              }
+            }
+          }
+        }
+        return false;
+      };
+
+      const rowLength: number = array[0].length;
+      const specialArrayGenerator = (dataArray: Array<Array<string>>, province: string, county?: string): Array<string> => {
+        const specialArray: Array<string> = new Array(rowLength).fill("");
+        if (!!province) {
+          specialArray[6] = province;
+        }
+        if (!!county) {
+          specialArray[5] = county;
+        }
+        for (let i = 11; i < rowLength; i++) {
+          let value: number = 0;
+          dataArray.forEach(row => {
+            value = value + parseInt(row[i]);
+          });
+          specialArray[i] = value.toString();
+        }
+        return specialArray;
+      };
+
+
+      const newArray: Array<Array<string>> = array.filter((row, index) => {
+        if (index === 0) {
+          return true;
+        } else {
+          const fips: string = row[4];
+          if (!fips) {
+            return false;
+          }
+          const state: string = row[6];
+          const county: string = row[5];
+          if (!county.includes("Out of") && county !== "Unassigned" && !ignoreUSLayer2(state, county)) {
+            return true;
+          } else {
+            return false;
           }
         }
       });
-    });
-    console.log("Getting Taiwan Data Complete!");
+      const puertoRicoDataArray: Array<Array<string>> = array.filter((row) => row[6] === "Puerto Rico");
+      const puertoRicoArray: Array<string> = specialArrayGenerator(puertoRicoDataArray, "Puerto Rico");
+      newArray.push(puertoRicoArray);
+
+      const alaskaDataArray: Array<Array<string>> = array.filter((row) => row[6] === "Alaska" && (row[5] === "Hoonah-Angoon" || row[5] === "Skagway" || row[5] === "Yakutat"));
+      const alaskaArray: Array<string> = specialArrayGenerator(alaskaDataArray, "Alaska", "Skagway-Yakutat-Angoon");
+      newArray.push(alaskaArray);
+
+      const marylandDataArray: Array<Array<string>> = array.filter((row) => row[6] === "Maryland" && (row[5] === "Baltimore" || row[5] === "Baltimore City"));
+      const marylandArray: Array<string> = specialArrayGenerator(marylandDataArray, "Maryland", "Baltimore");
+      newArray.push(marylandArray);
+
+      const missouriDataArray: Array<Array<string>> = array.filter((row) => row[6] === "Missouri" && (row[5] === "St. Louis" || row[5] === "St. Louis City"));
+      const missouriArray: Array<string> = specialArrayGenerator(missouriDataArray, "Missouri", "St. Louis");
+      newArray.push(missouriArray);
+
+      const virginiaFranklinDataArray: Array<Array<string>> = array.filter((row) => row[6] === "Virginia" && (row[5] === "Franklin" || row[5] === "Franklin City"));
+      const virginiaFranklinArray: Array<string> = specialArrayGenerator(virginiaFranklinDataArray, "Virginia", "Franklin");
+      newArray.push(virginiaFranklinArray);
+
+      const virginiaRichmondDataArray: Array<Array<string>> = array.filter((row) => row[6] === "Virginia" && (row[5] === "Richmond" || row[5] === "Richmond City"));
+      const virginiaRichmondArray: Array<string> = specialArrayGenerator(virginiaRichmondDataArray, "Virginia", "Richmond");
+      newArray.push(virginiaRichmondArray);
+
+      return newArray;
+    };
+
+
+    const globalNewCasesArray: Array<Array<string>> = await getCsvArray("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv");
+    const globalDeathsArray: Array<Array<string>> = await getCsvArray("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv");
+    const globalRecoveredArray: Array<Array<string>> = await getCsvArray("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv");
+    const usCasesArray: Array<Array<string>> = processUsArray(await getCsvArray("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv"));
+    const usDeathsArray: Array<Array<string>> = processUsArray(await getCsvArray("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_US.csv"));
+    const globalNewCasesFirstRow: Array<string> = globalNewCasesArray[0];
+    const firstDateString: string = globalNewCasesFirstRow[4];
+    const lastDateString: string = globalNewCasesFirstRow[globalNewCasesFirstRow.length - 1];
+    const dateStringArray: Array<string> = getDateStringArray(firstDateString, lastDateString);
+
+    for (let globalNewCasesArrayIndex = 1; globalNewCasesArrayIndex < globalNewCasesArray.length; globalNewCasesArrayIndex++) {
+      const row: Array<string> = globalNewCasesArray[globalNewCasesArrayIndex];
+      const [name, hierarchicalName, countryCode]: [Array<string>, string, string] = getName(row[1], row[0]);
+      if (!!hierarchicalName) {
+        createRegionData(name, hierarchicalName, countryCode);
+        const dailyCasesData: ServerDailyCasesDataObject = data[hierarchicalName] ? data[hierarchicalName].data : {};
+        dateStringArray.forEach((date, index) => {
+          createDailyData(dailyCasesData, date);
+          dailyCasesData[date] = {
+            ...dailyCasesData[date],
+            newCases: parseInt(row[index + 4]),
+          };
+        });
+        data[hierarchicalName] = {
+          ...data[hierarchicalName],
+          data: dailyCasesData,
+        };
+      }
+    }
+
+    for (let globalDeathsArrayIndex = 1; globalDeathsArrayIndex < globalDeathsArray.length; globalDeathsArrayIndex++) {
+      const row: Array<string> = globalDeathsArray[globalDeathsArrayIndex];
+      const [name, hierarchicalName, countryCode]: [Array<string>, string, string] = getName(row[1], row[0]);
+      if (!!hierarchicalName) {
+        createRegionData(name, hierarchicalName, countryCode);
+        const dailyCasesData: ServerDailyCasesDataObject = data[hierarchicalName] ? data[hierarchicalName].data : {};
+        dateStringArray.forEach((date, index) => {
+          createDailyData(dailyCasesData, date);
+          dailyCasesData[date] = {
+            ...dailyCasesData[date],
+            newDeaths: parseInt(row[index + 4]),
+          };
+        });
+      }
+    }
+
+    for (let globalRecoveredArrayIndex = 1; globalRecoveredArrayIndex < globalRecoveredArray.length; globalRecoveredArrayIndex++) {
+      const row: Array<string> = globalRecoveredArray[globalRecoveredArrayIndex];
+      const [name, hierarchicalName, countryCode]: [Array<string>, string, string] = getName(row[1], row[0]);
+      if (!!hierarchicalName) {
+        createRegionData(name, hierarchicalName, countryCode);
+        const dailyCasesData: ServerDailyCasesDataObject = data[hierarchicalName] ? data[hierarchicalName].data : {};
+        dateStringArray.forEach((date, index) => {
+          createDailyData(dailyCasesData, date);
+          dailyCasesData[date] = {
+            ...dailyCasesData[date],
+            newRecoveries: parseInt(row[index + 4]),
+          };
+        });
+        data[hierarchicalName] = {
+          ...data[hierarchicalName],
+          data: dailyCasesData,
+        };
+      }
+    }
+
+    for (let usCasesArrayIndex = 1; usCasesArrayIndex < usCasesArray.length; usCasesArrayIndex++) {
+      const row: Array<string> = usCasesArray[usCasesArrayIndex];
+      const [name, hierarchicalName, countryCode]: [Array<string>, string, string] = getName("United States of America", row[6], row[5]);
+      if (!!hierarchicalName) {
+        createRegionData(name, hierarchicalName, countryCode);
+        const dailyCasesData: ServerDailyCasesDataObject = data[hierarchicalName] ? data[hierarchicalName].data : {};
+        dateStringArray.forEach((date, index) => {
+          createDailyData(dailyCasesData, date);
+          dailyCasesData[date] = {
+            ...dailyCasesData[date],
+            newCases: parseInt(row[index + 11]),
+          };
+        });
+        data[hierarchicalName] = {
+          ...data[hierarchicalName],
+          data: dailyCasesData,
+        };
+      }
+    }
+
+    for (let usDeathsArrayIndex = 1; usDeathsArrayIndex < usDeathsArray.length; usDeathsArrayIndex++) {
+      const row: Array<string> = usDeathsArray[usDeathsArrayIndex];
+      const [name, hierarchicalName, countryCode]: [Array<string>, string, string] = getName("United States of America", row[6], row[5]);
+      if (!!hierarchicalName) {
+        createRegionData(name, hierarchicalName, countryCode);
+        const dailyCasesData: ServerDailyCasesDataObject = data[hierarchicalName] ? data[hierarchicalName].data : {};
+        dateStringArray.forEach((date, index) => {
+          createDailyData(dailyCasesData, date);
+          dailyCasesData[date] = {
+            ...dailyCasesData[date],
+            newDeaths: parseInt(row[index + 12]),
+          };
+        });
+        data[hierarchicalName] = {
+          ...data[hierarchicalName],
+          data: dailyCasesData,
+        };
+      }
+    }
     return true;
   };
 
-  export const nameConverter = (country: string, region: string): Array<string> => {
-    const countryNameTranslation: any = {
-      "Bahamas, The": "Bahamas",
-      "Brunei": "Brunei Darussalam",
-      "Cabo Verde": "Cape Verde",
-      "Congo (Brazzaville)": "Congo",
-      "Congo (Kinshasa)": "Congo, the Democratic Republic of the",
-      "Cote d'Ivoire": "Cote D'Ivoire",
-      "Czechia": "Czech Republic",
-      "East Timor": "Timor-Leste",
-      "Eswatini": "Swaziland",
-      "Gambia, The": "Gambia",
-      "Holy See": "Holy See (Vatican City State)",
-      "Iran": "Iran, Islamic Republic of",
-      "Korea, South": "South Korea",
-      "Moldova": "Moldova, Republic of",
-      "North Macedonia": "North Macedonia, Republic of",
-      "Russia": "Russian Federation",
-      "Syria": "Syrian Arab Republic",
-      "Taiwan*": "Taiwan",
-      "Tanzania": "Tanzania, United Republic of",
-      "US": "United States of America",
+  const getCsvArray = async (url: string): Promise<Array<Array<string>>> => {
+    const result: any = await axios.get(url);
+    const resultString: string = result.data;
+    const resultArray: Array<Array<string>> = csv.parse(resultString);
+    return resultArray;
+  };
 
-    };
-    const usStates: any = {
-      "AL": "Alabama",
-      "AK": "Alaska",
-      "AZ": "Arizona",
-      "AR": "Arkansas",
-      "CA": "California",
-      "CO": "Colorado",
-      "CT": "Connecticut",
-      "DE": "Delaware",
-      "FL": "Florida",
-      "GA": "Georgia",
-      "HI": "Hawaii",
-      "ID": "Idaho",
-      "IL": "Illinois",
-      "IN": "Indiana",
-      "IA": "Iowa",
-      "KS": "Kansas",
-      "KY": "Kentucky",
-      "LA": "Louisiana",
-      "ME": "Maine",
-      "MD": "Maryland",
-      "MA": "Massachusetts",
-      "MI": "Michigan",
-      "MN": "Minnesota",
-      "MS": "Mississippi",
-      "MO": "Missouri",
-      "MT": "Montana",
-      "NE": "Nebraska",
-      "NV": "Nevada",
-      "NH": "New Hampshire",
-      "NJ": "New Jersey",
-      "NM": "New Mexico",
-      "NY": "New York",
-      "NC": "North Carolina",
-      "ND": "North Dakota",
-      "OH": "Ohio",
-      "OK": "Oklahoma",
-      "OR": "Oregon",
-      "PA": "Pennsylvania",
-      "RI": "Rhode Island",
-      "SC": "South Carolina",
-      "SD": "South Dakota",
-      "TN": "Tennessee",
-      "TX": "Texas",
-      "UT": "Utah",
-      "VT": "Vermont",
-      "VA": "Virginia",
-      "WA": "Washington",
-      "WV": "West Virginia",
-      "WI": "Wisconsin",
-      "WY": "Wyoming"
-    };
-    let newCountryName: string = countryNameTranslation[country] ? countryNameTranslation[country] : country;
-    let newRegionName: string = region;
-    let newDistrictName: string = "";
-    if (newCountryName === "United States of America") {
-      const regionNameArray: Array<string> = region.split(",");
-      if (regionNameArray.length === 2) {
-        const usStateCode: string = regionNameArray[1].trim();
-        newRegionName = usStates[usStateCode];
-        newDistrictName = regionNameArray[0].replace("County", "").trim();
-      }
-    } else if (newCountryName === "Canada") {
-      if (newRegionName === "Quebec") {
-        newRegionName = "Québec";
-      }
-    }
-    switch (region) {
-      case "From Diamond Princess": {
-        newRegionName = "Cruise Ship";
-        break;
-      }
-      case "Grand Princess": {
-        newRegionName = "Cruise Ship";
-        break;
-      }
-      case "Hong Kong": {
-        newCountryName = region;
-        newRegionName = "";
-        break;
-      }
-      case "Macau": {
-        newCountryName = "Macao";
-        newRegionName = "";
-        break;
-      }
-      case "Faroe Islands": {
-        newCountryName = region;
-        newRegionName = "";
-        break;
-      }
-      case "Greenland": {
-        newCountryName = region;
-        newRegionName = "";
-        break;
-      }
-      case "France": {
-        newCountryName = region;
-        newRegionName = "";
-        break;
-      }
-      case "St Martin": {
-        newCountryName = "Saint Martin (French part)";
-        newRegionName = "";
-        break;
-      }
-      case "Saint Barthelemy": {
-        newCountryName = "Saint Barthélemy";
-        newRegionName = "";
-        break;
-      }
-      case "French Polynesia": {
-        newCountryName = region;
-        newRegionName = "";
-        break;
-      }
-      case "French Guiana": {
-        newCountryName = region;
-        newRegionName = "";
-        break;
-      }
-      case "Mayotte": {
-        newCountryName = region;
-        newRegionName = "";
-        break;
-      }
-      case "Guadeloupe": {
-        newCountryName = region;
-        newRegionName = "";
-        break;
-      }
-      case "Reunion": {
-        newCountryName = region;
-        newRegionName = "";
-        break;
-      }
-      case "New Caledonia": {
-        newCountryName = region;
-        newRegionName = "";
-        break;
-      }
-      case "Netherlands": {
-        newCountryName = region;
-        newRegionName = "";
-        break;
-      }
-      case "Curacao": {
-        newCountryName = "Curaçao";
-        newRegionName = "";
-        break;
-      }
-      case "Aruba": {
-        newCountryName = region;
-        newRegionName = "";
-        break;
-      }
-      case "Sint Maarten": {
-        newCountryName = "Sint Maarten (Dutch part)";
-        newRegionName = "";
-        break;
-      }
-      case "Channel Islands": {
-        newRegionName = "";
-        break;
-      }
-      case "Gibraltar": {
-        newCountryName = region;
-        newRegionName = "";
-        break;
-      }
-      case "United Kingdom": {
-        newCountryName = region;
-        newRegionName = "";
-        break;
-      }
-      case "Cayman Islands": {
-        newCountryName = region;
-        newRegionName = "";
-        break;
-      }
-      case "Montserrat": {
-        newCountryName = region;
-        newRegionName = "";
-        break;
-      }
-      case "Bermuda": {
-        newCountryName = region;
-        newRegionName = "";
-        break;
-      }
-      case "Isle of Man": {
-        newCountryName = region;
-        newRegionName = "";
-        break;
-      }
-      case "Guam": {
-        newCountryName = region;
-        newRegionName = "";
-        break;
-      }
-      case "Virgin Islands": {
-        newCountryName = "Virgin Islands, U.S.";
-        newRegionName = "";
-        break;
-      }
-      default: {
+  const getMomentDateFromDateString = (dateString: string): Moment => {
+    const dateStringArray: Array<string> = dateString.split("/");
+    const dateDay: number = parseInt(dateStringArray[1]);
+    const dateMonth: number = parseInt(dateStringArray[0]);
+    const dateYear: number = parseInt(`20${dateStringArray[2]}`);
+    const date: Moment = moment().date(dateDay).month(dateMonth - 1).year(dateYear).startOf("day");
+    return date;
+  };
 
+  const getDateStringArray = (firstDateString: string, lastDateString: string): Array<string> => {
+    const dateStringArray: Array<string> = [];
+    const firstDate: Moment = getMomentDateFromDateString(firstDateString);
+    const lastDate: Moment = getMomentDateFromDateString(lastDateString);
+    const dateDifference: number = lastDate.diff(firstDate, "days");
+    for (let dateIndex = 0; dateIndex < dateDifference; dateIndex++) {
+      if (dateIndex === 0) {
+        const firstDateString: string = firstDate.format("M/D/YY");
+        dateStringArray.push(firstDateString);
       }
+      firstDate.add(1, "days");
+      const newDateString: string = firstDate.format("M/D/YY");
+      dateStringArray.push(newDateString);
     }
-    const returnArray: Array<string> = [newCountryName];
-    if (!!newRegionName) {
-      returnArray.push(newRegionName);
-    }
-    if (!!newRegionName && !!newDistrictName) {
-      returnArray.push(newDistrictName);
-    }
-    return returnArray;
+    return dateStringArray;
   };
 }
