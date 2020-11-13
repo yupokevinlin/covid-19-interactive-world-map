@@ -1,11 +1,12 @@
 
 import {Moment} from "moment";
 import {
+  ServerCasesData,
   ServerCasesDataObject,
   ServerDailyCasesDataObject
 } from "../../../../shared/types/data/Cases/CasesTypes";
 import {ServerMapPolygon, ServerMapPolygonsObject} from "../../../../shared/types/data/Map/MapTypes";
-import {getHierarchicalName} from "../../../../shared/helpers/General";
+import {getHierarchicalName, getNameArray} from "../../../../shared/helpers/General";
 import {PopulationData, PopulationObject} from "../../../../data/population/type";
 
 const csv = require("csv-string");
@@ -1005,6 +1006,30 @@ export namespace CasesUtils {
           };
         }
       });
+
+
+
+      //Generate World Data
+      const layer0Data: Array<ServerCasesData> = Object.entries(data).map(([key, data]) => data).filter((data) => getNameArray(data.hierarchicalName).length === 2);
+      const worldDailyCasesData: ServerDailyCasesDataObject = {};
+      dateStringArray.forEach((date, index) => {
+        createDailyData(worldDailyCasesData, date);
+        layer0Data.forEach((layer0) => {
+          worldDailyCasesData[date] = {
+            population: worldDailyCasesData[date].population + layer0.data[date].population,
+            totalCases: worldDailyCasesData[date].totalCases + layer0.data[date].totalCases,
+            totalDeaths: worldDailyCasesData[date].totalDeaths + layer0.data[date].totalDeaths,
+            totalRecoveries: worldDailyCasesData[date].totalRecoveries + layer0.data[date].totalRecoveries,
+          };
+        });
+      });
+      data["World"] = {
+        name: ["World"],
+        hierarchicalName: "World",
+        countryCode: "World",
+        isMissingData: false,
+        data: worldDailyCasesData,
+      };
 
       return true;
     } catch (e) {
