@@ -3,6 +3,7 @@ export interface ServerCasesData {
   hierarchicalName: string;
   countryCode: string;
   isMissingData: boolean;
+  population: number;
   data: ServerDailyCasesDataObject;
 }
 
@@ -11,7 +12,6 @@ export interface ServerDailyCasesDataObject {
 }
 
 export interface ServerDailyCasesData {
-  population: number;
   totalCases: number;
   totalRecoveries: number;
   totalDeaths: number;

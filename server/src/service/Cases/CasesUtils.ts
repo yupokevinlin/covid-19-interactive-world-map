@@ -15,7 +15,7 @@ const moment = require("moment");
 const mapLayer0: Array<ServerMapPolygon> = require("../../../../data/map/gadm/gadm36_0_processed_array.json");
 const mapLayer1: ServerMapPolygonsObject = require("../../../../data/map/gadm/gadm36_1_processed_object.json");
 const mapLayer2: ServerMapPolygonsObject = require("../../../../data/map/gadm/gadm36_2_processed_object.json");
-const worldPopulation: PopulationObject = require("../../../../data/population/united-nations-world-population.json");
+const worldPopulationObject: PopulationObject = require("../../../../data/population/united-nations-world-population.json");
 
 export namespace CasesUtils {
   export let data: ServerCasesDataObject = {};
@@ -29,6 +29,7 @@ export namespace CasesUtils {
             hierarchicalName: hierarchicalName,
             countryCode: countryCode,
             isMissingData: false,
+            population: 0,
             data: {},
           }
         }
@@ -36,7 +37,6 @@ export namespace CasesUtils {
       const createDailyData = (dailyDataObject: ServerDailyCasesDataObject, date: string): void => {
         if (!dailyDataObject[date]) {
           dailyDataObject[date] = {
-            population: 0,
             totalCases: 0,
             totalRecoveries: 0,
             totalDeaths: 0,
@@ -670,7 +670,7 @@ export namespace CasesUtils {
           } else {
             const country: string = populationCountryConversionObject[row[1]] ? populationCountryConversionObject[row[1]] : row[1];
             const province: string = populationProvinceConversionObject[row[0]] ? populationProvinceConversionObject[row[0]] : row[0];
-            const populationData: PopulationData | undefined = worldPopulation[country];
+            const populationData: PopulationData | undefined = worldPopulationObject[country];
             let population: number = 0;
             if (province) {
               switch (country) {
@@ -687,7 +687,7 @@ export namespace CasesUtils {
                   break;
                 }
                 default: {
-                  const specialPopulationData: PopulationData | undefined = worldPopulation[province];
+                  const specialPopulationData: PopulationData | undefined = worldPopulationObject[province];
                   if (specialPopulationData) {
                     population = specialPopulationData.PopTotal;
                   }
@@ -882,24 +882,25 @@ export namespace CasesUtils {
         if (!!hierarchicalName) {
           createRegionData(name, hierarchicalName, countryCode);
           const dailyCasesData: ServerDailyCasesDataObject = data[hierarchicalName] ? data[hierarchicalName].data : {};
+          const population: number = parseInt(row[4]);
+          if (isNaN(population)) {
+            throw `Population is NaN for: ${hierarchicalName}.`;
+          }
           dateStringArray.forEach((date, index) => {
             createDailyData(dailyCasesData, date);
-            const population: number = parseInt(row[4]);
+
             const totalCases: number = parseInt(row[index + 5]);
-            if (isNaN(population)) {
-              throw `Population is NaN for: ${hierarchicalName} date: ${date}.`;
-            }
             if (isNaN(totalCases)) {
               throw `Total Cases is NaN for: ${hierarchicalName} date: ${date}.`;
             }
             dailyCasesData[date] = {
               ...dailyCasesData[date],
-              population: population,
               totalCases: totalCases,
             };
           });
           data[hierarchicalName] = {
             ...data[hierarchicalName],
+            population: population,
             data: dailyCasesData,
           };
         }
@@ -979,24 +980,24 @@ export namespace CasesUtils {
         if (!!hierarchicalName) {
           createRegionData(name, hierarchicalName, countryCode);
           const dailyCasesData: ServerDailyCasesDataObject = data[hierarchicalName] ? data[hierarchicalName].data : {};
+          const population: number = parseInt(row[11]);
+          if (isNaN(population)) {
+            throw `Population is NaN for: ${hierarchicalName}.`;
+          }
           dateStringArray.forEach((date, index) => {
             createDailyData(dailyCasesData, date);
-            const population: number = parseInt(row[11]);
             const totalDeaths: number = parseInt(row[index + 12]);
-            if (isNaN(population)) {
-              throw `Population is NaN for: ${hierarchicalName} date: ${date}.`;
-            }
             if (isNaN(totalDeaths)) {
               throw `Total Deaths is NaN for: ${hierarchicalName} date: ${date}.`;
             }
             dailyCasesData[date] = {
               ...dailyCasesData[date],
-              population: population,
               totalDeaths: totalDeaths,
             };
           });
           data[hierarchicalName] = {
             ...data[hierarchicalName],
+            population: population,
             data: dailyCasesData,
           };
         }
@@ -1038,12 +1039,12 @@ export namespace CasesUtils {
 
       //Generate World Data
       const layer0Data: Array<ServerCasesData> = Object.entries(data).map(([key, data]) => data).filter((data) => getNameArray(data.hierarchicalName).length === 2);
+      const worldPopulation: number = layer0Data.map(layer => layer.population).reduce((accumulator, value) => accumulator + value);
       const worldDailyCasesData: ServerDailyCasesDataObject = {};
       dateStringArray.forEach((date, index) => {
         createDailyData(worldDailyCasesData, date);
         layer0Data.forEach((layer0) => {
           worldDailyCasesData[date] = {
-            population: worldDailyCasesData[date].population + layer0.data[date].population,
             totalCases: worldDailyCasesData[date].totalCases + layer0.data[date].totalCases,
             totalDeaths: worldDailyCasesData[date].totalDeaths + layer0.data[date].totalDeaths,
             totalRecoveries: worldDailyCasesData[date].totalRecoveries + layer0.data[date].totalRecoveries,
@@ -1055,6 +1056,7 @@ export namespace CasesUtils {
         hierarchicalName: "World",
         countryCode: "World",
         isMissingData: false,
+        population: worldPopulation,
         data: worldDailyCasesData,
       };
 
