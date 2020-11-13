@@ -883,10 +883,18 @@ export namespace CasesUtils {
           const dailyCasesData: ServerDailyCasesDataObject = data[hierarchicalName] ? data[hierarchicalName].data : {};
           dateStringArray.forEach((date, index) => {
             createDailyData(dailyCasesData, date);
+            const population: number = parseInt(row[4]);
+            const totalCases: number = parseInt(row[index + 5]);
+            if (isNaN(population)) {
+              throw `Population is NaN for: ${hierarchicalName} date: ${date}.`;
+            }
+            if (isNaN(totalCases)) {
+              throw `Total Cases is NaN for: ${hierarchicalName} date: ${date}.`;
+            }
             dailyCasesData[date] = {
               ...dailyCasesData[date],
-              population: parseInt(row[4]),
-              totalCases: parseInt(row[index + 5]),
+              population: population,
+              totalCases: totalCases,
             };
           });
           data[hierarchicalName] = {
@@ -904,9 +912,13 @@ export namespace CasesUtils {
           const dailyCasesData: ServerDailyCasesDataObject = data[hierarchicalName] ? data[hierarchicalName].data : {};
           dateStringArray.forEach((date, index) => {
             createDailyData(dailyCasesData, date);
+            const totalDeaths: number = parseInt(row[index + 5]);
+            if (isNaN(totalDeaths)) {
+              throw `Total Deaths is NaN for: ${hierarchicalName} date: ${date}.`;
+            }
             dailyCasesData[date] = {
               ...dailyCasesData[date],
-              totalDeaths: parseInt(row[index + 5]),
+              totalDeaths: totalDeaths,
             };
           });
         }
@@ -920,9 +932,13 @@ export namespace CasesUtils {
           const dailyCasesData: ServerDailyCasesDataObject = data[hierarchicalName] ? data[hierarchicalName].data : {};
           dateStringArray.forEach((date, index) => {
             createDailyData(dailyCasesData, date);
+            const totalRecoveries: number = parseInt(row[index + 5]);
+            if (isNaN(totalRecoveries)) {
+              throw `Total Recoveries is NaN for: ${hierarchicalName} date: ${date}.`;
+            }
             dailyCasesData[date] = {
               ...dailyCasesData[date],
-              totalRecoveries: parseInt(row[index + 5]),
+              totalRecoveries: totalRecoveries,
             };
           });
           data[hierarchicalName] = {
@@ -940,9 +956,13 @@ export namespace CasesUtils {
           const dailyCasesData: ServerDailyCasesDataObject = data[hierarchicalName] ? data[hierarchicalName].data : {};
           dateStringArray.forEach((date, index) => {
             createDailyData(dailyCasesData, date);
+            const totalCases: number = parseInt(row[index + 11]);
+            if (isNaN(totalCases)) {
+              throw `Total Cases is NaN for: ${hierarchicalName} date: ${date}.`;
+            }
             dailyCasesData[date] = {
               ...dailyCasesData[date],
-              totalCases: parseInt(row[index + 11]),
+              totalCases: totalCases,
             };
           });
           data[hierarchicalName] = {
@@ -960,10 +980,18 @@ export namespace CasesUtils {
           const dailyCasesData: ServerDailyCasesDataObject = data[hierarchicalName] ? data[hierarchicalName].data : {};
           dateStringArray.forEach((date, index) => {
             createDailyData(dailyCasesData, date);
+            const population: number = parseInt(row[11]);
+            const totalDeaths: number = parseInt(row[index + 12]);
+            if (isNaN(population)) {
+              throw `Population is NaN for: ${hierarchicalName} date: ${date}.`;
+            }
+            if (isNaN(totalDeaths)) {
+              throw `Total Deaths is NaN for: ${hierarchicalName} date: ${date}.`;
+            }
             dailyCasesData[date] = {
               ...dailyCasesData[date],
-              population: parseInt(row[11]),
-              totalDeaths: parseInt(row[index + 12]),
+              population: population,
+              totalDeaths: totalDeaths,
             };
           });
           data[hierarchicalName] = {
@@ -1006,8 +1034,6 @@ export namespace CasesUtils {
           };
         }
       });
-
-
 
       //Generate World Data
       const layer0Data: Array<ServerCasesData> = Object.entries(data).map(([key, data]) => data).filter((data) => getNameArray(data.hierarchicalName).length === 2);
