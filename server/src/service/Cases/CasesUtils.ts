@@ -582,7 +582,7 @@ export namespace CasesUtils {
         };
 
         const addMissingRows = (oldArray: Array<Array<string>>): Array<Array<string>> => {
-          const rowLength: number = oldArray.length;
+          const rowLength: number = oldArray[0].length;
           const completeArray: Array<Array<string>> = oldArray.map(row => [...row]);
           const canadaProvinces: Array<string> = [
             "Alberta",
