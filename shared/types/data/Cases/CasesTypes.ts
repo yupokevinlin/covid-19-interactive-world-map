@@ -2,6 +2,7 @@ export interface ServerCasesData {
   name: Array<string>;
   hierarchicalName: string;
   countryCode: string;
+  isMissingData: boolean;
   data: ServerDailyCasesDataObject;
 }
 

@@ -25,6 +25,7 @@ export namespace CasesUtils {
           name: name,
           hierarchicalName: hierarchicalName,
           countryCode: countryCode,
+          isMissingData: false,
           data: {},
         }
       }
@@ -54,7 +55,6 @@ export namespace CasesUtils {
         "Gambia, The": "Gambia",
         "Holy See": "Holy See (Vatican City State)",
         "Iran": "Iran, Islamic Republic of",
-        "Korea, North": "North Korea",
         "Korea, South": "South Korea",
         "Laos": "Lao People's Democratic Republic",
         "Moldova": "Moldova, Republic of",
@@ -499,7 +499,6 @@ export namespace CasesUtils {
         "Congo (Kinshasa)": "Democratic Republic of the Congo",
         "Cote d'Ivoire": "Côte d'Ivoire",
         "Iran": "Iran (Islamic Republic of)",
-        "Korea, North": "Dem. People's Republic of Korea",
         "Korea, South": "Republic of Korea",
         "Laos": "Lao People's Democratic Republic",
         "Moldova": "Republic of Moldova",
@@ -617,13 +616,6 @@ export namespace CasesUtils {
             completeArray.push(arrayToAdd);
           }
         });
-
-        const northKoreaRow: Array<string> | undefined = completeArray.find((row) => row[1] === "Korea, North");
-        if (!northKoreaRow) {
-          const arrayToAdd: Array<string> = [...new Array(4).fill(""), ...new Array(rowLength - 4).fill("0")];
-          arrayToAdd[1] = "Korea, North";
-          completeArray.push(arrayToAdd);
-        }
 
         return completeArray;
       };
@@ -978,7 +970,40 @@ export namespace CasesUtils {
         };
       }
     }
-    
+
+    //Check if all layers have data.
+    const existingLayers: Array<ServerMapPolygon> = [];
+    mapLayer0.forEach((layer0) => {
+      if (layer0.hasChildren) {
+        mapLayer1[layer0.hierarchicalName].forEach((layer1) => {
+          if (layer1.hasChildren) {
+            mapLayer2[layer1.hierarchicalName].forEach((layer2) => {
+              existingLayers.push(layer2);
+            });
+          }
+          existingLayers.push(layer1);
+        });
+      }
+      existingLayers.push(layer0);
+    });
+    const dataExistingLayerNames: Array<string> = Object.entries(data).map(([key, data]) => key);
+    //Add empty data if missing
+    existingLayers.forEach((layer) => {
+      if (!dataExistingLayerNames.includes(layer.hierarchicalName)) {
+        console.log(`Missing data for layer: ${layer.hierarchicalName}.`);
+        createRegionData(layer.name, layer.hierarchicalName, layer.countryCode);
+        const dailyCasesData: ServerDailyCasesDataObject = {};
+        dateStringArray.forEach((date, index) => {
+          createDailyData(dailyCasesData, date);
+        });
+        data[layer.hierarchicalName] = {
+          ...data[layer.hierarchicalName],
+          isMissingData: true,
+          data: dailyCasesData,
+        };
+      }
+    });
+
     return true;
   };
 
