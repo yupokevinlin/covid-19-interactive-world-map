@@ -6,6 +6,7 @@ import {
 } from "../../../../shared/types/data/Cases/CasesTypes";
 import {ServerMapPolygon, ServerMapPolygonsObject} from "../../../../shared/types/data/Map/MapTypes";
 import {getHierarchicalName} from "../../../../shared/helpers/General";
+import {PopulationData, PopulationObject} from "../../../../data/population/type";
 
 const csv = require("csv-string");
 const axios = require("axios").default;
@@ -13,6 +14,7 @@ const moment = require("moment");
 const mapLayer0: Array<ServerMapPolygon> = require("../../../../data/map/gadm/gadm36_0_processed_array.json");
 const mapLayer1: ServerMapPolygonsObject = require("../../../../data/map/gadm/gadm36_1_processed_object.json");
 const mapLayer2: ServerMapPolygonsObject = require("../../../../data/map/gadm/gadm36_2_processed_object.json");
+const worldPopulation: PopulationObject = require("../../../../data/population/united-nations-world-population.json");
 
 export namespace CasesUtils {
   export const fetchCasesData = async (): Promise<boolean> => {
@@ -30,6 +32,7 @@ export namespace CasesUtils {
     const createDailyData = (dailyDataObject: ServerDailyCasesDataObject, date: string): void => {
       if (!dailyDataObject[date]) {
         dailyDataObject[date] = {
+          population: 0,
           totalCases: 0,
           totalRecoveries: 0,
           totalDeaths: 0,
@@ -51,6 +54,7 @@ export namespace CasesUtils {
         "Gambia, The": "Gambia",
         "Holy See": "Holy See (Vatican City State)",
         "Iran": "Iran, Islamic Republic of",
+        "Korea, North": "North Korea",
         "Korea, South": "South Korea",
         "Laos": "Lao People's Democratic Republic",
         "Moldova": "Moldova, Republic of",
@@ -487,8 +491,154 @@ export namespace CasesUtils {
     const processGlobalArray = (array: Array<Array<string>>): Array<Array<string>> => {
       const countriesToIgnore: Array<string> = ["Diamond Princess", "MS Zaandam"];
       const provincesToIgnore: Array<string> = ["Diamond Princess", "Grand Princess"];
+      const populationCountryConversionObject: any = {
+        "Burma": "Myanmar",
+        "Bolivia": "Bolivia (Plurinational State of)",
+        "Brunei": "Brunei Darussalam",
+        "Congo (Brazzaville)": "Congo",
+        "Congo (Kinshasa)": "Democratic Republic of the Congo",
+        "Cote d'Ivoire": "Côte d'Ivoire",
+        "Iran": "Iran (Islamic Republic of)",
+        "Korea, North": "Dem. People's Republic of Korea",
+        "Korea, South": "Republic of Korea",
+        "Laos": "Lao People's Democratic Republic",
+        "Moldova": "Republic of Moldova",
+        "Russia": "Russian Federation",
+        "Syria": "Syrian Arab Republic",
+        "Taiwan*": "Taiwan",
+        "Tanzania": "United Republic of Tanzania",
+        "US": "United States of America",
+        "Venezuela": "Venezuela (Bolivarian Republic of)",
+        "Vietnam": "Viet Nam",
+        "West Bank and Gaza": "State of Palestine",
+      };
+      const populationProvinceConversionObject: any = {
+        "Reunion": "Réunion",
+        "Saint Barthelemy" : "Saint Barthélemy",
+        "St Martin": "Saint Martin (French part)",
+        "Curacao": "Curaçao",
+        "Sint Maarten": "Sint Maarten (Dutch part)",
+      };
+      const australiaPopulationObject: any = {
+        "Australian Capital Territory": 429800,
+        "New South Wales": 8157700,
+        "Northern Territory": 245400,
+        "Queensland": 5160000,
+        "South Australia": 1767200,
+        "Tasmania": 539600,
+        "Victoria": 6689400,
+        "Western Australia": 2656200,
+      };
+      const canadaPopulationObject: any = {
+        "Alberta": 4402045,
+        "British Columbia": 5131575,
+        "Manitoba": 1377004,
+        "New Brunswick": 780040,
+        "Newfoundland and Labrador": 523631,
+        "Northwest Territories": 45119,
+        "Nova Scotia": 975898,
+        "Ontario": 14689075,
+        "Prince Edward Island": 158629,
+        "Quebec": 8556650,
+        "Saskatchewan": 1179154,
+        "Yukon": 41731,
+        "Nunavut": 38726,
+      };
+      const chinaPopulationObject: any = {
+        "Anhui": 59500510,
+        "Beijing": 19612368,
+        "Chongqing": 28846170,
+        "Fujian": 36894216,
+        "Gansu": 25575254,
+        "Guangdong": 104303132,
+        "Guangxi": 46026629,
+        "Guizhou": 35806468,
+        "Hainan": 9261518,
+        "Hebei": 71854202,
+        "Heilongjiang": 38312224,
+        "Henan": 94023567,
+        "Hong Kong": 7061200,
+        "Hubei": 57237740,
+        "Hunan": 65683722,
+        "Inner Mongolia": 24706321,
+        "Jiangsu": 78659903,
+        "Jiangxi": 44567475,
+        "Jilin": 27462297,
+        "Liaoning": 43746323,
+        "Macau": 552503,
+        "Ningxia": 6176900,
+        "Qinghai": 5626722,
+        "Shaanxi": 37327378,
+        "Shandong": 100063065,
+        "Shanghai": 23019148,
+        "Shanxi": 37022111,
+        "Sichuan": 80418200,
+        "Tianjin": 12938224,
+        "Tibet": 3002166,
+        "Xinjiang": 21813334,
+        "Yunnan": 45966239,
+        "Zhejiang": 54426891,
+      };
 
-      const rowLength: number = array[0].length;
+      const addMissingRows = (oldArray: Array<Array<string>>): Array<Array<string>> => {
+        const rowLength: number = oldArray.length;
+        const completeArray: Array<Array<string>> = oldArray.map(row => [...row]);
+        const canadaProvinces: Array<string> = [
+          "Alberta",
+          "British Columbia",
+          "Manitoba",
+          "New Brunswick",
+          "Newfoundland and Labrador",
+          "Northwest Territories",
+          "Nova Scotia",
+          "Ontario",
+          "Prince Edward Island",
+          "Quebec",
+          "Saskatchewan",
+          "Yukon",
+          "Nunavut",
+        ];
+
+        canadaProvinces.forEach((province) => {
+          let isIncluded: boolean = false;
+          completeArray.forEach((row) => {
+            const completeArrayCountry: string = row[1];
+            const completeArrayProvince: string = row[0];
+            if (completeArrayCountry === "Canada") {
+              if (completeArrayProvince === province) {
+                isIncluded = true;
+              }
+            }
+          });
+          if (!isIncluded) {
+            const arrayToAdd: Array<string> = [...new Array(4).fill(""), ...new Array(rowLength - 4).fill("0")];
+            arrayToAdd[0] = province;
+            arrayToAdd[1] = "Canada";
+            completeArray.push(arrayToAdd);
+          }
+        });
+
+        const northKoreaRow: Array<string> | undefined = completeArray.find((row) => row[1] === "Korea, North");
+        if (!northKoreaRow) {
+          const arrayToAdd: Array<string> = [...new Array(4).fill(""), ...new Array(rowLength - 4).fill("0")];
+          arrayToAdd[1] = "Korea, North";
+          completeArray.push(arrayToAdd);
+        }
+
+        return completeArray;
+      };
+
+      const splicedArray: Array<Array<string>> = addMissingRows(array).map((row, index) => {
+        if (index === 0) {
+          row.splice(4, 0, "Population");
+          return row;
+        } else {
+          row.splice(4, 0, "0");
+          return row;
+        }
+      });
+
+      const rowLength: number = splicedArray[0].length;
       const specialArrayGenerator = (dataArray: Array<Array<string>>, country: string, province?: string): Array<string> => {
         const specialArray: Array<string> = new Array(rowLength).fill("");
         if (!!country) {
@@ -507,7 +657,7 @@ export namespace CasesUtils {
         return specialArray;
       };
 
-      const newArray: Array<Array<string>> = array.filter((row) => {
+      const newArray: Array<Array<string>> = splicedArray.filter((row) => {
         const country: string = row[1];
         if (countriesToIgnore.includes(country)) {
           return false;
@@ -519,15 +669,57 @@ export namespace CasesUtils {
         return true;
       });
 
-      const australiaDataArray: Array<Array<string>> = array.filter((row) => row[1] === "Australia");
+      newArray.map((row, index) => {
+        if (index === 0) {
+          return row;
+        } else {
+          const country: string = populationCountryConversionObject[row[1]] ? populationCountryConversionObject[row[1]] : row[1];
+          const province: string = populationProvinceConversionObject[row[0]] ? populationProvinceConversionObject[row[0]] : row[0];
+          const populationData: PopulationData | undefined = worldPopulation[country];
+          let population: number = 0;
+          if (province) {
+            switch (country) {
+              case "Australia": {
+                population = australiaPopulationObject[province];
+                break;
+              }
+              case "Canada": {
+                population = canadaPopulationObject[province];
+                break;
+              }
+              case "China": {
+                population = chinaPopulationObject[province];
+                break;
+              }
+              default: {
+                const specialPopulationData: PopulationData | undefined = worldPopulation[province];
+                if (specialPopulationData) {
+                  population = specialPopulationData.PopTotal;
+                }
+              }
+            }
+          } else {
+            if (populationData) {
+              population = populationData.PopTotal;
+            }
+          }
+          if (population === 0) {
+            console.log(`Unable to get population for country: ${country}, province: ${province}.`);
+          }
+          row[4] = population.toString();
+          return row;
+        }
+      });
+
+      const australiaDataArray: Array<Array<string>> = splicedArray.filter((row) => row[1] === "Australia");
       const australiaArray: Array<string> = specialArrayGenerator(australiaDataArray, "Australia");
       newArray.push(australiaArray);
 
-      const canadaDataArray: Array<Array<string>> = array.filter((row) => row[1] === "Canada");
+      const canadaDataArray: Array<Array<string>> = splicedArray.filter((row) => row[1] === "Canada");
       const canadaArray: Array<string> = specialArrayGenerator(canadaDataArray, "Canada");
       newArray.push(canadaArray);
 
-      const chinaDataArray: Array<Array<string>> = array.filter((row) => row[1] === "China");
+      const chinaDataArray: Array<Array<string>> = splicedArray.filter((row) => row[1] === "China" && row[0] !== "Macau" && row[0] !== "Hong Kong");
       const chinaArray: Array<string> = specialArrayGenerator(chinaDataArray, "China");
       newArray.push(chinaArray);
 
@@ -685,7 +877,7 @@ export namespace CasesUtils {
     const usCasesArray: Array<Array<string>> = processUsArray(await getCsvArray("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv"));
     const usDeathsArray: Array<Array<string>> = processUsArray(await getCsvArray("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_US.csv"));
     const globalTotalCasesFirstRow: Array<string> = globalCasesArray[0];
-    const firstDateString: string = globalTotalCasesFirstRow[4];
+    const firstDateString: string = globalTotalCasesFirstRow[5];
     const lastDateString: string = globalTotalCasesFirstRow[globalTotalCasesFirstRow.length - 1];
     const dateStringArray: Array<string> = getDateStringArray(firstDateString, lastDateString);
 
@@ -699,7 +891,8 @@ export namespace CasesUtils {
           createDailyData(dailyCasesData, date);
           dailyCasesData[date] = {
             ...dailyCasesData[date],
-            totalCases: parseInt(row[index + 4]),
+            population: parseInt(row[4]),
+            totalCases: parseInt(row[index + 5]),
           };
         });
         data[hierarchicalName] = {
@@ -719,7 +912,7 @@ export namespace CasesUtils {
           createDailyData(dailyCasesData, date);
           dailyCasesData[date] = {
             ...dailyCasesData[date],
-            totalDeaths: parseInt(row[index + 4]),
+            totalDeaths: parseInt(row[index + 5]),
           };
         });
       }
@@ -735,7 +928,7 @@ export namespace CasesUtils {
           createDailyData(dailyCasesData, date);
           dailyCasesData[date] = {
             ...dailyCasesData[date],
-            totalRecoveries: parseInt(row[index + 4]),
+            totalRecoveries: parseInt(row[index + 5]),
           };
         });
         data[hierarchicalName] = {
@@ -775,6 +968,7 @@ export namespace CasesUtils {
           createDailyData(dailyCasesData, date);
           dailyCasesData[date] = {
             ...dailyCasesData[date],
+            population: parseInt(row[11]),
             totalDeaths: parseInt(row[index + 12]),
           };
         });
@@ -784,6 +978,7 @@ export namespace CasesUtils {
         };
       }
     }
+    
     return true;
   };
 
