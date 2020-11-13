@@ -7,10 +7,10 @@ export namespace MapService {
   export const getMayLayer0Polygons = (): Array<ServerMapPolygon> => {
     return mapLayer0;
   };
-  export const getMayLayer1Polygons = (name: string): Array<ServerMapPolygon> => {
-    return mapLayer1[name] || [];
+  export const getMayLayer1Polygons = (hierarchicalName: string): Array<ServerMapPolygon> => {
+    return mapLayer1[hierarchicalName] || [];
   };
-  export const getMayLayer2Polygons = (name: string): Array<ServerMapPolygon> => {
-    return mapLayer2[name] || [];
+  export const getMayLayer2Polygons = (hierarchicalName: string): Array<ServerMapPolygon> => {
+    return mapLayer2[hierarchicalName] || [];
   };
 }

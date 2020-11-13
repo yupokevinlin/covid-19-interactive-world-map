@@ -11,14 +11,14 @@ export namespace MapEndPoints {
   };
   export const getMayLayer1Polygons = (req: Request, rsp: Response, next: NextFunction): any => {
     try {
-      rsp.send(MapService.getMayLayer1Polygons(req.params.name));
+      rsp.send(MapService.getMayLayer1Polygons(req.params.hierarchicalName));
     } catch (e) {
       next(e);
     }
   };
   export const getMayLayer2Polygons = (req: Request, rsp: Response, next: NextFunction): any => {
     try {
-      rsp.send(MapService.getMayLayer2Polygons(req.params.name));
+      rsp.send(MapService.getMayLayer2Polygons(req.params.hierarchicalName));
     } catch (e) {
       next(e);
     }

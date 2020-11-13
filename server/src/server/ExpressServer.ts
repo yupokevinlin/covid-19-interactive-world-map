@@ -53,8 +53,8 @@ export class ExpressServer {
 
   private addEndPoints(server: Express) {
     server.get("/api/map/layer0", MapEndPoints.getMayLayer0Polygons);
-    server.get("/api/map/layer1/:name", MapEndPoints.getMayLayer1Polygons);
-    server.get("/api/map/layer2/:name", MapEndPoints.getMayLayer2Polygons);
+    server.get("/api/map/layer1/:hierarchicalName", MapEndPoints.getMayLayer1Polygons);
+    server.get("/api/map/layer2/:hierarchicalName", MapEndPoints.getMayLayer2Polygons);
     server.get("/api/cases/:hierarchicalName", CasesEndpoints.getCasesDataByHierarchicalName);
   }
 }
