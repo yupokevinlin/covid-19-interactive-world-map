@@ -30,9 +30,9 @@ export namespace CasesUtils {
     const createDailyData = (dailyDataObject: ServerDailyCasesDataObject, date: string): void => {
       if (!dailyDataObject[date]) {
         dailyDataObject[date] = {
-          newCases: 0,
-          newRecoveries: 0,
-          newDeaths: 0,
+          totalCases: 0,
+          totalRecoveries: 0,
+          totalDeaths: 0,
         }
       }
     };
@@ -679,18 +679,18 @@ export namespace CasesUtils {
     };
 
 
-    const globalNewCasesArray: Array<Array<string>> = processGlobalArray(await getCsvArray("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv"));
+    const globalCasesArray: Array<Array<string>> = processGlobalArray(await getCsvArray("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv"));
     const globalDeathsArray: Array<Array<string>> = processGlobalArray(await getCsvArray("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv"));
-    const globalRecoveredArray: Array<Array<string>> = processGlobalArray(await getCsvArray("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv"));
+    const globalRecoveriesArray: Array<Array<string>> = processGlobalArray(await getCsvArray("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv"));
     const usCasesArray: Array<Array<string>> = processUsArray(await getCsvArray("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv"));
     const usDeathsArray: Array<Array<string>> = processUsArray(await getCsvArray("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_US.csv"));
-    const globalNewCasesFirstRow: Array<string> = globalNewCasesArray[0];
-    const firstDateString: string = globalNewCasesFirstRow[4];
-    const lastDateString: string = globalNewCasesFirstRow[globalNewCasesFirstRow.length - 1];
+    const globalTotalCasesFirstRow: Array<string> = globalCasesArray[0];
+    const firstDateString: string = globalTotalCasesFirstRow[4];
+    const lastDateString: string = globalTotalCasesFirstRow[globalTotalCasesFirstRow.length - 1];
     const dateStringArray: Array<string> = getDateStringArray(firstDateString, lastDateString);
 
-    for (let globalNewCasesArrayIndex = 1; globalNewCasesArrayIndex < globalNewCasesArray.length; globalNewCasesArrayIndex++) {
-      const row: Array<string> = globalNewCasesArray[globalNewCasesArrayIndex];
+    for (let globalTotalCasesArrayIndex = 1; globalTotalCasesArrayIndex < globalCasesArray.length; globalTotalCasesArrayIndex++) {
+      const row: Array<string> = globalCasesArray[globalTotalCasesArrayIndex];
       const [name, hierarchicalName, countryCode]: [Array<string>, string, string] = getName(row[1], row[0]);
       if (!!hierarchicalName) {
         createRegionData(name, hierarchicalName, countryCode);
@@ -699,7 +699,7 @@ export namespace CasesUtils {
           createDailyData(dailyCasesData, date);
           dailyCasesData[date] = {
             ...dailyCasesData[date],
-            newCases: parseInt(row[index + 4]),
+            totalCases: parseInt(row[index + 4]),
           };
         });
         data[hierarchicalName] = {
@@ -719,14 +719,14 @@ export namespace CasesUtils {
           createDailyData(dailyCasesData, date);
           dailyCasesData[date] = {
             ...dailyCasesData[date],
-            newDeaths: parseInt(row[index + 4]),
+            totalDeaths: parseInt(row[index + 4]),
           };
         });
       }
     }
 
-    for (let globalRecoveredArrayIndex = 1; globalRecoveredArrayIndex < globalRecoveredArray.length; globalRecoveredArrayIndex++) {
-      const row: Array<string> = globalRecoveredArray[globalRecoveredArrayIndex];
+    for (let globalRecoveredArrayIndex = 1; globalRecoveredArrayIndex < globalRecoveriesArray.length; globalRecoveredArrayIndex++) {
+      const row: Array<string> = globalRecoveriesArray[globalRecoveredArrayIndex];
       const [name, hierarchicalName, countryCode]: [Array<string>, string, string] = getName(row[1], row[0]);
       if (!!hierarchicalName) {
         createRegionData(name, hierarchicalName, countryCode);
@@ -735,7 +735,7 @@ export namespace CasesUtils {
           createDailyData(dailyCasesData, date);
           dailyCasesData[date] = {
             ...dailyCasesData[date],
-            newRecoveries: parseInt(row[index + 4]),
+            totalRecoveries: parseInt(row[index + 4]),
           };
         });
         data[hierarchicalName] = {
@@ -755,7 +755,7 @@ export namespace CasesUtils {
           createDailyData(dailyCasesData, date);
           dailyCasesData[date] = {
             ...dailyCasesData[date],
-            newCases: parseInt(row[index + 11]),
+            totalCases: parseInt(row[index + 11]),
           };
         });
         data[hierarchicalName] = {
@@ -775,7 +775,7 @@ export namespace CasesUtils {
           createDailyData(dailyCasesData, date);
           dailyCasesData[date] = {
             ...dailyCasesData[date],
-            newDeaths: parseInt(row[index + 12]),
+            totalDeaths: parseInt(row[index + 12]),
           };
         });
         data[hierarchicalName] = {

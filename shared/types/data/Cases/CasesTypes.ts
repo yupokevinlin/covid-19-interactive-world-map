@@ -10,9 +10,9 @@ export interface ServerDailyCasesDataObject {
 }
 
 export interface ServerDailyCasesData {
-  newCases: number;
-  newRecoveries: number;
-  newDeaths: number;
+  totalCases: number;
+  totalRecoveries: number;
+  totalDeaths: number;
 }
 
 export interface ServerCasesDataObject {
