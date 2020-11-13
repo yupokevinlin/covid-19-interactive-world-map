@@ -71,9 +71,6 @@ export namespace CasesUtils {
 
       };
 
-      const layer0NamesToIgnore: Array<string> = ["Diamond Princess", "MS Zaandam"];
-      const layer1NamesToIgnore: Array<string> = ["Diamond Princess", "Grand Princess"];
-
       const getLayer0ConvertedName = (name: string): string => {
         return !!layer0NameConversionObject[name] ? layer0NameConversionObject[name] : name;
       };
@@ -447,9 +444,7 @@ export namespace CasesUtils {
         if (layer0MapPolygon) {
           return [layer0MapPolygon.name, layer0MapPolygon.hierarchicalName, layer0MapPolygon.countryCode];
         } else {
-          if (!layer0NamesToIgnore.includes(convertedCountry)) {
-            console.log(`Unable to find map polygon for country: ${convertedCountry}, province: ${convertedProvince}, county: ${convertedCounty}.`);
-          }
+          console.log(`Unable to find map polygon for country: ${convertedCountry}, province: ${convertedProvince}, county: ${convertedCounty}.`);
           return [[], "", ""];
         }
       } else {
@@ -462,14 +457,13 @@ export namespace CasesUtils {
           if (layer1MapPolygon) {
             return [layer1MapPolygon.name, layer1MapPolygon.hierarchicalName, layer1MapPolygon.countryCode];
           } else {
-            if (!layer1NamesToIgnore.includes(convertedProvince)) {
-              const specialLayer1MapPolygon: ServerMapPolygon | undefined = layer1SpecialProcessor(convertedCountry, convertedProvince);
-              if (specialLayer1MapPolygon) {
-                return [specialLayer1MapPolygon.name, specialLayer1MapPolygon.hierarchicalName, specialLayer1MapPolygon.countryCode];
-              }
+            const specialLayer1MapPolygon: ServerMapPolygon | undefined = layer1SpecialProcessor(convertedCountry, convertedProvince);
+            if (specialLayer1MapPolygon) {
+              return [specialLayer1MapPolygon.name, specialLayer1MapPolygon.hierarchicalName, specialLayer1MapPolygon.countryCode];
+            } else {
               console.log(`Unable to find map polygon for country: ${convertedCountry}, province: ${convertedProvince}, county: ${convertedCounty}.`);
+              return [[], "", ""];
             }
-            return [[], "", ""];
           }
         } else {
           if (!!convertedCountry && !!convertedProvince && !!convertedCounty) {
@@ -488,6 +482,56 @@ export namespace CasesUtils {
           return [[], "", ""];
         }
       }
+    };
+
+    const processGlobalArray = (array: Array<Array<string>>): Array<Array<string>> => {
+      const countriesToIgnore: Array<string> = ["Diamond Princess", "MS Zaandam"];
+      const provincesToIgnore: Array<string> = ["Diamond Princess", "Grand Princess"];
+
+      const rowLength: number = array[0].length;
+      const specialArrayGenerator = (dataArray: Array<Array<string>>, country: string, province?: string): Array<string> => {
+        const specialArray: Array<string> = new Array(rowLength).fill("");
+        if (!!country) {
+          specialArray[1] = country;
+        }
+        if (!!province) {
+          specialArray[0] = province;
+        }
+        for (let i = 4; i < rowLength; i++) {
+          let value: number = 0;
+          dataArray.forEach(row => {
+            value = value + parseInt(row[i]);
+          });
+          specialArray[i] = value.toString();
+        }
+        return specialArray;
+      };
+
+      const newArray: Array<Array<string>> = array.filter((row) => {
+        const country: string = row[1];
+        if (countriesToIgnore.includes(country)) {
+          return false;
+        }
+        const province: string = row[0];
+        if (provincesToIgnore.includes(province)) {
+          return false;
+        }
+        return true;
+      });
+
+      const australiaDataArray: Array<Array<string>> = array.filter((row) => row[1] === "Australia");
+      const australiaArray: Array<string> = specialArrayGenerator(australiaDataArray, "Australia");
+      newArray.push(australiaArray);
+
+      const canadaDataArray: Array<Array<string>> = array.filter((row) => row[1] === "Canada");
+      const canadaArray: Array<string> = specialArrayGenerator(canadaDataArray, "Canada");
+      newArray.push(canadaArray);
+
+      const chinaDataArray: Array<Array<string>> = array.filter((row) => row[1] === "China");
+      const chinaArray: Array<string> = specialArrayGenerator(chinaDataArray, "China");
+      newArray.push(chinaArray);
+
+      return newArray;
     };
 
     const processUsArray = (array: Array<Array<string>>): Array<Array<string>> => {
@@ -635,9 +679,9 @@ export namespace CasesUtils {
     };
 
 
-    const globalNewCasesArray: Array<Array<string>> = await getCsvArray("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv");
-    const globalDeathsArray: Array<Array<string>> = await getCsvArray("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv");
-    const globalRecoveredArray: Array<Array<string>> = await getCsvArray("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv");
+    const globalNewCasesArray: Array<Array<string>> = processGlobalArray(await getCsvArray("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv"));
+    const globalDeathsArray: Array<Array<string>> = processGlobalArray(await getCsvArray("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv"));
+    const globalRecoveredArray: Array<Array<string>> = processGlobalArray(await getCsvArray("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv"));
     const usCasesArray: Array<Array<string>> = processUsArray(await getCsvArray("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv"));
     const usDeathsArray: Array<Array<string>> = processUsArray(await getCsvArray("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_US.csv"));
     const globalNewCasesFirstRow: Array<string> = globalNewCasesArray[0];
