@@ -644,7 +644,7 @@ export namespace CasesUtils {
           }
           const state: string = row[6];
           const county: string = row[5];
-          if (!county.includes("Out of") && county !== "Unassigned" && !ignoreUSLayer2(state, county)) {
+          if (!county.includes("Out of") && state !== "Grand Princess" && state !== "Diamond Princess" && county !== "Unassigned" && !ignoreUSLayer2(state, county)) {
             return true;
           } else {
             return false;
