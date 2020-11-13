@@ -8,6 +8,7 @@ import * as cookieParser from "cookie-parser";
 import {MapEndPoints} from "../service/Map/MapEndpoints";
 import {CasesUtils} from "../service/Cases/CasesUtils";
 import {CasesEndpoints} from "../service/Cases/CasesEndpoints";
+import {MapUtils} from "../service/Map/MapUtils";
 
 export class ExpressServer {
   private server?: Express;
@@ -21,7 +22,8 @@ export class ExpressServer {
     this.httpServer = this.listen(server, port);
     this.server = server;
     this.addEndPoints(server);
-    await CasesUtils.getCasesTimeSeries();
+    // MapUtils.convertMapData();
+    await CasesUtils.fetchCasesData();
     return this.server;
   }
 
@@ -53,15 +55,7 @@ export class ExpressServer {
     server.get("/api/map/layer0", MapEndPoints.getMayLayer0Polygons);
     server.get("/api/map/layer1/:name", MapEndPoints.getMayLayer1Polygons);
     server.get("/api/map/layer2/:name", MapEndPoints.getMayLayer2Polygons);
-    server.get("/api/cases/world", CasesEndpoints.getWorldCases);
-    server.get("/api/cases/layer0", CasesEndpoints.getLayer0Cases);
-    server.get("/api/cases/layer0/:name", CasesEndpoints.getLayer0CasesByName);
-    server.get("/api/cases/layer1", CasesEndpoints.getLayer1Cases);
-    server.get("/api/cases/layer1/:name", CasesEndpoints.getLayer1CasesByName);
-    server.get("/api/cases/layer1_by_layer0/:name", CasesEndpoints.getLayer1CasesByLayer0Name);
-    server.get("/api/cases/layer2", CasesEndpoints.getLayer2Cases);
-    server.get("/api/cases/layer2/:name", CasesEndpoints.getLayer2CasesByName);
-    server.get("/api/cases/layer1_by_layer0layer1/:name", CasesEndpoints.getLayer2CasesByLayer0Layer1Names);
+    server.get("/api/cases/:hierarchicalName", CasesEndpoints.getCasesDataByHierarchicalName);
   }
 }
 

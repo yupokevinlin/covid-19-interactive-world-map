@@ -18,9 +18,10 @@ const mapLayer2: ServerMapPolygonsObject = require("../../../../data/map/gadm/ga
 const worldPopulation: PopulationObject = require("../../../../data/population/united-nations-world-population.json");
 
 export namespace CasesUtils {
+  export let data: ServerCasesDataObject = {};
   export const fetchCasesData = async (): Promise<boolean> => {
     try {
-      const data: ServerCasesDataObject = {};
+      data = {};
       const createRegionData = (name: Array<string>, hierarchicalName: string, countryCode: string): void => {
         if (!data[hierarchicalName]) {
           data[hierarchicalName] = {
