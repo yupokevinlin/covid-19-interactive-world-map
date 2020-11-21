@@ -2,7 +2,7 @@
 import {Moment} from "moment";
 import {
   ServerCasesData,
-  ServerCasesDataObject,
+  ServerCasesDataObject, ServerDailyCasesData,
   ServerDailyCasesDataObject
 } from "../../../../shared/types/data/Cases/CasesTypes";
 import {ServerMapPolygon, ServerMapPolygonsObject} from "../../../../shared/types/data/Map/MapTypes";
@@ -914,6 +914,28 @@ export namespace CasesUtils {
         });
       };
 
+      const sortData = (): void => {
+        Object.entries(data).forEach(([key, value]) => {
+          const oldDataObject: ServerDailyCasesDataObject = data[key].data;
+          const newDataObject: ServerDailyCasesDataObject = {};
+          Object.keys(oldDataObject).sort((a, b) => {
+            if (a === b) {
+              return 0;
+            }
+            const dateA: Moment = getMomentDateFromDateString(a);
+            const dateB: Moment = getMomentDateFromDateString(b);
+            const isALaterThanB: boolean = dateA.isAfter(dateB);
+            return isALaterThanB ? 1 : -1;
+          }).forEach((key) => {
+            newDataObject[key] = oldDataObject[key];
+          });
+
+          data[key] = {
+            ...value,
+            data: newDataObject,
+          };
+        });
+      };
 
       const globalCasesArray: Array<Array<string>> = processGlobalArray(await getCsvArray("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv"));
       const globalDeathsArray: Array<Array<string>> = processGlobalArray(await getCsvArray("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv"));
@@ -1111,6 +1133,8 @@ export namespace CasesUtils {
 
       addEarlyCasesData();
 
+      sortData();
+      
       return true;
     } catch (e) {
       console.log(e);
@@ -1126,11 +1150,7 @@ export namespace CasesUtils {
   };
 
   const getMomentDateFromDateString = (dateString: string): Moment => {
-    const dateStringArray: Array<string> = dateString.split("/");
-    const dateDay: number = parseInt(dateStringArray[1]);
-    const dateMonth: number = parseInt(dateStringArray[0]);
-    const dateYear: number = parseInt(`20${dateStringArray[2]}`);
-    const date: Moment = moment().date(dateDay).month(dateMonth - 1).year(dateYear).startOf("day");
+    const date: Moment = moment(dateString, "M/D/YY").startOf("day");
     return date;
   };
 
