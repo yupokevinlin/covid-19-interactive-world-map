@@ -889,6 +889,60 @@ export namespace CasesUtils {
         return newArray;
       };
 
+      const generateUSStatesData = (): void => {
+        const uniqueStates: Array<string> = [];
+        Object.keys(data).forEach((key) => {
+          if (key.includes("United States of America")) {
+            const name: Array<string> = getNameArray(key);
+            if (name.length === 4) {
+              const state: string = name[2];
+              if (!uniqueStates.includes(state)) {
+                uniqueStates.push(state);
+              }
+            }
+          }
+        });
+        uniqueStates.forEach((uniqueState) => {
+          const [name, hierarchicalName, countryCode]: [Array<string>, string, string] = getName("United States of America", uniqueState);
+          if (!!hierarchicalName) {
+            const matchingCountiesData: Array<ServerCasesData> = [];
+            Object.entries(data).forEach(([key, value]) => {
+              if (key.includes(hierarchicalName)) {
+                matchingCountiesData.push(value);
+              }
+            });
+            createRegionData(name, hierarchicalName, countryCode);
+            const dailyCasesData: ServerDailyCasesDataObject = data[hierarchicalName] ? data[hierarchicalName].data : {};
+            let population: number = 0;
+            matchingCountiesData.forEach((matchingCountyData) => {
+              population = population + matchingCountyData.population;
+            });
+            dateStringArray.forEach((date, index) => {
+              createDailyData(dailyCasesData, date);
+              let totalCases: number = 0;
+              let totalDeaths: number = 0;
+              let totalRecoveries: number = 0;
+              matchingCountiesData.forEach((matchingCountyData) => {
+                totalCases = totalCases + matchingCountyData.data[date].totalCases;
+                totalDeaths = totalDeaths + matchingCountyData.data[date].totalDeaths;
+                totalRecoveries = totalRecoveries + matchingCountyData.data[date].totalRecoveries;
+              });
+              dailyCasesData[date] = {
+                ...dailyCasesData[date],
+                totalCases: totalCases,
+                totalDeaths: totalDeaths,
+                totalRecoveries: totalRecoveries,
+              };
+            });
+            data[hierarchicalName] = {
+              ...data[hierarchicalName],
+              population: population,
+              data: dailyCasesData,
+            };
+          }
+        });
+      };
+
       const checkData = (): void => {
         //Check if all layers have data.
         const existingLayers: Array<ServerMapPolygon> = [];
@@ -1159,6 +1213,7 @@ export namespace CasesUtils {
         }
       }
 
+      generateUSStatesData();
       checkData();
       generateWorldData();
       addEarlyCasesData();
