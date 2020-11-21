@@ -16,6 +16,7 @@ const mapLayer0: Array<ServerMapPolygon> = require("../../../../data/map/gadm/ga
 const mapLayer1: ServerMapPolygonsObject = require("../../../../data/map/gadm/gadm36_1_processed_object.json");
 const mapLayer2: ServerMapPolygonsObject = require("../../../../data/map/gadm/gadm36_2_processed_object.json");
 const worldPopulationObject: PopulationObject = require("../../../../data/population/united-nations-world-population.json");
+const earlyCases: Array<any> = require("../../../../data/cases/early-cases.json");
 
 export namespace CasesUtils {
   export let data: ServerCasesDataObject = {};
@@ -865,6 +866,54 @@ export namespace CasesUtils {
         return newArray;
       };
 
+      const addEarlyCasesData = (): void => {
+        const earlyDateStringArray: Array<string> = getDateStringArray("1/1/20", "1/21/20");
+        Object.entries(data).forEach(([key, regionData]) => {
+          const dailyCasesData: ServerDailyCasesDataObject = regionData.data;
+          earlyDateStringArray.forEach((date) => {
+            createDailyData(dailyCasesData, date);
+          });
+        });
+        earlyCases.forEach((earlyCase) => {
+          const type: string = earlyCase.type;
+          const name: Array<string> = ["World"];
+          const country: string = earlyCase.country;
+          const province: string = earlyCase.province;
+          const county: string = earlyCase.county;
+          if (country) {
+            name.push(country);
+          }
+          if (province) {
+            name.push(province);
+          }
+          if (county) {
+            name.push(county);
+          }
+          const hierarchicalName: string = getHierarchicalName(name);
+          const casesData: ServerCasesData = data[hierarchicalName];
+          if (!!casesData) {
+            const dataObject: ServerDailyCasesDataObject = casesData.data;
+            earlyDateStringArray.forEach((date) => {
+              const count: number = earlyCase[date];
+              switch (type) {
+                case "cases": {
+                  dataObject[date].totalCases = count;
+                    break;
+                }
+                case "deaths": {
+                  dataObject[date].totalDeaths = count;
+                  break;
+                }
+                case "recoveries": {
+                  dataObject[date].totalRecoveries = count;
+                  break;
+                }
+              }
+            });
+          }
+        });
+      };
+
 
       const globalCasesArray: Array<Array<string>> = processGlobalArray(await getCsvArray("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv"));
       const globalDeathsArray: Array<Array<string>> = processGlobalArray(await getCsvArray("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv"));
@@ -1059,6 +1108,8 @@ export namespace CasesUtils {
         population: worldPopulation,
         data: worldDailyCasesData,
       };
+
+      addEarlyCasesData();
 
       return true;
     } catch (e) {
