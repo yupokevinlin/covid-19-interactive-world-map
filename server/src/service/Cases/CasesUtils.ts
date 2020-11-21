@@ -738,6 +738,9 @@ export namespace CasesUtils {
                 case "Yakutat": {
                   return true;
                 }
+                default: {
+                  return false;
+                }
               }
             }
             case "Maryland": {
@@ -746,12 +749,18 @@ export namespace CasesUtils {
                 case "Baltimore City": {
                   return true;
                 }
+                default: {
+                  return false;
+                }
               }
             }
             case "Massachusetts": {
               switch (convertedCounty) {
                 case "Dukes and Nantucket": {
                   return true;
+                }
+                default: {
+                  return false;
                 }
               }
             }
@@ -760,6 +769,9 @@ export namespace CasesUtils {
                 case "Federal Correctional Institution (FCI)":
                 case "Michigan Department of Corrections (MDOC)": {
                   return true;
+                }
+                default: {
+                  return false;
                 }
               }
             }
@@ -770,6 +782,9 @@ export namespace CasesUtils {
                 case "St. Louis": //Valid Counties
                 case "St. Louis City": {
                   return true;
+                }
+                default: {
+                  return false;
                 }
               }
             }
@@ -786,6 +801,9 @@ export namespace CasesUtils {
                 case "Weber-Morgan": {
                   return true;
                 }
+                default: {
+                  return false;
+                }
               }
             }
             case "Virginia": {
@@ -796,10 +814,15 @@ export namespace CasesUtils {
                 case "Richmond City": {
                   return true;
                 }
+                default: {
+                  return false;
+                }
               }
             }
+            default: {
+              return false;
+            }
           }
-          return false;
         };
 
         const rowLength: number = array[0].length;
@@ -1134,7 +1157,7 @@ export namespace CasesUtils {
       addEarlyCasesData();
 
       sortData();
-      
+
       return true;
     } catch (e) {
       console.log(e);
