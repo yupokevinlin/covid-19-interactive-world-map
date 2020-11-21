@@ -889,7 +889,69 @@ export namespace CasesUtils {
         return newArray;
       };
 
+      const checkData = (): void => {
+        //Check if all layers have data.
+        const existingLayers: Array<ServerMapPolygon> = [];
+        mapLayer0.forEach((layer0) => {
+          if (layer0.hasChildren) {
+            mapLayer1[layer0.hierarchicalName].forEach((layer1) => {
+              if (layer1.hasChildren) {
+                mapLayer2[layer1.hierarchicalName].forEach((layer2) => {
+                  existingLayers.push(layer2);
+                });
+              }
+              existingLayers.push(layer1);
+            });
+          }
+          existingLayers.push(layer0);
+        });
+        const dataExistingLayerNames: Array<string> = Object.entries(data).map(([key, data]) => key);
+
+        //Add empty data if missing
+        existingLayers.forEach((layer) => {
+          if (!dataExistingLayerNames.includes(layer.hierarchicalName)) {
+            console.log(`Missing data for layer: ${layer.hierarchicalName}.`);
+            createRegionData(layer.name, layer.hierarchicalName, layer.countryCode);
+            const dailyCasesData: ServerDailyCasesDataObject = {};
+            dateStringArray.forEach((date, index) => {
+              createDailyData(dailyCasesData, date);
+            });
+            data[layer.hierarchicalName] = {
+              ...data[layer.hierarchicalName],
+              isMissingData: true,
+              data: dailyCasesData,
+            };
+          }
+        });
+      };
+
+      const generateWorldData = (): void => {
+        //Generate World Data
+        const layer0Data: Array<ServerCasesData> = Object.entries(data).map(([key, data]) => data).filter((data) => getNameArray(data.hierarchicalName).length === 2);
+        const worldPopulation: number = layer0Data.map(layer => layer.population).reduce((accumulator, value) => accumulator + value);
+        const worldDailyCasesData: ServerDailyCasesDataObject = {};
+        dateStringArray.forEach((date, index) => {
+          createDailyData(worldDailyCasesData, date);
+          layer0Data.forEach((layer0) => {
+            worldDailyCasesData[date] = {
+              totalCases: worldDailyCasesData[date].totalCases + layer0.data[date].totalCases,
+              totalDeaths: worldDailyCasesData[date].totalDeaths + layer0.data[date].totalDeaths,
+              totalRecoveries: worldDailyCasesData[date].totalRecoveries + layer0.data[date].totalRecoveries,
+            };
+          });
+        });
+        data["World"] = {
+          name: ["World"],
+          hierarchicalName: "World",
+          countryCode: "World",
+          isMissingData: false,
+          population: worldPopulation,
+          data: worldDailyCasesData,
+        };
+      };
+
       const addEarlyCasesData = (): void => {
+        //Add data not present in JHU data
         const earlyDateStringArray: Array<string> = getDateStringArray("1/1/20", "1/21/20");
         Object.entries(data).forEach(([key, regionData]) => {
           const dailyCasesData: ServerDailyCasesDataObject = regionData.data;
@@ -1097,65 +1159,9 @@ export namespace CasesUtils {
         }
       }
 
-      //Check if all layers have data.
-      const existingLayers: Array<ServerMapPolygon> = [];
-      mapLayer0.forEach((layer0) => {
-        if (layer0.hasChildren) {
-          mapLayer1[layer0.hierarchicalName].forEach((layer1) => {
-            if (layer1.hasChildren) {
-              mapLayer2[layer1.hierarchicalName].forEach((layer2) => {
-                existingLayers.push(layer2);
-              });
-            }
-            existingLayers.push(layer1);
-          });
-        }
-        existingLayers.push(layer0);
-      });
-      const dataExistingLayerNames: Array<string> = Object.entries(data).map(([key, data]) => key);
-
-      //Add empty data if missing
-      existingLayers.forEach((layer) => {
-        if (!dataExistingLayerNames.includes(layer.hierarchicalName)) {
-          console.log(`Missing data for layer: ${layer.hierarchicalName}.`);
-          createRegionData(layer.name, layer.hierarchicalName, layer.countryCode);
-          const dailyCasesData: ServerDailyCasesDataObject = {};
-          dateStringArray.forEach((date, index) => {
-            createDailyData(dailyCasesData, date);
-          });
-          data[layer.hierarchicalName] = {
-            ...data[layer.hierarchicalName],
-            isMissingData: true,
-            data: dailyCasesData,
-          };
-        }
-      });
-
-      //Generate World Data
-      const layer0Data: Array<ServerCasesData> = Object.entries(data).map(([key, data]) => data).filter((data) => getNameArray(data.hierarchicalName).length === 2);
-      const worldPopulation: number = layer0Data.map(layer => layer.population).reduce((accumulator, value) => accumulator + value);
-      const worldDailyCasesData: ServerDailyCasesDataObject = {};
-      dateStringArray.forEach((date, index) => {
-        createDailyData(worldDailyCasesData, date);
-        layer0Data.forEach((layer0) => {
-          worldDailyCasesData[date] = {
-            totalCases: worldDailyCasesData[date].totalCases + layer0.data[date].totalCases,
-            totalDeaths: worldDailyCasesData[date].totalDeaths + layer0.data[date].totalDeaths,
-            totalRecoveries: worldDailyCasesData[date].totalRecoveries + layer0.data[date].totalRecoveries,
-          };
-        });
-      });
-      data["World"] = {
-        name: ["World"],
-        hierarchicalName: "World",
-        countryCode: "World",
-        isMissingData: false,
-        population: worldPopulation,
-        data: worldDailyCasesData,
-      };
-
+      checkData();
+      generateWorldData();
       addEarlyCasesData();
-
       sortData();
 
       return true;
