@@ -494,7 +494,7 @@ export namespace CasesUtils {
 
       const processGlobalArray = (array: Array<Array<string>>): Array<Array<string>> => {
         const countriesToIgnore: Array<string> = ["Diamond Princess", "MS Zaandam"];
-        const provincesToIgnore: Array<string> = ["Diamond Princess", "Grand Princess"];
+        const provincesToIgnore: Array<string> = ["Diamond Princess", "Grand Princess", "Repatriated Travellers"];
         const populationCountryConversionObject: any = {
           "Burma": "Myanmar",
           "Bolivia": "Bolivia (Plurinational State of)",
