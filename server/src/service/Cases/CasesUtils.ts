@@ -5,16 +5,16 @@ import {
   ServerCasesDataObject, ServerDailyCasesData,
   ServerDailyCasesDataObject
 } from "../../../../shared/types/data/Cases/CasesTypes";
-import {ServerMapPolygon, ServerMapPolygonsObject} from "../../../../shared/types/data/Map/MapTypes";
+import {MapPolygon, MapPolygonsObject} from "../../../../shared/types/data/Map/MapTypes";
 import {getHierarchicalName, getNameArray} from "../../../../shared/helpers/General";
 import {PopulationData, PopulationObject} from "../../../../data/population/type";
 
 const csv = require("csv-string");
 const axios = require("axios").default;
 const moment = require("moment");
-const mapLayer0: Array<ServerMapPolygon> = require("../../../../data/map/gadm/gadm36_0_processed_array.json");
-const mapLayer1: ServerMapPolygonsObject = require("../../../../data/map/gadm/gadm36_1_processed_object.json");
-const mapLayer2: ServerMapPolygonsObject = require("../../../../data/map/gadm/gadm36_2_processed_object.json");
+const mapLayer0: Array<MapPolygon> = require("../../../../data/map/gadm/gadm36_0_processed_array.json");
+const mapLayer1: MapPolygonsObject = require("../../../../data/map/gadm/gadm36_1_processed_object.json");
+const mapLayer2: MapPolygonsObject = require("../../../../data/map/gadm/gadm36_2_processed_object.json");
 const worldPopulationObject: PopulationObject = require("../../../../data/population/united-nations-world-population.json");
 const earlyCases: Array<any> = require("../../../../data/cases/early-cases.json");
 
@@ -99,7 +99,7 @@ export namespace CasesUtils {
           }
         };
 
-        const layer1SpecialProcessor = (convertedCountry: string, convertedProvince: string): ServerMapPolygon | undefined => {
+        const layer1SpecialProcessor = (convertedCountry: string, convertedProvince: string): MapPolygon | undefined => {
           switch (convertedCountry) {
             case "China": {
               switch (convertedProvince) {
@@ -448,7 +448,7 @@ export namespace CasesUtils {
         if (!!convertedCountry && !convertedProvince && !convertedCounty) {
           const layer0Name: Array<string> = ["World", convertedCountry];
           const layer0HierarchicalName: string = getHierarchicalName(layer0Name);
-          const layer0MapPolygon: ServerMapPolygon | undefined = mapLayer0.find((mapLayer) => mapLayer.hierarchicalName === layer0HierarchicalName);
+          const layer0MapPolygon: MapPolygon | undefined = mapLayer0.find((mapLayer) => mapLayer.hierarchicalName === layer0HierarchicalName);
           if (layer0MapPolygon) {
             return [layer0MapPolygon.name, layer0MapPolygon.hierarchicalName, layer0MapPolygon.countryCode];
           } else {
@@ -461,11 +461,11 @@ export namespace CasesUtils {
             const layer0HierarchicalName: string = getHierarchicalName(layer0Name);
             const layer1Name: Array<string> = ["World", convertedCountry, convertedProvince];
             const layer1HierarchicalName: string = getHierarchicalName(layer1Name);
-            const layer1MapPolygon: ServerMapPolygon | undefined = mapLayer1[layer0HierarchicalName] ? mapLayer1[layer0HierarchicalName].find((mapLayer) => mapLayer.hierarchicalName === layer1HierarchicalName) : undefined;
+            const layer1MapPolygon: MapPolygon | undefined = mapLayer1[layer0HierarchicalName] ? mapLayer1[layer0HierarchicalName].find((mapLayer) => mapLayer.hierarchicalName === layer1HierarchicalName) : undefined;
             if (layer1MapPolygon) {
               return [layer1MapPolygon.name, layer1MapPolygon.hierarchicalName, layer1MapPolygon.countryCode];
             } else {
-              const specialLayer1MapPolygon: ServerMapPolygon | undefined = layer1SpecialProcessor(convertedCountry, convertedProvince);
+              const specialLayer1MapPolygon: MapPolygon | undefined = layer1SpecialProcessor(convertedCountry, convertedProvince);
               if (specialLayer1MapPolygon) {
                 return [specialLayer1MapPolygon.name, specialLayer1MapPolygon.hierarchicalName, specialLayer1MapPolygon.countryCode];
               } else {
@@ -479,7 +479,7 @@ export namespace CasesUtils {
               const layer1HierarchicalName: string = getHierarchicalName(layer1Name);
               const layer2Name: Array<string> = ["World", convertedCountry, convertedProvince, convertedCounty];
               const layer2HierarchicalName: string = getHierarchicalName(layer2Name);
-              const layer2MapPolygon: ServerMapPolygon | undefined = mapLayer2[layer1HierarchicalName] ? mapLayer2[layer1HierarchicalName].find((mapLayer) => mapLayer.hierarchicalName === layer2HierarchicalName) : undefined;
+              const layer2MapPolygon: MapPolygon | undefined = mapLayer2[layer1HierarchicalName] ? mapLayer2[layer1HierarchicalName].find((mapLayer) => mapLayer.hierarchicalName === layer2HierarchicalName) : undefined;
               if (layer2MapPolygon) {
                 return [layer2MapPolygon.name, layer2MapPolygon.hierarchicalName, layer2MapPolygon.countryCode];
               } else {
@@ -945,7 +945,7 @@ export namespace CasesUtils {
 
       const checkData = (): void => {
         //Check if all layers have data.
-        const existingLayers: Array<ServerMapPolygon> = [];
+        const existingLayers: Array<MapPolygon> = [];
         mapLayer0.forEach((layer0) => {
           if (layer0.hasChildren) {
             mapLayer1[layer0.hierarchicalName].forEach((layer1) => {

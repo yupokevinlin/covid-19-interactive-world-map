@@ -1,4 +1,4 @@
-import {ServerMapPolygon, ServerMapPolygonsObject} from "../../../../shared/types/data/Map/MapTypes";
+import {MapPolygon, MapPolygonsObject} from "../../../../shared/types/data/Map/MapTypes";
 const mapLayer0: any = require("../../../../data/map/gadm/gadm36_0-simplified.json");
 const mapLayer1: any = require("../../../../data/map/gadm/gadm36_1-simplified.json");
 const mapLayer2: any = require("../../../../data/map/gadm/gadm36_2-simplified.json");
@@ -41,7 +41,7 @@ export namespace MapUtils {
       return countries.getName(correctCountryCode(feature.properties.GID_0), "en");
     };
     const layer0Features: Array<any> = mapLayer0.features;
-    const layer0: Array<ServerMapPolygon> = layer0Features.filter(featureFilterCallback).map(feature => {
+    const layer0: Array<MapPolygon> = layer0Features.filter(featureFilterCallback).map(feature => {
       const countryCode: string = correctCountryCode(feature.properties.GID_0);
       const countryName: string = countries.getName(countryCode, "en");
 
@@ -59,7 +59,7 @@ export namespace MapUtils {
     });
 
     const layer1Features: Array<any> = mapLayer1.features;
-    const layer1: Array<ServerMapPolygon> = layer1Features.filter(featureFilterCallback).map(feature => {
+    const layer1: Array<MapPolygon> = layer1Features.filter(featureFilterCallback).map(feature => {
       const countryCode: string = correctCountryCode(feature.properties.GID_0);
       const countryName: string = countries.getName(countryCode, "en");
       const provinceName: string = layer1NameConversionObject[feature.properties.NAME_1] ? layer1NameConversionObject[feature.properties.NAME_1] : feature.properties.NAME_1;
@@ -77,7 +77,7 @@ export namespace MapUtils {
     });
     const layer2Features: Array<any> = mapLayer2.features;
     const layer2CountriesWithChildren: Array<string> = [];
-    const layer2: Array<ServerMapPolygon> = layer2Features.filter(featureFilterCallback).map(feature => {
+    const layer2: Array<MapPolygon> = layer2Features.filter(featureFilterCallback).map(feature => {
       const countryCode: string = correctCountryCode(feature.properties.GID_0);
       const countryName: string = countries.getName(countryCode, "en");
       const provinceName: string = layer1NameConversionObject[feature.properties.NAME_1] ? layer1NameConversionObject[feature.properties.NAME_1] : feature.properties.NAME_1;
@@ -95,7 +95,7 @@ export namespace MapUtils {
       };
     });
 
-    const layer1Object: ServerMapPolygonsObject = {};
+    const layer1Object: MapPolygonsObject = {};
     layer1.forEach(layer => {
       const layerName: Array<string> = [layer.name[0], layer.name[1]];
       const layerHierarchicalName: string = getHierarchicalName(layerName);
@@ -105,7 +105,7 @@ export namespace MapUtils {
         layer1Object[layerHierarchicalName].push(layer);
       }
     });
-    const layer2Object: ServerMapPolygonsObject = {};
+    const layer2Object: MapPolygonsObject = {};
     layer2.forEach(layer => {
       const layerName: Array<string> = [layer.name[0], layer.name[1], layer.name[2]];
       const layerHierarchicalName: string = getHierarchicalName(layerName);

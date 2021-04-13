@@ -1,4 +1,4 @@
-export interface ServerMapPolygon {
+export interface MapPolygon {
   name: Array<string>;
   hierarchicalName: string;
   countryCode: string;
@@ -6,6 +6,6 @@ export interface ServerMapPolygon {
   hasChildren: boolean;
 }
 
-export interface ServerMapPolygonsObject {
-  [hierarchicalName: string]: Array<ServerMapPolygon>;
+export interface MapPolygonsObject {
+  [hierarchicalName: string]: Array<MapPolygon>;
 }
