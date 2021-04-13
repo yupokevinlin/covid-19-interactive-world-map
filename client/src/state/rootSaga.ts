@@ -1,9 +1,9 @@
 import { all } from "redux-saga/effects";
-import MapPageContainerSagas from "./containers/MapPageContainer/sagas";
+import AppSagas from "./global/App/sagas";
 
 function* rootSaga(): any {
   yield all({
-    ...MapPageContainerSagas,
+    ...AppSagas,
   });
 }
 

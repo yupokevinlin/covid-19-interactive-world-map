@@ -1,10 +1,8 @@
 import { combineReducers } from "redux";
-import { reducer as mapPageContainerReducer } from "./containers/MapPageContainer/reducer";
-import { reducer as pageWrapperContainerReducer } from "./containers/PageWrapperContainer/reducer";
+import { reducer as appReducer } from "./global/App/reducer";
 
 export const rootReducer = combineReducers({
-  map: mapPageContainerReducer,
-  page: pageWrapperContainerReducer
+  app: appReducer,
 });
 
 export default rootReducer;
