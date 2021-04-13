@@ -9,4 +9,12 @@ export namespace CasesEndpoints {
       next(e);
     }
   };
+
+  export const getAllCasesData = (req: Request, rsp: Response, next: NextFunction): any => {
+    try {
+      rsp.send(CasesService.getAllCasesData());
+    } catch (e) {
+      next(e);
+    }
+  };
 }
