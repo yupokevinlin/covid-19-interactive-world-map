@@ -1,18 +1,33 @@
-import mapLayer0 from "../../../../data/map/gadm/gadm36_0_processed_array.json";
-import {ServerMapPolygon} from "../../../../shared/types/data/Map/MapTypes";
+import {MapPolygon} from "../../../../shared/types/data/Map/MapTypes";
 import {Api} from "../Api";
 import axios from "axios";
 
 export namespace MapApi {
-  export const getMapLayer0Data = (): Array<ServerMapPolygon> => {
-    return mapLayer0 as Array<ServerMapPolygon>;
-  };
-  export const getMapLayer1Data = async (name: Array<string>): Promise<Array<ServerMapPolygon>> => {
-    const url: string = `${Api.serverLocation}api/map/layer1/${JSON.stringify(name)}`;
-    const rsp: any = await axios({
+  export const getMapLayer0Data = (): Promise<Array<MapPolygon>> => {
+    const url: string = `${Api.serverLocation}/api/map/layer0`;
+    return axios({
       method: "GET",
-      url: url
+      url: url,
+    }).then((rsp) => {
+      return rsp.data;
     });
-    return rsp.data;
+  };
+  export const getMapLayer1Data = (hierarchicalName: string): Promise<Array<MapPolygon>> => {
+    const url: string = `${Api.serverLocation}/api/map/layer1/${hierarchicalName}`;
+    return axios({
+      method: "GET",
+      url: url,
+    }).then((rsp) => {
+      return rsp.data;
+    });
+  };
+  export const getMapLayer2Data = (hierarchicalName: string): Promise<Array<MapPolygon>> => {
+    const url: string = `${Api.serverLocation}/api/map/layer2/${hierarchicalName}`;
+    return axios({
+      method: "GET",
+      url: url,
+    }).then((rsp) => {
+      return rsp.data;
+    });
   };
 }
