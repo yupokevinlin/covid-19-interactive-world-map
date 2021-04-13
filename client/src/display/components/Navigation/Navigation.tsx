@@ -102,7 +102,7 @@ const Navigation: React.FC<PageNavigationControlProps> = (props) => {
   const isSmXs: boolean = /xs|sm/.test(width);
 
   const [drawerOpen, setDrawerOpen] = useState<boolean>(!isSmXs);
-  const [drawerExpanded, setDrawerExpanded] = useState<boolean>(false);
+  const [drawerExpanded, setDrawerExpanded] = useState<boolean>(!isSmXs);
 
   const handleDrawerToggle = (open: boolean): void => {
     setDrawerOpen(open);
