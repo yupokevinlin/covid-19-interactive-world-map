@@ -1,22 +1,22 @@
-export interface ServerCasesData {
+export interface CasesData {
   name: Array<string>;
   hierarchicalName: string;
   countryCode: string;
   isMissingData: boolean;
   population: number;
-  data: ServerDailyCasesDataObject;
+  data: DailyCasesDataObject;
 }
 
-export interface ServerDailyCasesDataObject {
-  [date: string]: ServerDailyCasesData;
+export interface DailyCasesDataObject {
+  [date: string]: DailyCasesData;
 }
 
-export interface ServerDailyCasesData {
+export interface DailyCasesData {
   totalCases: number;
   totalRecoveries: number;
   totalDeaths: number;
 }
 
-export interface ServerCasesDataObject {
-  [hierarchicalName: string]: ServerCasesData;
+export interface CasesDataObject {
+  [hierarchicalName: string]: CasesData;
 }

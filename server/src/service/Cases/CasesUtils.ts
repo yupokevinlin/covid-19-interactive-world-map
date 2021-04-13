@@ -1,9 +1,9 @@
 
 import {Moment} from "moment";
 import {
-  ServerCasesData,
-  ServerCasesDataObject, ServerDailyCasesData,
-  ServerDailyCasesDataObject
+  CasesData,
+  CasesDataObject, DailyCasesData,
+  DailyCasesDataObject
 } from "../../../../shared/types/data/Cases/CasesTypes";
 import {MapPolygon, MapPolygonsObject} from "../../../../shared/types/data/Map/MapTypes";
 import {getHierarchicalName, getNameArray} from "../../../../shared/helpers/General";
@@ -19,7 +19,7 @@ const worldPopulationObject: PopulationObject = require("../../../../data/popula
 const earlyCases: Array<any> = require("../../../../data/cases/early-cases.json");
 
 export namespace CasesUtils {
-  export let data: ServerCasesDataObject = {};
+  export let data: CasesDataObject = {};
   export const fetchCasesData = async (): Promise<boolean> => {
     try {
       data = {};
@@ -35,7 +35,7 @@ export namespace CasesUtils {
           }
         }
       };
-      const createDailyData = (dailyDataObject: ServerDailyCasesDataObject, date: string): void => {
+      const createDailyData = (dailyDataObject: DailyCasesDataObject, date: string): void => {
         if (!dailyDataObject[date]) {
           dailyDataObject[date] = {
             totalCases: 0,
@@ -905,14 +905,14 @@ export namespace CasesUtils {
         uniqueStates.forEach((uniqueState) => {
           const [name, hierarchicalName, countryCode]: [Array<string>, string, string] = getName("United States of America", uniqueState);
           if (!!hierarchicalName) {
-            const matchingCountiesData: Array<ServerCasesData> = [];
+            const matchingCountiesData: Array<CasesData> = [];
             Object.entries(data).forEach(([key, value]) => {
               if (key.includes(hierarchicalName)) {
                 matchingCountiesData.push(value);
               }
             });
             createRegionData(name, hierarchicalName, countryCode);
-            const dailyCasesData: ServerDailyCasesDataObject = data[hierarchicalName] ? data[hierarchicalName].data : {};
+            const dailyCasesData: DailyCasesDataObject = data[hierarchicalName] ? data[hierarchicalName].data : {};
             let population: number = 0;
             matchingCountiesData.forEach((matchingCountyData) => {
               population = population + matchingCountyData.population;
@@ -966,7 +966,7 @@ export namespace CasesUtils {
           if (!dataExistingLayerNames.includes(layer.hierarchicalName)) {
             console.log(`Missing data for layer: ${layer.hierarchicalName}.`);
             createRegionData(layer.name, layer.hierarchicalName, layer.countryCode);
-            const dailyCasesData: ServerDailyCasesDataObject = {};
+            const dailyCasesData: DailyCasesDataObject = {};
             dateStringArray.forEach((date, index) => {
               createDailyData(dailyCasesData, date);
             });
@@ -981,9 +981,9 @@ export namespace CasesUtils {
 
       const generateWorldData = (): void => {
         //Generate World Data
-        const layer0Data: Array<ServerCasesData> = Object.entries(data).map(([key, data]) => data).filter((data) => getNameArray(data.hierarchicalName).length === 2);
+        const layer0Data: Array<CasesData> = Object.entries(data).map(([key, data]) => data).filter((data) => getNameArray(data.hierarchicalName).length === 2);
         const worldPopulation: number = layer0Data.map(layer => layer.population).reduce((accumulator, value) => accumulator + value);
-        const worldDailyCasesData: ServerDailyCasesDataObject = {};
+        const worldDailyCasesData: DailyCasesDataObject = {};
         dateStringArray.forEach((date, index) => {
           createDailyData(worldDailyCasesData, date);
           layer0Data.forEach((layer0) => {
@@ -1008,7 +1008,7 @@ export namespace CasesUtils {
         //Add data not present in JHU data
         const earlyDateStringArray: Array<string> = getDateStringArray("1/1/20", "1/21/20");
         Object.entries(data).forEach(([key, regionData]) => {
-          const dailyCasesData: ServerDailyCasesDataObject = regionData.data;
+          const dailyCasesData: DailyCasesDataObject = regionData.data;
           earlyDateStringArray.forEach((date) => {
             createDailyData(dailyCasesData, date);
           });
@@ -1029,9 +1029,9 @@ export namespace CasesUtils {
             name.push(county);
           }
           const hierarchicalName: string = getHierarchicalName(name);
-          const casesData: ServerCasesData = data[hierarchicalName];
+          const casesData: CasesData = data[hierarchicalName];
           if (!!casesData) {
-            const dataObject: ServerDailyCasesDataObject = casesData.data;
+            const dataObject: DailyCasesDataObject = casesData.data;
             earlyDateStringArray.forEach((date) => {
               const count: number = earlyCase[date];
               switch (type) {
@@ -1055,8 +1055,8 @@ export namespace CasesUtils {
 
       const sortData = (): void => {
         Object.entries(data).forEach(([key, value]) => {
-          const oldDataObject: ServerDailyCasesDataObject = data[key].data;
-          const newDataObject: ServerDailyCasesDataObject = {};
+          const oldDataObject: DailyCasesDataObject = data[key].data;
+          const newDataObject: DailyCasesDataObject = {};
           Object.keys(oldDataObject).sort((a, b) => {
             if (a === b) {
               return 0;
@@ -1091,7 +1091,7 @@ export namespace CasesUtils {
         const [name, hierarchicalName, countryCode]: [Array<string>, string, string] = getName(row[1], row[0]);
         if (!!hierarchicalName) {
           createRegionData(name, hierarchicalName, countryCode);
-          const dailyCasesData: ServerDailyCasesDataObject = data[hierarchicalName] ? data[hierarchicalName].data : {};
+          const dailyCasesData: DailyCasesDataObject = data[hierarchicalName] ? data[hierarchicalName].data : {};
           const population: number = parseInt(row[4]);
           if (isNaN(population)) {
             throw `Population is NaN for: ${hierarchicalName}.`;
@@ -1121,7 +1121,7 @@ export namespace CasesUtils {
         const [name, hierarchicalName, countryCode]: [Array<string>, string, string] = getName(row[1], row[0]);
         if (!!hierarchicalName) {
           createRegionData(name, hierarchicalName, countryCode);
-          const dailyCasesData: ServerDailyCasesDataObject = data[hierarchicalName] ? data[hierarchicalName].data : {};
+          const dailyCasesData: DailyCasesDataObject = data[hierarchicalName] ? data[hierarchicalName].data : {};
           dateStringArray.forEach((date, index) => {
             createDailyData(dailyCasesData, date);
             const totalDeaths: number = parseInt(row[index + 5]);
@@ -1141,7 +1141,7 @@ export namespace CasesUtils {
         const [name, hierarchicalName, countryCode]: [Array<string>, string, string] = getName(row[1], row[0]);
         if (!!hierarchicalName) {
           createRegionData(name, hierarchicalName, countryCode);
-          const dailyCasesData: ServerDailyCasesDataObject = data[hierarchicalName] ? data[hierarchicalName].data : {};
+          const dailyCasesData: DailyCasesDataObject = data[hierarchicalName] ? data[hierarchicalName].data : {};
           dateStringArray.forEach((date, index) => {
             createDailyData(dailyCasesData, date);
             const totalRecoveries: number = parseInt(row[index + 5]);
@@ -1165,7 +1165,7 @@ export namespace CasesUtils {
         const [name, hierarchicalName, countryCode]: [Array<string>, string, string] = getName("United States of America", row[6], row[5]);
         if (!!hierarchicalName) {
           createRegionData(name, hierarchicalName, countryCode);
-          const dailyCasesData: ServerDailyCasesDataObject = data[hierarchicalName] ? data[hierarchicalName].data : {};
+          const dailyCasesData: DailyCasesDataObject = data[hierarchicalName] ? data[hierarchicalName].data : {};
           dateStringArray.forEach((date, index) => {
             createDailyData(dailyCasesData, date);
             const totalCases: number = parseInt(row[index + 11]);
@@ -1189,7 +1189,7 @@ export namespace CasesUtils {
         const [name, hierarchicalName, countryCode]: [Array<string>, string, string] = getName("United States of America", row[6], row[5]);
         if (!!hierarchicalName) {
           createRegionData(name, hierarchicalName, countryCode);
-          const dailyCasesData: ServerDailyCasesDataObject = data[hierarchicalName] ? data[hierarchicalName].data : {};
+          const dailyCasesData: DailyCasesDataObject = data[hierarchicalName] ? data[hierarchicalName].data : {};
           const population: number = parseInt(row[11]);
           if (isNaN(population)) {
             throw `Population is NaN for: ${hierarchicalName}.`;

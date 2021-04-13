@@ -1,12 +1,12 @@
-import {ServerCasesData, ServerCasesDataObject} from "../../../../shared/types/data/Cases/CasesTypes";
+import {CasesData, CasesDataObject} from "../../../../shared/types/data/Cases/CasesTypes";
 import {CasesUtils} from "./CasesUtils";
 
 export namespace CasesService {
-  export const getCasesDataByHierarchicalName = (hierarchicalName: string): ServerCasesData | undefined => {
+  export const getCasesDataByHierarchicalName = (hierarchicalName: string): CasesData | undefined => {
     return CasesUtils.data[hierarchicalName];
   };
 
-  export const getAllCasesData = (): ServerCasesDataObject => {
+  export const getAllCasesData = (): CasesDataObject => {
     return CasesUtils.data;
   };
 }
