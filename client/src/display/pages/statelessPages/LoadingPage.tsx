@@ -68,7 +68,7 @@ const LoadingPage: React.FC<LoadingPageProps> = (props) => {
 
   return (
     <div className={classes.loadingPage}>
-      <CircularProgress size={size} style={{color: themeColor}}/>
+      <CircularProgress size={size} disableShrink style={{color: themeColor}}/>
     </div>
   );
 };
