@@ -11,16 +11,10 @@ export interface MapPageStyleProps {
 }
 
 export interface MapPageEventProps {
-  handleLoaded(): void;
+
 }
 
 const MapPage: React.FC<MapPageProps> = (props) => {
-  const {
-    handleLoaded,
-  } = props;
-  useEffect(() => {
-    handleLoaded();
-  }, []);
 
   return (
     <div/>
