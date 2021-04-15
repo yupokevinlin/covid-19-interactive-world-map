@@ -8,7 +8,6 @@ export interface AppState {
   version: string;
   title: string;
   theme: Theme;
-  themeColor: string;
   page: Pages;
   subPage: SubPages;
   menuItems: Array<NavigationDrawerMenuItem>;
@@ -19,7 +18,6 @@ export enum AppActionTypes {
   SET_IS_INIT_COMPLETE = "app.SET_IS_INIT_COMPLETE",
   SET_IS_LOADING = "app.SET_IS_LOADING",
   SET_THEME = "app.SET_THEME",
-  SET_THEME_COLOR = "app.SET_THEME_COLOR",
   SET_VERSION = "app.SET_VERSION",
   SET_TITLE = "app.SET_TITLE",
   SET_PAGE = "app.SET_PAGE",

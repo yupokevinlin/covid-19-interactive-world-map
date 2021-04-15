@@ -199,10 +199,6 @@ function * goToPageSaga(action: AppGoToPageAction): any {
       });
     }
     yield put({
-      type: AppActionTypes.SET_THEME_COLOR,
-      themeColor: getThemeColor(action.page),
-    });
-    yield put({
       type: AppActionTypes.SET_THEME,
       theme: getPageColorTheme(action.page, appState.theme),
     });
@@ -254,23 +250,6 @@ const getDefaultSubPage = (page: Pages): SubPages => {
     }
   }
   return newSubPage;
-};
-
-const getThemeColor = (page: Pages): string => {
-  switch (page) {
-    case Pages.HOME: {
-      return PageColors.HOME;
-    }
-    case Pages.MAP: {
-      return PageColors.MAP;
-    }
-    case Pages.CHART: {
-      return PageColors.CHART;
-    }
-    default: {
-      return PageColors.HOME;
-    }
-  }
 };
 
 const getPageColorTheme = (page: Pages, theme: Theme): Theme => {

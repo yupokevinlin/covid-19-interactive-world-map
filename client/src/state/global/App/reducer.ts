@@ -7,7 +7,6 @@ export const initialState: AppState = {
   version: "0.0.1",
   title: `${Pages.HOME}`,
   theme: null,
-  themeColor: PageColors.HOME,
   page: Pages.HOME,
   subPage: null,
   menuItems: [],
@@ -31,12 +30,6 @@ export const reducer = (state: AppState = initialState, action: AppAction): AppS
       return {
         ...state,
         theme: action.theme,
-      }
-    }
-    case AppActionTypes.SET_THEME_COLOR: {
-      return {
-        ...state,
-        themeColor: action.themeColor,
       }
     }
     case AppActionTypes.SET_TITLE: {

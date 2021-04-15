@@ -7,7 +7,6 @@ export type AppAction = AppInitAction
 | AppSetIsInitCompleteAction
 | AppSetIsLoadingAction
 | AppSetThemeAction
-| AppSetThemeColorAction
 | AppSetTitleAction
 | AppSetVersionAction
 | AppSetPageAction
@@ -53,17 +52,6 @@ export const setTheme = (theme: Theme): AppSetThemeAction => {
   return {
     type: AppActionTypes.SET_THEME,
     theme: theme,
-  };
-};
-
-export interface AppSetThemeColorAction {
-  type: typeof AppActionTypes.SET_THEME_COLOR;
-  themeColor: string;
-}
-export const setThemeColor = (themeColor: string): AppSetThemeColorAction => {
-  return {
-    type: AppActionTypes.SET_THEME_COLOR,
-    themeColor: themeColor,
   };
 };
 
