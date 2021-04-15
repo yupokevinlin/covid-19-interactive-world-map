@@ -7,6 +7,7 @@ import {MapApi} from "../../../api/MapApi/MapApi";
 import {ESRIMapPolygon} from "../../../display/components/ESRIMap/ESRIMap";
 import {CasesData} from "../../../../../shared/types/data/Cases/CasesTypes";
 import {CasesApi} from "../../../api/CasesApi/CasesApi";
+import {DateUtils} from "../../../helper/DateUtils";
 
 export const mapPageSagas = {
   initSaga: takeEvery(MapPageActionTypes.INIT, initSaga),
@@ -29,7 +30,11 @@ function * initSaga(action: MapPageInitAction): any {
     mapPolygons: esriMapPolygons,
   });
 
-
+  const dateValues: Array<string> = DateUtils.getDateStringArray("1/1/20", DateUtils.getCurrentDate());
+  yield put({
+    type: MapPageActionTypes.SET_DATE_VALUES,
+    dateValues: dateValues,
+  });
 
   yield put({
     type: AppActionTypes.SET_IS_LOADING,

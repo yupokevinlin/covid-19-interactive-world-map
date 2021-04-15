@@ -9,6 +9,7 @@ export const initialState: MapPageState = {
   date: DateUtils.getCurrentDate(),
   hierarchicalName: "World",
   initialBaseMap: "streets",
+  dateValues: [],
 };
 
 export const reducer = (state: MapPageState = initialState, action: MapPageAction): MapPageState => {
@@ -35,6 +36,12 @@ export const reducer = (state: MapPageState = initialState, action: MapPageActio
       return {
         ...state,
         hierarchicalName: action.hierarchicalName,
+      }
+    }
+    case MapPageActionTypes.SET_DATE_VALUES: {
+      return {
+        ...state,
+        dateValues: [...action.dateValues],
       }
     }
     default: {

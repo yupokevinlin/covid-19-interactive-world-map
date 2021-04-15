@@ -5,7 +5,8 @@ export type MapPageAction = MapPageInitAction
 | MapPageSetMapPolygonsAction
 | MapPageSetDisplayedLayerAction
 | MapPageSetDateAction
-| MapPageSetHierarchicalNameAction;
+| MapPageSetHierarchicalNameAction
+| MapPageSetDateValuesAction;
 
 export interface MapPageInitAction {
   type: typeof MapPageActionTypes.INIT;
@@ -57,5 +58,16 @@ export const setHierarchicalName = (hierarchicalName: string): MapPageSetHierarc
   return {
     type: MapPageActionTypes.SET_HIERARCHICAL_NAME,
     hierarchicalName: hierarchicalName,
+  };
+};
+
+export interface MapPageSetDateValuesAction {
+  type: typeof MapPageActionTypes.SET_DATE_VALUES;
+  dateValues: Array<string>;
+}
+export const setDateValues = (dateValues: Array<string>): MapPageSetDateValuesAction => {
+  return {
+    type: MapPageActionTypes.SET_DATE_VALUES,
+    dateValues: dateValues,
   };
 };

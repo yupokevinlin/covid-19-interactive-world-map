@@ -6,6 +6,7 @@ export interface MapPageState {
   date: string;
   hierarchicalName: string;
   initialBaseMap: string;
+  dateValues: Array<string>;
 }
 
 export enum MapPageActionTypes {
@@ -14,4 +15,5 @@ export enum MapPageActionTypes {
   SET_DISPLAYED_LAYER = "map.SET_DISPLAYED_LAYER",
   SET_DATE = "map.SET_DATE",
   SET_HIERARCHICAL_NAME = "map.SET_HIERARCHICAL_NAME",
+  SET_DATE_VALUES = "map.SET_DATE_VALUES",
 }
