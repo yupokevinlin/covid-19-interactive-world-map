@@ -5,7 +5,16 @@ import {
 } from "./actions";
 import {
   AppActionTypes,
-  AppState, ChartSubPages, HomeSubPages, MapSubPages, PageBackgroundColors, PageColors, Pages, PageURLs, SubPages,
+  AppState,
+  ChartSubPages,
+  HomeSubPages,
+  MapSubPages,
+  PageBackgroundColors,
+  PageColors, PageDarkColors,
+  PageLightColors,
+  Pages,
+  PageURLs,
+  SubPages,
 } from "./types";
 import {Theme} from "@material-ui/core";
 import createMuiTheme from "@material-ui/core/styles/createMuiTheme";
@@ -62,9 +71,9 @@ const getInitialMaterialUITheme = (): Theme => {
   let theme = createMuiTheme({
     palette: {
       primary: {
-        light: "#6573c3",
-        main: "#3f51b5",
-        dark: "#2c387e",
+        light: PageLightColors.HOME,
+        main: PageColors.HOME,
+        dark: PageDarkColors.HOME,
         contrastText: "#fff",
       },
       secondary: {
@@ -194,6 +203,10 @@ function * goToPageSaga(action: AppGoToPageAction): any {
       themeColor: getThemeColor(action.page),
     });
     yield put({
+      type: AppActionTypes.SET_THEME,
+      theme: getPageColorTheme(action.page, appState.theme),
+    });
+    yield put({
       type: AppActionTypes.SET_TITLE,
       page: action.page,
     });
@@ -256,6 +269,67 @@ const getThemeColor = (page: Pages): string => {
     }
     default: {
       return PageColors.HOME;
+    }
+  }
+};
+
+const getPageColorTheme = (page: Pages, theme: Theme): Theme => {
+  switch (page) {
+    case Pages.HOME: {
+      return {
+        ...theme,
+        palette: {
+          ...theme.palette,
+          primary: {
+            light: PageLightColors.HOME,
+            main: PageColors.HOME,
+            dark: PageDarkColors.HOME,
+            contrastText: "#fff",
+          }
+        }
+      }
+    }
+    case Pages.MAP: {
+      return {
+        ...theme,
+        palette: {
+          ...theme.palette,
+          primary: {
+            light: PageLightColors.MAP,
+            main: PageColors.MAP,
+            dark: PageDarkColors.MAP,
+            contrastText: "#fff",
+          }
+        }
+      }
+    }
+    case Pages.CHART: {
+      return {
+        ...theme,
+        palette: {
+          ...theme.palette,
+          primary: {
+            light: PageLightColors.CHART,
+            main: PageColors.CHART,
+            dark: PageDarkColors.CHART,
+            contrastText: "#fff",
+          }
+        }
+      }
+    }
+    default: {
+      return {
+        ...theme,
+        palette: {
+          ...theme.palette,
+          primary: {
+            light: PageLightColors.DEFAULT,
+            main: PageColors.DEFAULT,
+            dark: PageDarkColors.DEFAULT,
+            contrastText: "#fff",
+          }
+        }
+      }
     }
   }
 };

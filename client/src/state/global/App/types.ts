@@ -54,6 +54,7 @@ export enum PageURLs {
 }
 
 export enum PageColors {
+  DEFAULT = "#607d8b",
   HOME = "#3f51b5",
   MAP = "#ff5722",
   CHART = "#009688",
@@ -62,14 +63,46 @@ export enum PageColors {
   UNUSED_3 = "#ffc107",
   UNUSED_4 = "#03a9f4",
   UNUSED_5 = "#e91e63",
-  UNUSED_6 = "#607d8b",
   UNUSED_7 = "#4caf50",
   UNUSED_8 = "#673ab7",
   UNUSED_9 = "#9e9e9e",
   UNUSED_10 = "#795548",
 }
 
+export enum PageDarkColors {
+  DEFAULT = "#435761",
+  HOME = "#2c387e",
+  MAP = "#b23c17",
+  CHART = "#00695f",
+  UNUSED_1 = "#aa2e25",
+  UNUSED_2 = "#6d1b7b",
+  UNUSED_3 = "#b28704",
+  UNUSED_4 = "#0276aa",
+  UNUSED_5 = "#a31545",
+  UNUSED_7 = "#357a38",
+  UNUSED_8 = "#482880",
+  UNUSED_9 = "#6e6e6e",
+  UNUSED_10 = "#543b32",
+}
+
+export enum PageLightColors {
+  DEFAULT = "#7f97a2",
+  HOME = "#6573c3",
+  MAP = "#ff784e",
+  CHART = "#33ab9f",
+  UNUSED_1 = "#f6685e",
+  UNUSED_2 = "#af52bf",
+  UNUSED_3 = "#ffcd38",
+  UNUSED_4 = "#35baf6",
+  UNUSED_5 = "#ed4b82",
+  UNUSED_7 = "#6fbf73",
+  UNUSED_8 = "#8561c5",
+  UNUSED_9 = "#b1b1b1",
+  UNUSED_10 = "#93776c",
+}
+
 export enum PageBackgroundColors {
+  DEFAULT = "#e7ecee",
   HOME = "#e2e5f4",
   MAP = "#ffe6de",
   CHART = "#d9efed",
@@ -78,7 +111,6 @@ export enum PageBackgroundColors {
   UNUSED_3 = "#fff6da",
   UNUSED_4 = "#d9f2fd",
   UNUSED_5 = "#fcdde8",
-  UNUSED_6 = "#e7ecee",
   UNUSED_7 = "#e4f3e5",
   UNUSED_8 = "#e8e1f4",
   UNUSED_9 = "#f0f0f0",
