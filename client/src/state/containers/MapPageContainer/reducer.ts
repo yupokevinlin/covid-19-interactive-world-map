@@ -1,12 +1,10 @@
 import {MapPageActionTypes, MapPageState} from "./types";
 import {ESRIMapModeNames} from "../../../display/components/ESRIMap/ESRIMap";
 import {MapPageAction} from "./actions";
-import {DateUtils} from "../../../helper/DateUtils";
 
 export const initialState: MapPageState = {
   mapPolygons: [],
   displayedLayer: ESRIMapModeNames.confirmedCases,
-  date: DateUtils.getCurrentDate(),
   hierarchicalName: "World",
   initialBaseMap: "streets",
   dateValues: [],
@@ -24,12 +22,6 @@ export const reducer = (state: MapPageState = initialState, action: MapPageActio
       return {
         ...state,
         displayedLayer: action.displayedLayer,
-      }
-    }
-    case MapPageActionTypes.SET_DATE: {
-      return {
-        ...state,
-        date: action.date,
       }
     }
     case MapPageActionTypes.SET_HIERARCHICAL_NAME: {

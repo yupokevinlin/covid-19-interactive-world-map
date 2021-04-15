@@ -3,7 +3,6 @@ import {ESRIMapModeNames, ESRIMapPolygon} from "../../../display/components/ESRI
 export interface MapPageState {
   mapPolygons: Array<ESRIMapPolygon>;
   displayedLayer: ESRIMapModeNames;
-  date: string;
   hierarchicalName: string;
   initialBaseMap: string;
   dateValues: Array<string>;
@@ -13,7 +12,6 @@ export enum MapPageActionTypes {
   INIT = "map.INIT",
   SET_MAP_POLYGONS = "map.SET_MAP_POLYGONS",
   SET_DISPLAYED_LAYER = "map.SET_DISPLAYED_LAYER",
-  SET_DATE = "map.SET_DATE",
   SET_HIERARCHICAL_NAME = "map.SET_HIERARCHICAL_NAME",
   SET_DATE_VALUES = "map.SET_DATE_VALUES",
 }

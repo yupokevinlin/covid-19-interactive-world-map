@@ -4,7 +4,6 @@ import {ESRIMapModeNames, ESRIMapPolygon} from "../../../display/components/ESRI
 export type MapPageAction = MapPageInitAction
 | MapPageSetMapPolygonsAction
 | MapPageSetDisplayedLayerAction
-| MapPageSetDateAction
 | MapPageSetHierarchicalNameAction
 | MapPageSetDateValuesAction;
 
@@ -36,17 +35,6 @@ export const setDisplayedLayer = (displayedLayer: ESRIMapModeNames): MapPageSetD
   return {
     type: MapPageActionTypes.SET_DISPLAYED_LAYER,
     displayedLayer: displayedLayer,
-  };
-};
-
-export interface MapPageSetDateAction {
-  type: typeof MapPageActionTypes.SET_DATE;
-  date: string;
-}
-export const setDate = (date: string): MapPageSetDateAction => {
-  return {
-    type: MapPageActionTypes.SET_DATE,
-    date: date,
   };
 };
 
