@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import MapPage from "../../pages/MapPage";
 import {AppState} from "../../../state/global/App/types";
 import {Store} from "../../../state/store";
@@ -7,6 +7,7 @@ import {AppAction} from "../../../state/global/App/actions";
 import {shallowEqual, useDispatch, useSelector} from "react-redux";
 import {MapPageActionTypes, MapPageState} from "../../../state/containers/MapPageContainer/types";
 import {MapPageAction} from "../../../state/containers/MapPageContainer/actions";
+import {DateUtils} from "../../../helper/DateUtils";
 
 export type MapPageContainerProps = MapPageContainerDataProps & MapPageContainerStyleProps & MapPageContainerEventProps;
 
@@ -34,10 +35,15 @@ const MapPageContainer: React.FC<MapPageContainerProps> = (props) => {
     });
   }, []);
 
+  const [date, setDate] = useState<string>(DateUtils.getCurrentDate());
+
+  const handleDateChange = (date: string): void => {
+    setDate(date);
+  };
 
   return (
-    <MapPage/>
-  )
+    <MapPage dateValues={mapPageState.dateValues} handleDateChange={handleDateChange}/>
+  );
 };
 
 export default MapPageContainer;
