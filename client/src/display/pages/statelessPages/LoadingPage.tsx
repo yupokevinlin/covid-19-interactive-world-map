@@ -16,7 +16,6 @@ export interface LoadingPageDataProps {
 }
 
 export interface LoadingPageStyleProps {
-  themeColor: string;
   width: Breakpoint;
 }
 
@@ -58,7 +57,6 @@ const LoadingPage: React.FC<LoadingPageProps> = (props) => {
 
   const {
     width,
-    themeColor,
   } = props;
 
   const isXs: boolean = /xs/.test(width);
@@ -68,7 +66,7 @@ const LoadingPage: React.FC<LoadingPageProps> = (props) => {
 
   return (
     <div className={classes.loadingPage}>
-      <CircularProgress size={size} disableShrink style={{color: themeColor}}/>
+      <CircularProgress size={size} disableShrink/>
     </div>
   );
 };

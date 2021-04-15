@@ -29,7 +29,6 @@ export interface ControlBarDataProps {
 
 export interface ControlBarStyleProps {
   width: Breakpoint;
-  themeColor: string;
 }
 
 export interface ControlBarEventProps {
@@ -150,7 +149,6 @@ const ControlBar: React.FC<ControlBarProps> = (props) => {
     drawerOpen,
     drawerExpanded,
     width,
-    themeColor,
     handleDrawerToggle,
   } = props;
 
@@ -169,7 +167,7 @@ const ControlBar: React.FC<ControlBarProps> = (props) => {
     <AppBar position="fixed" className={clsx(classes.appBar, {
       [classes.appBarShift]: drawerOpen && !drawerExpanded && !isSmXs,
       [classes.appBarShiftExpanded]: drawerOpen && drawerExpanded && !isSmXs,
-    })} style={{backgroundColor: themeColor}}>
+    })}>
       <Toolbar>
         <Tooltip classes={{tooltip: classes.toolTip}} title={"Toggle Menu"}>
           <IconButton edge={"start"} className={classes.menuButton} color={"inherit"} onClick={onMenuIconClick}>

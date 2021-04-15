@@ -22,7 +22,6 @@ export interface PageNavigationControlDataProps {
 
 export interface PageNavigationControlStyleProps {
   width: Breakpoint;
-  themeColor: string;
 }
 
 export interface PageNavigationControlEventProps {
@@ -94,7 +93,6 @@ const Navigation: React.FC<PageNavigationControlProps> = (props) => {
     width,
     isLoading,
     version,
-    themeColor,
     handleMenuItemClick,
     handleMenuItemChildClick,
   } = props;
@@ -128,8 +126,8 @@ const Navigation: React.FC<PageNavigationControlProps> = (props) => {
           [classes.controlBarContentWrapperDrawerOpen]: drawerOpen && !drawerExpanded && !isSmXs,
           [classes.controlBarContentWrapperDrawerOpenExpanded]: drawerOpen && drawerExpanded && !isSmXs,
         })}>
-          <ControlBar width={width} title={pageTitle} drawerOpen={drawerOpen} drawerExpanded={drawerExpanded} themeColor={themeColor} handleDrawerToggle={handleDrawerToggle}/>
-          <ContentWrapper width={width} isLoading={isLoading} themeColor={themeColor}>
+          <ControlBar width={width} title={pageTitle} drawerOpen={drawerOpen} drawerExpanded={drawerExpanded} handleDrawerToggle={handleDrawerToggle}/>
+          <ContentWrapper width={width} isLoading={isLoading}>
             {
               props.children
             }

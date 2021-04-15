@@ -12,7 +12,6 @@ export interface ContentWrapperDataProps {
 
 export interface ContentWrapperStyleProps {
   width: Breakpoint;
-  themeColor: string;
 }
 
 export interface ContentWrapperEventProps {
@@ -47,7 +46,6 @@ const ContentWrapper: React.FC<ContentWrapperProps> = (props) => {
 
   const {
     width,
-    themeColor,
     isLoading,
   } = props;
 
@@ -60,7 +58,7 @@ const ContentWrapper: React.FC<ContentWrapperProps> = (props) => {
       </main>
       {
         isLoading ? (
-          <LoadingPage width={width} themeColor={themeColor}/>
+          <LoadingPage width={width}/>
         ) : null
       }
     </React.Fragment>
