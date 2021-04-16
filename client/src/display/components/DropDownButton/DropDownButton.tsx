@@ -26,10 +26,14 @@ export interface DropDownButtonEventProps {
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     button: {
+      "& .MuiButton-label": {
+        whiteSpace: "nowrap",
+      },
       [theme.breakpoints.up("xs")]: {
         padding: "9px 8px",
         minWidth: "64px",
         "& .MuiButton-label": {
+          overflow: "hidden",
           height: "9px",
           fontSize: "9px",
           lineHeight: "9px",

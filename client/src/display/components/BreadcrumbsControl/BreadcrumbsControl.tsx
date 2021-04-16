@@ -55,7 +55,9 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
     text: {
+      whiteSpace: "nowrap",
       [theme.breakpoints.up("xs")]: {
+        overflow: "hidden",
         padding: "9px 8px",
         minWidth: "64px",
         height: "9px",
