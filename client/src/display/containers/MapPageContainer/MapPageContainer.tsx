@@ -36,13 +36,18 @@ const MapPageContainer: React.FC<MapPageContainerProps> = (props) => {
   }, []);
 
   const [date, setDate] = useState<string>(DateUtils.getCurrentDate());
+  const [region, setRegion] = useState<string>("World");
 
   const handleDateChange = (date: string): void => {
     setDate(date);
   };
 
+  const handleRegionChange = (hierarchicalName: string): void => {
+    setRegion(hierarchicalName);
+  };
+
   return (
-    <MapPage dateValues={mapPageState.dateValues} handleDateChange={handleDateChange}/>
+    <MapPage dateValues={mapPageState.dateValues} dataTree={appState.dataTree} handleDateChange={handleDateChange} handleRegionChange={handleRegionChange}/>
   );
 };
 
