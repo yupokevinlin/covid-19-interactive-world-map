@@ -104,10 +104,10 @@ export namespace CasesUtils {
             case "China": {
               switch (convertedProvince) {
                 case "Hong Kong": {
-                  return mapLayer0.find((layer) => layer.hierarchicalName === "World.Hong Kong");
+                  return mapLayer0.find((layer) => layer.hierarchicalName === "World_Hong Kong");
                 }
                 case "Macao": {
-                  return mapLayer0.find((layer) => layer.hierarchicalName === "World.Macao");
+                  return mapLayer0.find((layer) => layer.hierarchicalName === "World_Macao");
                 }
               }
               break;
@@ -115,10 +115,10 @@ export namespace CasesUtils {
             case "Denmark": {
               switch (convertedProvince) {
                 case "Faroe Islands": {
-                  return mapLayer0.find((layer) => layer.hierarchicalName === "World.Faroe Islands");
+                  return mapLayer0.find((layer) => layer.hierarchicalName === "World_Faroe Islands");
                 }
                 case "Greenland": {
-                  return mapLayer0.find((layer) => layer.hierarchicalName === "World.Greenland");
+                  return mapLayer0.find((layer) => layer.hierarchicalName === "World_Greenland");
                 }
               }
               break;
@@ -126,34 +126,34 @@ export namespace CasesUtils {
             case "France": {
               switch (convertedProvince) {
                 case "French Guiana": {
-                  return mapLayer0.find((layer) => layer.hierarchicalName === "World.French Guiana");
+                  return mapLayer0.find((layer) => layer.hierarchicalName === "World_French Guiana");
                 }
                 case "French Polynesia": {
-                  return mapLayer0.find((layer) => layer.hierarchicalName === "World.French Polynesia");
+                  return mapLayer0.find((layer) => layer.hierarchicalName === "World_French Polynesia");
                 }
                 case "Guadeloupe": {
-                  return mapLayer0.find((layer) => layer.hierarchicalName === "World.Guadeloupe");
+                  return mapLayer0.find((layer) => layer.hierarchicalName === "World_Guadeloupe");
                 }
                 case "Martinique": {
-                  return mapLayer0.find((layer) => layer.hierarchicalName === "World.Martinique");
+                  return mapLayer0.find((layer) => layer.hierarchicalName === "World_Martinique");
                 }
                 case "Mayotte": {
-                  return mapLayer0.find((layer) => layer.hierarchicalName === "World.Mayotte");
+                  return mapLayer0.find((layer) => layer.hierarchicalName === "World_Mayotte");
                 }
                 case "New Caledonia": {
-                  return mapLayer0.find((layer) => layer.hierarchicalName === "World.New Caledonia");
+                  return mapLayer0.find((layer) => layer.hierarchicalName === "World_New Caledonia");
                 }
                 case "Reunion": {
-                  return mapLayer0.find((layer) => layer.hierarchicalName === "World.Reunion");
+                  return mapLayer0.find((layer) => layer.hierarchicalName === "World_Reunion");
                 }
                 case "Saint Barthelemy": {
-                  return mapLayer0.find((layer) => layer.hierarchicalName === "World.Saint Barthélemy");
+                  return mapLayer0.find((layer) => layer.hierarchicalName === "World_Saint Barthélemy");
                 }
                 case "Saint Pierre and Miquelon": {
-                  return mapLayer0.find((layer) => layer.hierarchicalName === "World.Saint Pierre and Miquelon");
+                  return mapLayer0.find((layer) => layer.hierarchicalName === "World_Saint Pierre and Miquelon");
                 }
                 case "St Martin": {
-                  return mapLayer0.find((layer) => layer.hierarchicalName === "World.Saint Martin (French part)");
+                  return mapLayer0.find((layer) => layer.hierarchicalName === "World_Saint Martin (French part)");
                 }
               }
               break;
@@ -161,16 +161,16 @@ export namespace CasesUtils {
             case "Netherlands": {
               switch (convertedProvince) {
                 case "Aruba": {
-                  return mapLayer0.find((layer) => layer.hierarchicalName === "World.Aruba");
+                  return mapLayer0.find((layer) => layer.hierarchicalName === "World_Aruba");
                 }
                 case "Bonaire, Sint Eustatius and Saba": {
-                  return mapLayer0.find((layer) => layer.hierarchicalName === "World.Bonaire, Sint Eustatius and Saba");
+                  return mapLayer0.find((layer) => layer.hierarchicalName === "World_Bonaire, Sint Eustatius and Saba");
                 }
                 case "Curacao": {
-                  return mapLayer0.find((layer) => layer.hierarchicalName === "World.Curaçao");
+                  return mapLayer0.find((layer) => layer.hierarchicalName === "World_Curaçao");
                 }
                 case "Sint Maarten": {
-                  return mapLayer0.find((layer) => layer.hierarchicalName === "World.Sint Maarten (Dutch part)");
+                  return mapLayer0.find((layer) => layer.hierarchicalName === "World_Sint Maarten (Dutch part)");
                 }
               }
               break;
@@ -178,34 +178,34 @@ export namespace CasesUtils {
             case "United Kingdom": {
               switch (convertedProvince) {
                 case "Anguilla": {
-                  return mapLayer0.find((layer) => layer.hierarchicalName === "World.Anguilla");
+                  return mapLayer0.find((layer) => layer.hierarchicalName === "World_Anguilla");
                 }
                 case "Bermuda": {
-                  return mapLayer0.find((layer) => layer.hierarchicalName === "World.Bermuda");
+                  return mapLayer0.find((layer) => layer.hierarchicalName === "World_Bermuda");
                 }
                 case "British Virgin Islands": {
-                  return mapLayer0.find((layer) => layer.hierarchicalName === "World.Virgin Islands, British");
+                  return mapLayer0.find((layer) => layer.hierarchicalName === "World_Virgin Islands, British");
                 }
                 case "Cayman Islands": {
-                  return mapLayer0.find((layer) => layer.hierarchicalName === "World.Cayman Islands");
+                  return mapLayer0.find((layer) => layer.hierarchicalName === "World_Cayman Islands");
                 }
                 case "Channel Islands": {
                   return undefined;
                 }
                 case "Falkland Islands (Malvinas)": {
-                  return mapLayer0.find((layer) => layer.hierarchicalName === "World.Falkland Islands (Malvinas)");
+                  return mapLayer0.find((layer) => layer.hierarchicalName === "World_Falkland Islands (Malvinas)");
                 }
                 case "Gibraltar": {
-                  return mapLayer0.find((layer) => layer.hierarchicalName === "World.Gibraltar");
+                  return mapLayer0.find((layer) => layer.hierarchicalName === "World_Gibraltar");
                 }
                 case "Isle of Man": {
-                  return mapLayer0.find((layer) => layer.hierarchicalName === "World.Isle of Man");
+                  return mapLayer0.find((layer) => layer.hierarchicalName === "World_Isle of Man");
                 }
                 case "Montserrat": {
-                  return mapLayer0.find((layer) => layer.hierarchicalName === "World.Montserrat");
+                  return mapLayer0.find((layer) => layer.hierarchicalName === "World_Montserrat");
                 }
                 case "Turks and Caicos Islands": {
-                  return mapLayer0.find((layer) => layer.hierarchicalName === "World.Turks and Caicos Islands");
+                  return mapLayer0.find((layer) => layer.hierarchicalName === "World_Turks and Caicos Islands");
                 }
               }
               break;
@@ -213,19 +213,19 @@ export namespace CasesUtils {
             case "United States of America": {
               switch (convertedProvince) {
                 case "American Samoa": {
-                  return mapLayer0.find((layer) => layer.hierarchicalName === "World.American Samoa");
+                  return mapLayer0.find((layer) => layer.hierarchicalName === "World_American Samoa");
                 }
                 case "Guam": {
-                  return mapLayer0.find((layer) => layer.hierarchicalName === "World.Guam");
+                  return mapLayer0.find((layer) => layer.hierarchicalName === "World_Guam");
                 }
                 case "Northern Mariana Islands": {
-                  return mapLayer0.find((layer) => layer.hierarchicalName === "World.Northern Mariana Islands");
+                  return mapLayer0.find((layer) => layer.hierarchicalName === "World_Northern Mariana Islands");
                 }
                 case "Virgin Islands": {
-                  return mapLayer0.find((layer) => layer.hierarchicalName === "World.Virgin Islands, U.S.");
+                  return mapLayer0.find((layer) => layer.hierarchicalName === "World_Virgin Islands, U.S.");
                 }
                 case "Puerto Rico": {
-                  return mapLayer0.find((layer) => layer.hierarchicalName === "World.Puerto Rico");
+                  return mapLayer0.find((layer) => layer.hierarchicalName === "World_Puerto Rico");
                 }
               }
             }
