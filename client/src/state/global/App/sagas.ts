@@ -31,6 +31,8 @@ import {MaterialIconNames} from "../../../display/components/MaterialIcon/Materi
 import {Utils} from "../../../helper/Utils";
 import createDoubleMap = Utils.createDoubleMap;
 import {Store} from "../../store";
+import {TreeItem} from "../../../../../shared/types/data/Tree/TreeTypes";
+import {TreeApi} from "../../../api/TreeApi/TreeApi";
 
 export const appSagas = {
   initSaga: takeEvery(AppActionTypes.INIT, initSaga),
@@ -59,6 +61,12 @@ function * initSaga(action: AppInitAction): any {
   yield put({
     type: AppActionTypes.SET_MENU_ITEMS,
     menuItems: menuItems,
+  });
+
+  const dataTree: TreeItem = yield call(TreeApi.getTree);
+  yield put({
+    type: AppActionTypes.SET_DATA_TREE,
+    dataTree: dataTree,
   });
 
   yield put({

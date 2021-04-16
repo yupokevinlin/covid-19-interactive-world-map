@@ -2,6 +2,7 @@ import {AppActionTypes, Pages, SubPages} from "./types";
 import {Theme} from "@material-ui/core";
 import {History} from "history";
 import {NavigationDrawerMenuItem} from "../../../display/components/Navigation/NavigationDrawer/NavigationDrawer";
+import {TreeItem} from "../../../../../shared/types/data/Tree/TreeTypes";
 
 export type AppAction = AppInitAction
 | AppSetIsInitCompleteAction
@@ -11,6 +12,7 @@ export type AppAction = AppInitAction
 | AppSetVersionAction
 | AppSetPageAction
 | AppSetMenuItemsAction
+| AppSetDataTreeAction
 | AppGoToPageAction;
 
 export interface AppInitAction {
@@ -98,6 +100,17 @@ export const setMenuItems = (menuItems: Array<NavigationDrawerMenuItem>): AppSet
   return {
     type: AppActionTypes.SET_MENU_ITEMS,
     menuItems: menuItems,
+  };
+};
+
+export interface AppSetDataTreeAction {
+  type: typeof AppActionTypes.SET_DATA_TREE;
+  dataTree: TreeItem;
+}
+export const setDataTree = (dataTree: TreeItem): AppSetDataTreeAction => {
+  return {
+    type: AppActionTypes.SET_DATA_TREE,
+    dataTree: dataTree,
   };
 };
 

@@ -1,4 +1,4 @@
-import {AppActionTypes, AppState, PageColors, Pages} from "./types";
+import {AppActionTypes, AppState, Pages} from "./types";
 import {AppAction} from "./actions";
 
 export const initialState: AppState = {
@@ -10,6 +10,7 @@ export const initialState: AppState = {
   page: Pages.HOME,
   subPage: null,
   menuItems: [],
+  dataTree: null,
 };
 
 export const reducer = (state: AppState = initialState, action: AppAction): AppState => {
@@ -57,6 +58,12 @@ export const reducer = (state: AppState = initialState, action: AppAction): AppS
       return {
         ...state,
         menuItems: action.menuItems,
+      }
+    }
+    case AppActionTypes.SET_DATA_TREE: {
+      return {
+        ...state,
+        dataTree: action.dataTree,
       }
     }
     default:

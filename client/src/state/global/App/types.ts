@@ -1,5 +1,6 @@
 import {Theme} from "@material-ui/core";
 import {NavigationDrawerMenuItem} from "../../../display/components/Navigation/NavigationDrawer/NavigationDrawer";
+import {TreeItem} from "../../../../../shared/types/data/Tree/TreeTypes";
 
 
 export interface AppState {
@@ -11,6 +12,7 @@ export interface AppState {
   page: Pages;
   subPage: SubPages;
   menuItems: Array<NavigationDrawerMenuItem>;
+  dataTree: TreeItem;
 }
 
 export enum AppActionTypes {
@@ -22,6 +24,7 @@ export enum AppActionTypes {
   SET_TITLE = "app.SET_TITLE",
   SET_PAGE = "app.SET_PAGE",
   SET_MENU_ITEMS = "app.SET_MENU_ITEMS",
+  SET_DATA_TREE = "app.SET_DATA_TREE",
   GO_TO_PAGE = "app.GO_TO_PAGE",
 }
 
