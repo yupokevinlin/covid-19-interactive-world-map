@@ -40,6 +40,7 @@ import SpeakerNotes from '@material-ui/icons/SpeakerNotes';
 import VpnKey from '@material-ui/icons/VpnKey';
 import ShowChart from '@material-ui/icons/ShowChart';
 import BarChart from '@material-ui/icons/BarChart';
+import NavigateNext from '@material-ui/icons/NavigateNext';
 
 export interface MaterialIconProps extends SvgIconProps {
   iconName: MaterialIconNames;
@@ -70,6 +71,7 @@ export enum MaterialIconNames {
   Map = "Map",
   Memory = "Memory",
   Menu = "Menu",
+  NavigateNext = "NavigateNext",
   Notifications = "Notifications",
   Palette = "Palette",
   PhoneIphone = "PhoneIphone",
@@ -164,6 +166,9 @@ const MaterialIcon: React.FC<MaterialIconProps> = (props) => {
     }
     case MaterialIconNames.Menu: {
       return <Menu {...svgIconProps}/>;
+    }
+    case MaterialIconNames.NavigateNext: {
+      return <NavigateNext {...svgIconProps}/>;
     }
     case MaterialIconNames.Notifications: {
       return <Notifications {...svgIconProps}/>;
