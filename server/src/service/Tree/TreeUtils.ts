@@ -1,6 +1,8 @@
 import {TreeItem} from "../../../../shared/types/data/Tree/TreeTypes";
 import {MapPolygon, MapPolygonsObject} from "../../../../shared/types/data/Map/MapTypes";
 import {getHierarchicalName, getNameArray} from "../../../../shared/helpers/General";
+import {CasesDataObject} from "../../../../shared/types/data/Cases/CasesTypes";
+import {CasesUtils} from "../Cases/CasesUtils";
 const mapLayer0: Array<MapPolygon> = require("../../../../data/map/gadm/gadm36_0_processed_array.json");
 const mapLayer1: MapPolygonsObject = require("../../../../data/map/gadm/gadm36_1_processed_object.json");
 const mapLayer2: MapPolygonsObject = require("../../../../data/map/gadm/gadm36_2_processed_object.json");
@@ -11,12 +13,15 @@ export namespace TreeUtils {
     children: [],
   };
   export const getTreeData = (): void => {
+    const casesData: CasesDataObject = CasesUtils.data;
     //Add layer 0
     mapLayer0.forEach((layer) => {
-      data.children.push({
-        hierarchicalName: layer.hierarchicalName,
-        children: [],
-      });
+      if (hasCasesData(casesData, layer.hierarchicalName)) {
+        data.children.push({
+          hierarchicalName: layer.hierarchicalName,
+          children: [],
+        });
+      }
     });
 
     //Add layer 1
@@ -24,12 +29,12 @@ export namespace TreeUtils {
       const matchingLayer0Item: TreeItem | undefined = data.children.find((treeItem) => treeItem.hierarchicalName === layer0HierarchicalName);
       layer1MapPolygons.forEach((layer1MapPolygon) => {
         if (matchingLayer0Item) {
-          matchingLayer0Item.children.push({
-            hierarchicalName: layer1MapPolygon.hierarchicalName,
-            children: [],
-          })
-        } else {
-          console.log(`Unable to find matching layer 0 parent for layer: ${layer1MapPolygon.hierarchicalName}`);
+          if (hasCasesData(casesData, layer1MapPolygon.hierarchicalName)) {
+            matchingLayer0Item.children.push({
+              hierarchicalName: layer1MapPolygon.hierarchicalName,
+              children: [],
+            });
+          }
         }
       });
     });
@@ -43,20 +48,14 @@ export namespace TreeUtils {
         const matchingLayer1Item: TreeItem | undefined = matchingLayer0Item.children.find((treeItem) => treeItem.hierarchicalName === layer1HierarchicalName);
         if (matchingLayer1Item) {
           layer2MapPolygons.forEach((layer2MapPolygon) => {
-            matchingLayer1Item.children.push({
-              hierarchicalName: layer2MapPolygon.hierarchicalName,
-              children: [],
-            });
-          });
-        } else {
-          layer2MapPolygons.forEach((layer2MapPolygon) => {
-            console.log(`Unable to find matching layer 1 parent for layer: ${layer2MapPolygon.hierarchicalName}`);
+            if (hasCasesData(casesData, layer2MapPolygon.hierarchicalName)) {
+              matchingLayer1Item.children.push({
+                hierarchicalName: layer2MapPolygon.hierarchicalName,
+                children: [],
+              });
+            }
           });
         }
-      } else {
-        layer2MapPolygons.forEach((layer2MapPolygon) => {
-          console.log(`Unable to find matching layer 0 parent for layer: ${layer2MapPolygon.hierarchicalName}`);
-        });
       }
     });
 
@@ -77,5 +76,9 @@ export namespace TreeUtils {
       child1.children = child1.children.sort(sortFunction);
     });
     data.children = data.children.sort(sortFunction);
+  };
+
+  const hasCasesData = (casesData: CasesDataObject, hierarchicalName: string): boolean => {
+    return !!casesData[hierarchicalName];
   };
 }
