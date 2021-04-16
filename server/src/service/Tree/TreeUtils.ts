@@ -58,25 +58,24 @@ export namespace TreeUtils {
           console.log(`Unable to find matching layer 0 parent for layer: ${layer2MapPolygon.hierarchicalName}`);
         });
       }
-
     });
-  };
 
-  //Sort
-  const sortFunction = (a: TreeItem, b: TreeItem): number => {
-    if (a.hierarchicalName > b.hierarchicalName) {
-      return 1;
-    } else if (a.hierarchicalName === b.hierarchicalName) {
+    //Sort
+    const sortFunction = (a: TreeItem, b: TreeItem): number => {
+      if (a.hierarchicalName > b.hierarchicalName) {
+        return 1;
+      }
+      if (a.hierarchicalName < b.hierarchicalName) {
+        return -1
+      }
       return 0;
-    } else {
-      return -1;
-    }
-  };
-  data.children.sort(sortFunction);
-  data.children.forEach((child1) => {
-    child1.children.sort(sortFunction);
-    child1.children.forEach((child2) => {
-      child2.children.sort(sortFunction);
+    };
+    data.children.forEach((child1) => {
+      child1.children.forEach((child2) => {
+        child2.children = child2.children.sort(sortFunction);
+      });
+      child1.children = child1.children.sort(sortFunction);
     });
-  });
+    data.children = data.children.sort(sortFunction);
+  };
 }
