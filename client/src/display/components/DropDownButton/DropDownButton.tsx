@@ -1,10 +1,11 @@
-import React, {useState} from "react";
+import React, {MutableRefObject, useRef, useState} from "react";
 import {createStyles, Theme, useTheme} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import Menu from "@material-ui/core/Menu";
 import DropDownButtonMenuItem from "./DropDownButtonMenuItem/DropDownButtonMenuItem";
 import Divider from "@material-ui/core/Divider";
+import {useEventListener} from "../../../hooks/useEventListener";
 
 export type DropDownButtonProps = DropDownButtonDataProps & DropDownButtonStyleProps & DropDownButtonEventProps;
 
@@ -69,6 +70,8 @@ const DropDownButton: React.FC<DropDownButtonProps> = (props) => {
   const theme: Theme = useTheme();
   const classes = useStyles();
 
+  const ref: MutableRefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
+
   const {
     name,
     children,
@@ -77,6 +80,29 @@ const DropDownButton: React.FC<DropDownButtonProps> = (props) => {
   } = props;
 
   const [anchorElement, setAnchorElement] = useState<Element>(null);
+
+  const onKeyPress = (e: KeyboardEvent): void => {
+    const keyString: string = e.key;
+    const isLetter: RegExpMatchArray = keyString.match(/[a-z]/i);
+    if (!!isLetter) {
+      const menuElement: HTMLDivElement = ref.current;
+      if (!!menuElement) {
+        const childrenList: NodeList = menuElement.querySelectorAll("div.MuiPaper-root > ul > li");
+        let moved: boolean = false;
+        childrenList.forEach((child, index) => {
+          const text: string = child.textContent;
+          const firstCharacter: string = text.charAt(0).toLowerCase();
+          if (!moved && firstCharacter === keyString.toLowerCase() && index > 0) {
+            const childElement: Element = child as Element;
+            childElement.scrollIntoView();
+            moved = true;
+          }
+        });
+      }
+    }
+  };
+
+  useEventListener("keypress", onKeyPress, document);
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>): void => {
     setAnchorElement(e.currentTarget);
@@ -99,6 +125,7 @@ const DropDownButton: React.FC<DropDownButtonProps> = (props) => {
         }
       </Button>
       <Menu
+        ref={ref}
         anchorEl={anchorElement}
         open={!!anchorElement}
         onClose={handleClose}
