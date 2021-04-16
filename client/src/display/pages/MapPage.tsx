@@ -28,6 +28,21 @@ const useStyles = makeStyles((theme: Theme) =>
       width: "100%",
       display: "flex",
       flexDirection: "column",
+    },
+    map: {
+      width: "100%",
+      [theme.breakpoints.up("xs")]: {
+        height: "calc(100% - 69px)",
+      },
+      [theme.breakpoints.up("sm")]: {
+        height: "calc(100% - 72px)",
+      },
+      [theme.breakpoints.up("md")]: {
+        height: "calc(100% - 78px)",
+      },
+      [theme.breakpoints.up("lg")]: {
+        height: "calc(100% - 84px)",
+      },
     }
   }),
 );
@@ -46,6 +61,7 @@ const MapPage: React.FC<MapPageProps> = (props) => {
   return (
     <div className={classes.root}>
       <BreadcrumbsControl dataTree={dataTree} handleChange={handleRegionChange}/>
+      <div className={classes.map}/>
       <SliderControl values={dateValues} handleChange={handleDateChange}/>
     </div>
   );
