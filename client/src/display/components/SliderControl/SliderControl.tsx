@@ -1,8 +1,8 @@
 import React, {ChangeEvent, useEffect, useState} from "react";
 import {createStyles, Slider, Theme, useTheme} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
-import {Observable, Subject} from "rxjs";
-import {distinctUntilChanged} from "rxjs/operators";
+import {asyncScheduler, Observable, Subject} from "rxjs";
+import {distinctUntilChanged, throttleTime} from "rxjs/operators";
 
 export type SliderControlProps = SliderControlDataProps & SliderControlStyleProps & SliderControlEventProps;
 
@@ -133,7 +133,7 @@ const SliderControl: React.FC<SliderControlProps> = (props) => {
   const [subject, setSubject] = useState<Subject<string>>(new Subject());
 
   useEffect(() => {
-    const observable: Observable<string> = subject.pipe(distinctUntilChanged());
+    const observable: Observable<string> = subject.pipe(throttleTime(350, asyncScheduler, { leading: true, trailing: true }), distinctUntilChanged());
     observable.subscribe((value) => {
       handleChange(value);
     });
