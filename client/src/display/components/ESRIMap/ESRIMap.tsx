@@ -59,12 +59,14 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
+let isInitialLoad: boolean = true;
 let map: Map = null;
 let mapView: MapView = null;
 let polygonLayer: FeatureLayer = null;
 let localMapPolygons: Array<ESRIMapPolygon> = [];
 
-export const destroyERSIMap = (): void => {
+export const destroyESRIMap = (): void => {
+  isInitialLoad = true;
   map = null;
   mapView = null;
   polygonLayer = null;
@@ -110,7 +112,7 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
           handleDateChange();
         }
       }
-      return destroyERSIMap;
+      return destroyESRIMap;
     });
   }, [mapPolygons, displayMode, date]);
 
@@ -176,7 +178,12 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
     if (!polygonLayer) {
       return;
     }
-    handleUpdateStart();
+    if (isInitialLoad) {
+      isInitialLoad = false;
+    } else {
+      handleUpdateStart();
+    }
+    
     polygonLayer.queryFeatures().then(result => {
       const renderer = (polygonLayer.renderer as ClassBreaksRenderer).clone();
       const newHierarchicalNames: Array<string> = mapPolygons.map(mapPolygon => mapPolygon.hierarchicalName);

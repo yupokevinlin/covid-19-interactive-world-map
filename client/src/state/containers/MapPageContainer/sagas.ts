@@ -14,6 +14,10 @@ export const mapPageSagas = {
 };
 
 function * initSaga(action: MapPageInitAction): any {
+  yield put({
+    type: MapPageActionTypes.SET_MAP_POLYGONS,
+    mapPolygons: [],
+  });
   const mapPolygons: Array<MapPolygon> = yield call(MapApi.getMapLayer0Data);
   const hierarchicalNames: Array<string> = mapPolygons.map((mapPolygon) => mapPolygon.hierarchicalName);
   const casesDataArray: Array<CasesData> = yield all(hierarchicalNames.map((hierarchicalName) => call(CasesApi.getCasesData, hierarchicalName)));
@@ -34,11 +38,6 @@ function * initSaga(action: MapPageInitAction): any {
   yield put({
     type: MapPageActionTypes.SET_DATE_VALUES,
     dateValues: dateValues,
-  });
-
-  yield put({
-    type: AppActionTypes.SET_IS_LOADING,
-    isLoading: false,
   });
 }
 
