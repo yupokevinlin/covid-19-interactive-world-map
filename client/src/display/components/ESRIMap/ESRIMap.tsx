@@ -1,133 +1,114 @@
-import React, { useEffect, useRef } from "react";
-import {render} from "react-dom";
-import styled from "styled-components";
-import { loadModules } from "esri-loader";
+import React, {MutableRefObject, useEffect, useRef} from "react";
 import "./ESRIMap.css";
-import MapView = __esri.MapView;
+import {createStyles, Theme, useTheme} from "@material-ui/core";
+import {makeStyles} from "@material-ui/core/styles";
+import ReactResizeDetector from "react-resize-detector";
 import Map = __esri.Map;
-import chroma, { Color, Scale } from "chroma-js";
+import MapView = __esri.MapView;
 import FeatureLayer = __esri.FeatureLayer;
-import FieldProperties = __esri.FieldProperties;
+import Legend = __esri.Legend;
 import {
   ClassBreakColors,
-  LatLon,
-  MapConfirmedCasesClassBreakColors,
-  MapDeathsClassBreakColors,
-  MapRecoveredCasesClassBreakColors,
-} from "../../../api/MapApi/types";
-import { usePreviousProps } from "../../../hooks/usePreviousProps";
-import Legend = __esri.Legend;
-import ReactResizeDetector from "react-resize-detector";
-import { MathUtils } from "../../../helper/MathUtils";
-import {ServerDailyCasesDataObject} from "../../../../../shared/types/data/Cases/CasesTypes";
-import MapPolygonClickPopup from "./Popups/MapPolygonClickPopup/MapPolygonClickPopup";
-import {RegionChangeEvent} from "../../../state/containers/MapPageContainer/types";
-import {handleRegionChange} from "../../../state/containers/MapPageContainer/action";
+  ESRIMapModeNames,
+  ESRIMapPolygon,
+  MapTotalCasesClassBreakColors,
+  MapTotalCasesClassBreakDomain
+} from "./types";
+import {usePreviousProps} from "../../../hooks/usePreviousProps";
+import {loadModules} from "esri-loader";
+import {ESRIMapLayerNames} from "./ESRIMapOld";
+import FieldProperties = __esri.FieldProperties;
+import chroma, {Color, Scale} from "chroma-js";
+import {MathUtils} from "../../../helper/MathUtils";
+import ClassBreaksRenderer = __esri.ClassBreaksRenderer;
+import {DailyCasesData, DailyCasesDataObject} from "../../../../../shared/types/data/Cases/CasesTypes";
+import {DateUtils} from "../../../helper/DateUtils";
+import getMomentDateFromDateString = DateUtils.getMomentDateFromDateString;
+import {Moment} from "moment";
+import getDateStringFromMomentDate = DateUtils.getDateStringFromMomentDate;
+import Graphic = __esri.Graphic;
 
 export type ESRIMapProps = ESRIMapDataProps & ESRIMapStyleProps & ESRIMapEventProps;
 
 export interface ESRIMapDataProps {
-  initialBaseMap?: string;
-  mapPolygons: Array<MapPolygon>;
-  displayedLayer: ESRIMapModeNames;
-  enableMapPopup: boolean;
-  moveMap: boolean;
-  currentRegion: Array<string>;
+  mapPolygons: Array<ESRIMapPolygon>;
+  displayMode: ESRIMapModeNames;
+  date: string;
+  initialBaseMap: string;
 }
 
-export interface ESRIMapStyleProps {}
+export interface ESRIMapStyleProps {
+
+}
 
 export interface ESRIMapEventProps {
-  handleRegionChange(e: RegionChangeEvent);
-  handleMapPolygonClick(e: RegionChangeEvent);
+  handleUpdateStart(): void;
+  handleUpdateComplete(): void;
 }
 
-export interface MapPolygon {
-  internalId: number;
-  name: Array<string>;
-  hasChildren: boolean;
-  type: string;
-  countryCode: string;
-  displayedConfirmedCasesCount: number;
-  displayedRecoveredCasesCount: number;
-  displayedDeathsCount: number;
-  data: ServerDailyCasesDataObject;
-  geometry: Array<Array<[number, number]>>;
-  hidden: boolean;
-}
-
-const StyledESRIMap = styled.div`
-  height: 100%;
-  width: 100%;
-`;
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      height: "100%",
+      width: "100%",
+    }
+  }),
+);
 
 let map: Map = null;
 let mapView: MapView = null;
 let polygonLayer: FeatureLayer = null;
-let isSmall: boolean = false;
-let localMapPolygons: Array<MapPolygon> = [];
+let localMapPolygons: Array<ESRIMapPolygon> = [];
 
-export enum ESRIMapLayerNames {
-  polygonLayer = "polygon-layer",
-}
-
-export enum ESRIMapModeNames {
-  confirmedCases = "Confirmed Cases",
-  recoveredCases = "Recovered Cases",
-  deaths = "Deaths",
-}
-
-
-export const reloadMap = (): void => {
+export const destroyERSIMap = (): void => {
   map = null;
   mapView = null;
   polygonLayer = null;
-  isSmall = false;
   localMapPolygons = [];
 };
 
-const ESRIMap: React.FC<ESRIMapProps> = props => {
-  const { initialBaseMap = "streets", mapPolygons = [], displayedLayer, enableMapPopup, currentRegion, moveMap, handleRegionChange, handleMapPolygonClick } = props;
+const ESRIMap: React.FC<ESRIMapProps> = (props) => {
+  const theme: Theme = useTheme();
+  const classes = useStyles();
 
-  const mapRef: React.MutableRefObject<HTMLDivElement> = useRef();
+  const mapRef: MutableRefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
+
+  const {
+    mapPolygons,
+    displayMode,
+    date,
+    initialBaseMap,
+    handleUpdateStart,
+    handleUpdateComplete,
+  } = props;
 
   const prevProps: ESRIMapProps = usePreviousProps<ESRIMapProps>(props);
   useEffect(() => {
-    localMapPolygons = mapPolygons;
     loadModules(
       ["esri/Map", "esri/views/MapView", "esri/layers/FeatureLayer", "esri/widgets/Legend", "esri/geometry/Point",],
       {
         css: true,
       }
     ).then(([Map, MapView, FeatureLayer, Legend, Point]) => {
-      isSmall = window.innerWidth <= 710;
+
       if (!map) {
         initialize(Map, MapView, FeatureLayer, Legend, Point);
       }
 
       if (prevProps) {
         if (prevProps.mapPolygons !== mapPolygons) {
-          if (polygonLayer) {
-            updatePolygonLayerData();
-          }
+          handleMapPolygonsChange();
         }
-        if (prevProps.displayedLayer !== displayedLayer) {
-          if (polygonLayer) {
-            updatePolygonLayerRenderer();
-          }
+        if (prevProps.displayMode !== displayMode) {
+          handleDisplayedLayer();
         }
-        if (moveMap) {
-          updatePolygonLayerView(prevProps.mapPolygons);
+        if (prevProps.date !== date) {
+          handleDateChange();
         }
       }
-      return cleanUp;
+      return destroyERSIMap;
     });
-  }, [mapPolygons, displayedLayer]);
-
-  const handleRegionChangeInterceptor = (e: RegionChangeEvent) => {
-    handleRegionChange(e);
-    mapView.popup.visible = false;
-  };
+  }, [mapPolygons, displayMode, date]);
 
   const initialize = (Map, MapView, FeatureLayer, Legend, Point): void => {
     map = new Map({
@@ -148,48 +129,6 @@ const ESRIMap: React.FC<ESRIMapProps> = props => {
       position: "top-right"
     };
 
-    mapView.on("click", (event) => {
-      mapView.popup.visible = false;
-      mapView.hitTest(event).then((rsp => {
-        const hitResults: Array<any> = rsp.results;
-        hitResults.forEach(result => {
-          const sourceLayerName: string = result.graphic.sourceLayer.id;
-          switch (sourceLayerName) {
-            case ESRIMapLayerNames.polygonLayer: {
-              const objectId: number = result.graphic.attributes.OBJECTID;
-              polygonLayer.queryFeatures().then((featureRsp) => {
-                const features: Array<any> = featureRsp.features;
-                for (let i = 0; i < features.length; i++) {
-                  const feature: any = features[i];
-                  if (feature.attributes.OBJECTID === objectId) {
-                    const internalId: number = feature.attributes.internalId;
-                    const mapPolygon: MapPolygon = localMapPolygons.find(icon => icon.internalId === internalId);
-                    handleMapPolygonClick({
-                      name: ["World", ...mapPolygon.name],
-                      hasChildren: false,
-                    });
-                    if (enableMapPopup) {
-                      mapView.popup.location = event.mapPoint;
-                      const element: HTMLElement = document.createElement("div");
-                      render(<MapPolygonClickPopup name={mapPolygon.name} confirmedCases={mapPolygon.displayedConfirmedCasesCount} deaths={mapPolygon.displayedDeathsCount} recoveredCases={mapPolygon.displayedRecoveredCasesCount} hasChildren={mapPolygon.hasChildren} handleRegionChange={handleRegionChangeInterceptor}/>, element);
-                      mapView.popup.content = element;
-                      mapView.popup.title = mapPolygon.name[mapPolygon.name.length - 1];
-                      mapView.popup.visible = true;
-                    }
-                    break;
-                  }
-                }
-              });
-              break;
-            }
-            default: {
-              break;
-            }
-          }
-        });
-      }));
-    });
-
     polygonLayer = getPolygonLayer(FeatureLayer);
 
     const layers: Array<FeatureLayer> = [polygonLayer];
@@ -200,78 +139,57 @@ const ESRIMap: React.FC<ESRIMapProps> = props => {
     });
 
     mapView.ui.add(legend, "bottom-left");
-    updatePolygonLayerData();
   };
 
-  const cleanUp = (): void => {
-    if (mapView) {
-      mapView.container = null;
-    }
-  };
-
-  const updatePolygonLayerRenderer = (): void => {
-    const renderer = (polygonLayer.renderer as __esri.ClassBreaksRenderer).clone();
-    renderer.legendOptions = {
-      title: displayedLayer,
-    };
-    switch (displayedLayer) {
-      case ESRIMapModeNames.confirmedCases: {
-        renderer.field = "confirmedCases";
-        renderer.classBreakInfos = generateLogarithmicClassStep(7, MapConfirmedCasesClassBreakColors, [
-          0, 1.5, 4, 5.5, 7
-        ]);
-        break;
-      }
-      case ESRIMapModeNames.recoveredCases: {
-        renderer.field = "recoveredCases";
-        renderer.classBreakInfos = generateLogarithmicClassStep(7, MapRecoveredCasesClassBreakColors, [0, 1.5, 3, 5, 7]);
-        break;
-      }
-      case ESRIMapModeNames.deaths: {
-        renderer.field = "deaths";
-        renderer.classBreakInfos = generateLogarithmicClassStep(7, MapDeathsClassBreakColors, [0, 1.5, 3, 5, 7]);
-        break;
-      }
-    }
-    polygonLayer.renderer = renderer;
-  };
-
-  const updatePolygonLayerView = (prevMapPolygons: Array<MapPolygon>): void => {
-    const name: Array<string> = currentRegion;
-    name.shift();
-    const mapPolygon: MapPolygon = prevMapPolygons.find(mapPolygon => JSON.stringify(mapPolygon.name) === JSON.stringify(name));
-    if (mapPolygon) {
-      polygonLayer.queryFeatures().then((featureRsp) => {
-        const features: Array<any> = featureRsp.features;
-        for (let i = 0; i < features.length; i++) {
-          const feature: any = features[i];
-          if (feature.attributes.internalId === mapPolygon.internalId) {
-            mapView.goTo(feature.geometry.extent, {
-              duration: 1000
-            });
-            mapView.popup.visible = false;
+  const getDailyCasesData = (dailyCasesDataObject: DailyCasesDataObject, dateString: string): DailyCasesData => {
+    const data: DailyCasesData | undefined = dailyCasesDataObject[dateString];
+    if (!!data) {
+      return data;
+    } else {
+      const date: Moment = getMomentDateFromDateString(dateString);
+      for (let i = 0; i < 10; i++) {
+        date.subtract(1, "days");
+        const previousDayData: DailyCasesData | undefined = dailyCasesDataObject[getDateStringFromMomentDate(date)];
+        if (!!previousDayData) {
+          return previousDayData;
+        } else {
+          if (i === 9) {
+            console.error(`Unable to get cases data on day: ${dateString}.`);
+            console.error("Daily Cases Object");
+            console.log(dailyCasesDataObject);
+            return {
+              totalCases: 0,
+              totalRecoveries: 0,
+              totalDeaths: 0,
+            }
           }
         }
-      });
+      }
     }
   };
 
-  const updatePolygonLayerData = (): void => {
+  const handleMapPolygonsChange = (): void => {
+    if (!polygonLayer) {
+      return;
+    }
+    handleUpdateStart();
     polygonLayer.queryFeatures().then(result => {
-      const renderer = (polygonLayer.renderer as __esri.ClassBreaksRenderer).clone();
-      const newInternalIds: Array<number> = mapPolygons.map(mapPolygon => mapPolygon.internalId);
-      const oldInternalIds: Array<number> = prevProps ? prevProps.mapPolygons.map(mapPolygon => mapPolygon.internalId) : [];
-      const removeInternalIds: Array<number> = oldInternalIds.filter(id => !newInternalIds.includes(id));
-      const addInternalIds: Array<number> = newInternalIds.filter(id => !oldInternalIds.includes(id));
+      //use result for hierarchical names?
+      const renderer = (polygonLayer.renderer as ClassBreaksRenderer).clone();
+      const newHierarchicalNames: Array<string> = mapPolygons.map(mapPolygon => mapPolygon.hierarchicalName);
+      const oldHierarchicalNames: Array<string> = prevProps?.mapPolygons.map(mapPolygon => mapPolygon.hierarchicalName) || [];
+      const removeHierarchicalNames: Array<string> = oldHierarchicalNames.filter(hierarchicalName => !newHierarchicalNames.includes(hierarchicalName));
+      const addHierarchicalNames: Array<string> = newHierarchicalNames.filter(hierarchicalName => !oldHierarchicalNames.includes(hierarchicalName));
+      const addMapPolygons: Array<ESRIMapPolygon> = mapPolygons.filter(mapPolygon => addHierarchicalNames.includes(mapPolygon.hierarchicalName));
 
-      const addFeatures: Array<any> = mapPolygons.filter(mapPolygon => !mapPolygon.hidden && addInternalIds.includes(mapPolygon.internalId)).map(mapPolygon => {
+      const addFeatures: Array<any> = addMapPolygons.map(mapPolygon => {
+        const matchingDailyCasesData: DailyCasesData = getDailyCasesData(mapPolygon.data, date);
         return {
           attributes: {
-            name: mapPolygon.name[mapPolygon.name.length - 1],
-            internalId: mapPolygon.internalId,
-            confirmedCases: mapPolygon.displayedConfirmedCasesCount,
-            recoveredCases: mapPolygon.displayedRecoveredCasesCount,
-            deaths: mapPolygon.displayedDeathsCount,
+            hierarchicalName: mapPolygon.hierarchicalName,
+            totalCases: matchingDailyCasesData.totalCases,
+            totalRecoveries: matchingDailyCasesData.totalRecoveries,
+            totalDeaths: matchingDailyCasesData.totalDeaths,
           },
           geometry: {
             type: "polygon",
@@ -283,80 +201,57 @@ const ESRIMap: React.FC<ESRIMapProps> = props => {
         }
       });
 
-      const deleteFeatures: Array<{ objectId: number }> = result.features.filter(feature => removeInternalIds.includes(feature.attributes.internalId)).map(feature => ({ objectId: feature.attributes.OBJECTID }));
+      const deleteFeatures: Array<{ objectId: number }> = result.features.filter(feature => removeHierarchicalNames.includes(feature.attributes.hierarchicalName)).map(feature => ({ objectId: feature.attributes.OBJECTID }));
 
       polygonLayer.renderer = renderer;
-      polygonLayer
-        .applyEdits({
-          addFeatures: addFeatures,
-          deleteFeatures: deleteFeatures,
-        })
-        .then(rsp => {});
+      polygonLayer.applyEdits({
+        addFeatures: addFeatures,
+        deleteFeatures: deleteFeatures,
+      }).then(rsp => {
+        handleUpdateComplete();
+      });
     });
   };
 
-  const getPolygonLayer = (FeatureLayer): FeatureLayer => {
-    const fields: Array<FieldProperties> = [
-      {
-        name: "OBJECTID",
-        alias: "OBJECTID",
-        type: "oid",
-      },
-      {
-        name: "name",
-        alias: "name",
-        type: "string",
-      },
-      {
-        name: "internalId",
-        alias: "internalId",
-        type: "integer",
-      },
-      {
-        name: "confirmedCases",
-        alias: "confirmedCases",
-        type: "integer",
-      },
-      {
-        name: "recoveredCases",
-        alias: "recoveredCases",
-        type: "integer",
-      },
-      {
-        name: "deaths",
-        alias: "deaths",
-        type: "integer",
-      },
-    ];
+  const handleDisplayedLayer = (): void => {
 
-    const renderer = {
-      type: "class-breaks",
-      field: "confirmedCases",
-      legendOptions: {
-        title: ESRIMapModeNames.confirmedCases,
-      },
-      defaultSymbol: {
-        type: "simple-fill",
-        style: "backward-diagonal",
-        color: [0, 0, 0, 0.4],
-        outline: {
-          width: 1,
-          color: [126, 126, 126, 1],
-        },
-      },
-      defaultLabel: "no data",
-      classBreakInfos: generateLogarithmicClassStep(7, MapConfirmedCasesClassBreakColors, [0, 1.5, 4, 5.5, 7]),
-    };
+  };
 
-    return new FeatureLayer({
-      id: ESRIMapLayerNames.polygonLayer,
-      title: "",
-      geometryType: "polygon",
-      source: [],
-      fields: fields,
-      objectIdField: "OBJECTID",
-      renderer: renderer,
+  const handleDateChange = (): void => {
+    if (!polygonLayer) {
+      return;
+    }
+    const start: number = performance.now();
+    handleUpdateStart();
+    polygonLayer.queryFeatures().then(result => {
+      const renderer = (polygonLayer.renderer as ClassBreaksRenderer).clone();
+
+      const existingFeatures: Array<Graphic> = result.features;
+
+      const updateFeatures: Array<Graphic> = [];
+      existingFeatures.forEach((existingFeature) => {
+        const hierarchicalName: string = existingFeature.attributes.hierarchicalName;
+        const matchingMapPolygon: ESRIMapPolygon | null = mapPolygons.find(mapPolygon => mapPolygon.hierarchicalName === hierarchicalName);
+        if (!!matchingMapPolygon) {
+          const matchingDailyCasesData: DailyCasesData = getDailyCasesData(matchingMapPolygon.data, date);
+          existingFeature.attributes.totalCases = matchingDailyCasesData.totalCases;
+          existingFeature.attributes.totalRecoveries = matchingDailyCasesData.totalRecoveries;
+          existingFeature.attributes.totalDeaths = matchingDailyCasesData.totalDeaths;
+        }
+        updateFeatures.push(existingFeature);
+      });
+
+      polygonLayer.renderer = renderer;
+      polygonLayer.applyEdits({
+        updateFeatures: updateFeatures,
+      }).then(rsp => {
+        handleUpdateComplete();
+      });
     });
+  };
+
+  const onResize = (): void => {
+
   };
 
   const generateLogarithmicClassStep = (steps: number, colors: ClassBreakColors, domain: Array<number>): Array<any> => {
@@ -389,17 +284,17 @@ const ESRIMap: React.FC<ESRIMapProps> = props => {
         const minValue: number = Math.pow(10, step - 1);
         const maxValue: number = step === steps ? Number.MAX_SAFE_INTEGER : Math.pow(10, step) - 0.1;
         let label: string = "";
-        if (isSmall) {
-          label =
-            step === steps ? `>${MathUtils.abbreviateNumber(minValue)}` : `${MathUtils.abbreviateNumber(minValue)}'s`;
-        } else {
+        // if (isSmall) {
+        //   label =
+        //     step === steps ? `>${MathUtils.abbreviateNumber(minValue)}` : `${MathUtils.abbreviateNumber(minValue)}'s`;
+        // } else {
           label =
             step === steps
               ? `>${MathUtils.abbreviateNumber(minValue)}`
               : `${MathUtils.abbreviateNumber(minValue)} - ${MathUtils.abbreviateNumber(
-                  maxValue < 100 ? Math.floor(maxValue) : Math.ceil(maxValue)
-                )}`;
-        }
+              maxValue < 100 ? Math.floor(maxValue) : Math.ceil(maxValue)
+              )}`;
+        // }
         classBreakInfos.push({
           minValue: minValue,
           maxValue: maxValue,
@@ -419,21 +314,69 @@ const ESRIMap: React.FC<ESRIMapProps> = props => {
     return classBreakInfos;
   };
 
-  const onResize = (): void => {
-    const newWidth: number = window.innerWidth;
-    if (newWidth > 710 && isSmall) {
-      isSmall = false;
-      updatePolygonLayerRenderer();
-    } else if (newWidth <= 710 && !isSmall) {
-      isSmall = true;
-      updatePolygonLayerRenderer();
-    }
+  const getPolygonLayer = (FeatureLayer): FeatureLayer => {
+    const fields: Array<FieldProperties> = [
+      {
+        name: "OBJECTID",
+        alias: "OBJECTID",
+        type: "oid",
+      },
+      {
+        name: "hierarchicalName",
+        alias: "hierarchicalName",
+        type: "string",
+      },
+      {
+        name: "totalCases",
+        alias: "totalCases",
+        type: "integer",
+      },
+      {
+        name: "totalRecoveries",
+        alias: "totalRecoveries",
+        type: "integer",
+      },
+      {
+        name: "totalDeaths",
+        alias: "totalDeaths",
+        type: "integer",
+      },
+    ];
+
+    const renderer = {
+      type: "class-breaks",
+      field: "totalCases",
+      legendOptions: {
+        title: ESRIMapModeNames.totalCases,
+      },
+      defaultSymbol: {
+        type: "simple-fill",
+        style: "backward-diagonal",
+        color: [0, 0, 0, 0.4],
+        outline: {
+          width: 1,
+          color: [126, 126, 126, 1],
+        },
+      },
+      defaultLabel: "no data",
+      classBreakInfos: generateLogarithmicClassStep(8, MapTotalCasesClassBreakColors, MapTotalCasesClassBreakDomain),
+    };
+
+    return new FeatureLayer({
+      id: ESRIMapLayerNames.polygonLayer,
+      title: "",
+      geometryType: "polygon",
+      source: [],
+      fields: fields,
+      objectIdField: "OBJECTID",
+      renderer: renderer,
+    });
   };
 
   return (
     <React.Fragment>
-      <ReactResizeDetector handleWidth handleHeight onResize={onResize} />
-      <StyledESRIMap className={"esri-map"} ref={mapRef} />
+      <ReactResizeDetector handleWidth handleHeight onResize={onResize}/>
+      <div className={classes.root} ref={mapRef}/>
     </React.Fragment>
   );
 };
