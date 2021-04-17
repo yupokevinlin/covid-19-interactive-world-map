@@ -221,7 +221,7 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
     if (!polygonLayer) {
       return;
     }
-    const start: number = performance.now();
+
     handleUpdateStart();
     polygonLayer.queryFeatures().then(result => {
       const renderer = (polygonLayer.renderer as ClassBreaksRenderer).clone();
