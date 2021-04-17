@@ -1,15 +1,19 @@
-import React from "react";
+import React, {useState} from "react";
 import {createStyles, Theme, useTheme} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
 import SliderControl from "../components/SliderControl/SliderControl";
 import {TreeItem} from "../../../../shared/types/data/Tree/TreeTypes";
 import BreadcrumbsControl from "../components/BreadcrumbsControl/BreadcrumbsControl";
+import {ESRIMapModeNames, ESRIMapPolygon} from "../components/ESRIMap/types";
+import ESRIMap from "../components/ESRIMap/ESRIMap";
 
 export type MapPageProps = MapPageDataProps & MapPageStyleProps & MapPageEventProps;
 
 export interface MapPageDataProps {
   dateValues: Array<string>;
   dataTree: TreeItem;
+  date: string;
+  mapPolygons: Array<ESRIMapPolygon>;
 }
 
 export interface MapPageStyleProps {
@@ -19,6 +23,8 @@ export interface MapPageStyleProps {
 export interface MapPageEventProps {
   handleDateChange(date: string): void;
   handleRegionChange(hierarchicalName: string): void;
+  handleMapUpdateStart(): void;
+  handleMapUpdateComplete(): void;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -54,14 +60,22 @@ const MapPage: React.FC<MapPageProps> = (props) => {
   const {
     dateValues,
     dataTree,
+    date,
+    mapPolygons,
     handleDateChange,
     handleRegionChange,
+    handleMapUpdateStart,
+    handleMapUpdateComplete,
   } = props;
+
+  const [displayMode, setDisplayMode] = useState<ESRIMapModeNames>(ESRIMapModeNames.totalCases);
 
   return (
     <div className={classes.root}>
       <BreadcrumbsControl dataTree={dataTree} handleChange={handleRegionChange}/>
-      <div className={classes.map}/>
+      <div className={classes.map}>
+        <ESRIMap mapPolygons={mapPolygons} displayMode={displayMode} date={date} initialBaseMap={"streets"} handleUpdateStart={handleMapUpdateStart} handleUpdateComplete={handleMapUpdateComplete}/>
+      </div>
       <SliderControl values={dateValues} handleChange={handleDateChange}/>
     </div>
   );
