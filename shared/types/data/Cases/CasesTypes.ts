@@ -17,6 +17,12 @@ export interface DailyCasesData {
   totalDeaths: number;
 }
 
+export interface DailyCasesDataNull {
+  totalCases: null;
+  totalRecoveries: null;
+  totalDeaths: null;
+}
+
 export interface CasesDataObject {
   [hierarchicalName: string]: CasesData;
 }
