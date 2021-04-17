@@ -17,7 +17,7 @@
     "@material-ui/styles": "^4.9.0",
     "axios": "^0.19.2",
     "chroma-js": "^2.1.0",
-    "esri-loader": "^2.13.0",
+    "esri-loader": "^3.0.0",
     "history": "^4.10.1",
     "i18n-iso-countries": "^5.1.0",
     "material-ui-popup-state": "^1.8.0",
