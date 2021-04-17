@@ -21,7 +21,11 @@ import FieldProperties = __esri.FieldProperties;
 import chroma, {Color, Scale} from "chroma-js";
 import {MathUtils} from "../../../helper/MathUtils";
 import ClassBreaksRenderer = __esri.ClassBreaksRenderer;
-import {DailyCasesData, DailyCasesDataObject} from "../../../../../shared/types/data/Cases/CasesTypes";
+import {
+  DailyCasesData,
+  DailyCasesDataNull,
+  DailyCasesDataObject
+} from "../../../../../shared/types/data/Cases/CasesTypes";
 import {DateUtils} from "../../../helper/DateUtils";
 import getMomentDateFromDateString = DateUtils.getMomentDateFromDateString;
 import {Moment} from "moment";
@@ -141,7 +145,7 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
     mapView.ui.add(legend, "bottom-left");
   };
 
-  const getDailyCasesData = (dailyCasesDataObject: DailyCasesDataObject, dateString: string): DailyCasesData => {
+  const getDailyCasesData = (dailyCasesDataObject: DailyCasesDataObject, dateString: string): DailyCasesData | DailyCasesDataNull => {
     const data: DailyCasesData | undefined = dailyCasesDataObject[dateString];
     if (!!data) {
       return data;
@@ -158,9 +162,9 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
             console.error("Daily Cases Object");
             console.log(dailyCasesDataObject);
             return {
-              totalCases: 0,
-              totalRecoveries: 0,
-              totalDeaths: 0,
+              totalCases: null,
+              totalRecoveries: null,
+              totalDeaths: null,
             }
           }
         }
@@ -174,7 +178,6 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
     }
     handleUpdateStart();
     polygonLayer.queryFeatures().then(result => {
-      //use result for hierarchical names?
       const renderer = (polygonLayer.renderer as ClassBreaksRenderer).clone();
       const newHierarchicalNames: Array<string> = mapPolygons.map(mapPolygon => mapPolygon.hierarchicalName);
       const oldHierarchicalNames: Array<string> = prevProps?.mapPolygons.map(mapPolygon => mapPolygon.hierarchicalName) || [];
@@ -183,21 +186,39 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
       const addMapPolygons: Array<ESRIMapPolygon> = mapPolygons.filter(mapPolygon => addHierarchicalNames.includes(mapPolygon.hierarchicalName));
 
       const addFeatures: Array<any> = addMapPolygons.map(mapPolygon => {
-        const matchingDailyCasesData: DailyCasesData = getDailyCasesData(mapPolygon.data, date);
-        return {
-          attributes: {
-            hierarchicalName: mapPolygon.hierarchicalName,
-            totalCases: matchingDailyCasesData.totalCases,
-            totalRecoveries: matchingDailyCasesData.totalRecoveries,
-            totalDeaths: matchingDailyCasesData.totalDeaths,
-          },
-          geometry: {
-            type: "polygon",
-            hasZ: false,
-            hasM: false,
-            rings: mapPolygon.geometry,
-            spatialReference: { wkid: 4326 },
-          },
+        if (mapPolygon.isMissingData) {
+          return {
+            attributes: {
+              hierarchicalName: mapPolygon.hierarchicalName,
+              totalCases: null,
+              totalRecoveries: null,
+              totalDeaths: null,
+            },
+            geometry: {
+              type: "polygon",
+              hasZ: false,
+              hasM: false,
+              rings: mapPolygon.geometry,
+              spatialReference: { wkid: 4326 },
+            },
+          }
+        } else {
+          const matchingDailyCasesData: DailyCasesData | DailyCasesDataNull = getDailyCasesData(mapPolygon.data, date);
+          return {
+            attributes: {
+              hierarchicalName: mapPolygon.hierarchicalName,
+              totalCases: matchingDailyCasesData.totalCases,
+              totalRecoveries: matchingDailyCasesData.totalRecoveries,
+              totalDeaths: matchingDailyCasesData.totalDeaths,
+            },
+            geometry: {
+              type: "polygon",
+              hasZ: false,
+              hasM: false,
+              rings: mapPolygon.geometry,
+              spatialReference: { wkid: 4326 },
+            },
+          }
         }
       });
 
@@ -222,7 +243,6 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
       return;
     }
 
-    handleUpdateStart();
     polygonLayer.queryFeatures().then(result => {
       const renderer = (polygonLayer.renderer as ClassBreaksRenderer).clone();
 
@@ -233,10 +253,16 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
         const hierarchicalName: string = existingFeature.attributes.hierarchicalName;
         const matchingMapPolygon: ESRIMapPolygon | null = mapPolygons.find(mapPolygon => mapPolygon.hierarchicalName === hierarchicalName);
         if (!!matchingMapPolygon) {
-          const matchingDailyCasesData: DailyCasesData = getDailyCasesData(matchingMapPolygon.data, date);
-          existingFeature.attributes.totalCases = matchingDailyCasesData.totalCases;
-          existingFeature.attributes.totalRecoveries = matchingDailyCasesData.totalRecoveries;
-          existingFeature.attributes.totalDeaths = matchingDailyCasesData.totalDeaths;
+          if (matchingMapPolygon.isMissingData) {
+            existingFeature.attributes.totalCases = null;
+            existingFeature.attributes.totalRecoveries = null;
+            existingFeature.attributes.totalDeaths = null;
+          } else {
+            const matchingDailyCasesData: DailyCasesData | DailyCasesDataNull = getDailyCasesData(matchingMapPolygon.data, date);
+            existingFeature.attributes.totalCases = matchingDailyCasesData.totalCases;
+            existingFeature.attributes.totalRecoveries = matchingDailyCasesData.totalRecoveries;
+            existingFeature.attributes.totalDeaths = matchingDailyCasesData.totalDeaths;
+          }
         }
         updateFeatures.push(existingFeature);
       });
@@ -245,7 +271,6 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
       polygonLayer.applyEdits({
         updateFeatures: updateFeatures,
       }).then(rsp => {
-        handleUpdateComplete();
       });
     });
   };
