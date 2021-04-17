@@ -10,6 +10,10 @@ export namespace DateUtils {
     return date;
   };
 
+  export const getDateStringFromMomentDate = (date: Moment): string => {
+    return date.format("M/D/YY");
+  };
+
   export const getDateStringArray = (firstDateString: string, lastDateString: string): Array<string> => {
     const dateStringArray: Array<string> = [];
     const firstDate: Moment = getMomentDateFromDateString(firstDateString);
@@ -17,11 +21,11 @@ export namespace DateUtils {
     const dateDifference: number = lastDate.diff(firstDate, "days");
     for (let dateIndex = 0; dateIndex < dateDifference; dateIndex++) {
       if (dateIndex === 0) {
-        const firstDateString: string = firstDate.format("M/D/YY");
+        const firstDateString: string = getDateStringFromMomentDate(firstDate);
         dateStringArray.push(firstDateString);
       }
       firstDate.add(1, "days");
-      const newDateString: string = firstDate.format("M/D/YY");
+      const newDateString: string = getDateStringFromMomentDate(firstDate);
       dateStringArray.push(newDateString);
     }
     return dateStringArray;
