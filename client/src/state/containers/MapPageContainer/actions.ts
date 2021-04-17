@@ -1,11 +1,10 @@
 import {MapPageActionTypes} from "./types";
-import {ESRIMapModeNames, ESRIMapPolygon} from "../../../display/components/ESRIMap/ESRIMap";
+import {ESRIMapPolygon} from "../../../display/components/ESRIMap/ESRIMap";
 
 export type MapPageAction = MapPageInitAction
 | MapPageSetMapPolygonsAction
-| MapPageSetDisplayedLayerAction
-| MapPageSetHierarchicalNameAction
-| MapPageSetDateValuesAction;
+| MapPageSetDateValuesAction
+| MapPageHandleRegionChangeAction;
 
 export interface MapPageInitAction {
   type: typeof MapPageActionTypes.INIT;
@@ -27,28 +26,6 @@ export const setMapPolygons = (mapPolygons: Array<ESRIMapPolygon>): MapPageSetMa
   };
 };
 
-export interface MapPageSetDisplayedLayerAction {
-  type: typeof MapPageActionTypes.SET_DISPLAYED_LAYER;
-  displayedLayer: ESRIMapModeNames;
-}
-export const setDisplayedLayer = (displayedLayer: ESRIMapModeNames): MapPageSetDisplayedLayerAction => {
-  return {
-    type: MapPageActionTypes.SET_DISPLAYED_LAYER,
-    displayedLayer: displayedLayer,
-  };
-};
-
-export interface MapPageSetHierarchicalNameAction {
-  type: typeof MapPageActionTypes.SET_HIERARCHICAL_NAME;
-  hierarchicalName: string;
-}
-export const setHierarchicalName = (hierarchicalName: string): MapPageSetHierarchicalNameAction => {
-  return {
-    type: MapPageActionTypes.SET_HIERARCHICAL_NAME,
-    hierarchicalName: hierarchicalName,
-  };
-};
-
 export interface MapPageSetDateValuesAction {
   type: typeof MapPageActionTypes.SET_DATE_VALUES;
   dateValues: Array<string>;
@@ -57,5 +34,16 @@ export const setDateValues = (dateValues: Array<string>): MapPageSetDateValuesAc
   return {
     type: MapPageActionTypes.SET_DATE_VALUES,
     dateValues: dateValues,
+  };
+};
+
+export interface MapPageHandleRegionChangeAction {
+  type: typeof MapPageActionTypes.HANDLE_REGION_CHANGE;
+  hierarchicalName: string;
+}
+export const handleRegionChange = (hierarchicalName: string): MapPageHandleRegionChangeAction => {
+  return {
+    type: MapPageActionTypes.HANDLE_REGION_CHANGE,
+    hierarchicalName: hierarchicalName,
   };
 };

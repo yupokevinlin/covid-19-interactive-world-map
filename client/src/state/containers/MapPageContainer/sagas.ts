@@ -4,10 +4,10 @@ import {MapPageInitAction} from "./actions";
 import {AppActionTypes} from "../../global/App/types";
 import {MapPolygon} from "../../../../../shared/types/data/Map/MapTypes";
 import {MapApi} from "../../../api/MapApi/MapApi";
-import {ESRIMapPolygon} from "../../../display/components/ESRIMap/ESRIMap";
 import {CasesData} from "../../../../../shared/types/data/Cases/CasesTypes";
 import {CasesApi} from "../../../api/CasesApi/CasesApi";
 import {DateUtils} from "../../../helper/DateUtils";
+import {ESRIMapPolygon} from "../../../display/components/ESRIMap/types";
 
 export const mapPageSagas = {
   initSaga: takeEvery(MapPageActionTypes.INIT, initSaga),

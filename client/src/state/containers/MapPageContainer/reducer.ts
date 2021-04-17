@@ -1,12 +1,8 @@
 import {MapPageActionTypes, MapPageState} from "./types";
-import {ESRIMapModeNames} from "../../../display/components/ESRIMap/ESRIMap";
 import {MapPageAction} from "./actions";
 
 export const initialState: MapPageState = {
   mapPolygons: [],
-  displayedLayer: ESRIMapModeNames.confirmedCases,
-  hierarchicalName: "World",
-  initialBaseMap: "streets",
   dateValues: [],
 };
 
@@ -16,18 +12,6 @@ export const reducer = (state: MapPageState = initialState, action: MapPageActio
       return {
         ...state,
         mapPolygons: [...action.mapPolygons],
-      }
-    }
-    case MapPageActionTypes.SET_DISPLAYED_LAYER: {
-      return {
-        ...state,
-        displayedLayer: action.displayedLayer,
-      }
-    }
-    case MapPageActionTypes.SET_HIERARCHICAL_NAME: {
-      return {
-        ...state,
-        hierarchicalName: action.hierarchicalName,
       }
     }
     case MapPageActionTypes.SET_DATE_VALUES: {
