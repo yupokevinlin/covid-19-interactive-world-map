@@ -37,12 +37,14 @@ export const setIsInitComplete = (isInitComplete: boolean): AppSetIsInitComplete
 
 export interface AppSetIsLoadingAction {
   type: typeof AppActionTypes.SET_IS_LOADING;
-  isLoading: boolean;
+  displayLoadingBar: boolean;
+  displayLoadingPage: boolean;
 }
-export const setIsLoading = (isLoading: boolean): AppSetIsLoadingAction => {
+export const setIsLoading = (displayLoadingBar: boolean, displayLoadingPage: boolean): AppSetIsLoadingAction => {
   return {
     type: AppActionTypes.SET_IS_LOADING,
-    isLoading: isLoading,
+    displayLoadingBar: displayLoadingBar,
+    displayLoadingPage: displayLoadingPage,
   };
 };
 

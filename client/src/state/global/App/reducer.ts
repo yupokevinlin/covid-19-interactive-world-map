@@ -3,7 +3,8 @@ import {AppAction} from "./actions";
 
 export const initialState: AppState = {
   isInitComplete: false,
-  isLoading: false,
+  displayLoadingBar: false,
+  displayLoadingPage: false,
   version: "0.0.1",
   title: `${Pages.HOME}`,
   theme: null,
@@ -24,7 +25,8 @@ export const reducer = (state: AppState = initialState, action: AppAction): AppS
     case AppActionTypes.SET_IS_LOADING: {
       return {
         ...state,
-        isLoading: action.isLoading,
+        displayLoadingBar: action.displayLoadingBar,
+        displayLoadingPage: action.displayLoadingPage,
       }
     }
     case AppActionTypes.SET_THEME: {

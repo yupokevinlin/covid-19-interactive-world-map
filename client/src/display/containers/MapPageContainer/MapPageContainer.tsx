@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import MapPage from "../../pages/MapPage";
-import {AppState} from "../../../state/global/App/types";
+import {AppActionTypes, AppState} from "../../../state/global/App/types";
 import {Store} from "../../../state/store";
 import {Dispatch} from "redux";
 import {AppAction} from "../../../state/global/App/actions";
@@ -46,8 +46,24 @@ const MapPageContainer: React.FC<MapPageContainerProps> = (props) => {
     setRegion(hierarchicalName);
   };
 
+  const handleMapUpdateStart = (): void => {
+    appDispatch({
+      type: AppActionTypes.SET_IS_LOADING,
+      displayLoadingBar: true,
+      displayLoadingPage: false,
+    });
+  };
+
+  const handleMapUpdateComplete = (): void => {
+    appDispatch({
+      type: AppActionTypes.SET_IS_LOADING,
+      displayLoadingBar: false,
+      displayLoadingPage: false,
+    });
+  };
+
   return (
-    <MapPage dateValues={mapPageState.dateValues} dataTree={appState.dataTree} handleDateChange={handleDateChange} handleRegionChange={handleRegionChange}/>
+    <MapPage dateValues={mapPageState.dateValues} dataTree={appState.dataTree} mapPolygons={mapPageState.mapPolygons} date={date} handleDateChange={handleDateChange} handleRegionChange={handleRegionChange} handleMapUpdateStart={handleMapUpdateStart} handleMapUpdateComplete={handleMapUpdateComplete}/>
   );
 };
 

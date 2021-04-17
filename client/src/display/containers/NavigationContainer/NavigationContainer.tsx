@@ -70,7 +70,7 @@ const NavigationContainer: React.FC<NavigationContainerProps> = (props) => {
       <ThemeProvider theme={appState.theme}>
         <Router history={history}>
           {
-            <Navigation width={width} pageTitle={pageTitle} menuItems={appState.menuItems} version={appState.version} isLoading={appState.isLoading} handleMenuItemClick={handleMenuItemClick} handleMenuItemChildClick={handleMenuItemChildClick}>
+            <Navigation width={width} pageTitle={pageTitle} menuItems={appState.menuItems} version={appState.version} displayLoadingBar={appState.displayLoadingBar} displayLoadingPage={appState.displayLoadingPage} handleMenuItemClick={handleMenuItemClick} handleMenuItemChildClick={handleMenuItemChildClick}>
               <Route exact path={PageURLs.HOME}>
                 <HomePageContainer/>
               </Route>

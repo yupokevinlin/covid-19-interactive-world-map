@@ -27,7 +27,8 @@ const HomePageContainer: React.FC<HomePageContainerProps> = (props) => {
   const handleLoaded = (): void => {
     appDispatch({
       type: AppActionTypes.SET_IS_LOADING,
-      isLoading: false,
+      displayLoadingBar: false,
+      displayLoadingPage: false,
     });
   };
 

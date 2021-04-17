@@ -7,7 +7,7 @@ import {Breakpoint} from "@material-ui/core/styles/createBreakpoints";
 export type ContentWrapperProps = ContentWrapperDataProps & ContentWrapperStyleProps & ContentWrapperEventProps;
 
 export interface ContentWrapperDataProps {
-  isLoading: boolean;
+  displayLoadingPage: boolean;
 }
 
 export interface ContentWrapperStyleProps {
@@ -46,7 +46,7 @@ const ContentWrapper: React.FC<ContentWrapperProps> = (props) => {
 
   const {
     width,
-    isLoading,
+    displayLoadingPage,
   } = props;
 
   return (
@@ -57,7 +57,7 @@ const ContentWrapper: React.FC<ContentWrapperProps> = (props) => {
         }
       </main>
       {
-        isLoading ? (
+        displayLoadingPage ? (
           <LoadingPage width={width}/>
         ) : null
       }

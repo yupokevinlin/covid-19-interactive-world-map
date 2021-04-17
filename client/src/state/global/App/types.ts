@@ -5,7 +5,8 @@ import {TreeItem} from "../../../../../shared/types/data/Tree/TreeTypes";
 
 export interface AppState {
   isInitComplete: boolean;
-  isLoading: boolean;
+  displayLoadingBar: boolean;
+  displayLoadingPage: boolean;
   version: string;
   title: string;
   theme: Theme;

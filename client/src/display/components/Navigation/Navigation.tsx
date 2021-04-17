@@ -16,7 +16,8 @@ export type PageNavigationControlProps = PageNavigationControlDataProps & PageNa
 export interface PageNavigationControlDataProps {
   pageTitle: string;
   menuItems: Array<NavigationDrawerMenuItem>;
-  isLoading: boolean;
+  displayLoadingBar: boolean;
+  displayLoadingPage: boolean;
   version: string;
 }
 
@@ -91,7 +92,8 @@ const Navigation: React.FC<PageNavigationControlProps> = (props) => {
     pageTitle,
     menuItems,
     width,
-    isLoading,
+    displayLoadingBar,
+    displayLoadingPage,
     version,
     handleMenuItemClick,
     handleMenuItemChildClick,
@@ -127,14 +129,14 @@ const Navigation: React.FC<PageNavigationControlProps> = (props) => {
           [classes.controlBarContentWrapperDrawerOpenExpanded]: drawerOpen && drawerExpanded && !isSmXs,
         })}>
           <ControlBar width={width} title={pageTitle} drawerOpen={drawerOpen} drawerExpanded={drawerExpanded} handleDrawerToggle={handleDrawerToggle}/>
-          <ContentWrapper width={width} isLoading={isLoading}>
+          <ContentWrapper width={width} displayLoadingPage={displayLoadingPage}>
             {
               props.children
             }
           </ContentWrapper>
         </div>
       </div>
-      <ProgressBar isLoading={isLoading}/>
+      <ProgressBar isLoading={displayLoadingBar}/>
     </React.Fragment>
   );
 };

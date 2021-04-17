@@ -33,6 +33,7 @@ import createDoubleMap = Utils.createDoubleMap;
 import {Store} from "../../store";
 import {TreeItem} from "../../../../../shared/types/data/Tree/TreeTypes";
 import {TreeApi} from "../../../api/TreeApi/TreeApi";
+import {destroyESRIMap} from "../../../display/components/ESRIMap/ESRIMap";
 
 export const appSagas = {
   initSaga: takeEvery(AppActionTypes.INIT, initSaga),
@@ -187,10 +188,11 @@ function * goToPageSaga(action: AppGoToPageAction): any {
   } else {
     yield put({
       type: AppActionTypes.SET_IS_LOADING,
-      isLoading: true,
+      displayLoadingBar: true,
+      displayLoadingPage: true,
     });
     if (action.page === Pages.MAP) {
-      //destroyESRIMap();
+      destroyESRIMap();
     }
     redirect(redirectURL, action.history);
     if (isRootPage) {
