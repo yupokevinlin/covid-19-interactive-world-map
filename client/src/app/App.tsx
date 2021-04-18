@@ -14,9 +14,13 @@ const StyledApp = styled.div`
   flex-wrap: nowrap;
 `;
 
+export namespace AppStore {
+  export const store = configureStore();
+}
+
 const App: React.FC<AppProps> = props => {
   return (
-    <Provider store={configureStore()}>
+    <Provider store={AppStore.store}>
       <StyledApp className={"app"}>
         <NavigationContainer/>
       </StyledApp>
