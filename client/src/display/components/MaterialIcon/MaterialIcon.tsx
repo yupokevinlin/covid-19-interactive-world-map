@@ -41,6 +41,10 @@ import VpnKey from '@material-ui/icons/VpnKey';
 import ShowChart from '@material-ui/icons/ShowChart';
 import BarChart from '@material-ui/icons/BarChart';
 import NavigateNext from '@material-ui/icons/NavigateNext';
+import FirstPage from '@material-ui/icons/FirstPage';
+import LastPage from '@material-ui/icons/LastPage';
+import Stop from '@material-ui/icons/Stop';
+import PlayArrow from '@material-ui/icons/PlayArrow';
 
 export interface MaterialIconProps extends SvgIconProps {
   iconName: MaterialIconNames;
@@ -61,10 +65,12 @@ export enum MaterialIconNames {
   Event = "Event",
   ExitToApp = "ExitToApp",
   Extension = "Extension",
+  FirstPage = "FirstPage",
   Home = "Home",
   Image = "Image",
   Inbox = "Inbox",
   InsertDriveFile = "InsertDriveFile",
+  LastPage = "LastPage",
   LocalGroceryStore = "LocalGroceryStore",
   LocalShipping = "LocalShipping",
   Mail = "Mail",
@@ -75,6 +81,7 @@ export enum MaterialIconNames {
   Notifications = "Notifications",
   Palette = "Palette",
   PhoneIphone = "PhoneIphone",
+  PlayArrow = "PlayArrow",
   PlayCircleOutline = "PlayCircleOutline",
   PriorityHigh = "PriorityHigh",
   Redo = "Redo",
@@ -83,6 +90,7 @@ export enum MaterialIconNames {
   Shift = "Shift",
   ShowChart = "ShowChart",
   SpeakerNotes = "SpeakerNotes",
+  Stop = "Stop",
   Storage = "Storage",
   SupervisorAccount = "SupervisorAccount",
   SystemUpdateAlt = "SystemUpdateAlt",
@@ -137,6 +145,9 @@ const MaterialIcon: React.FC<MaterialIconProps> = (props) => {
     case MaterialIconNames.Extension: {
       return <Extension {...svgIconProps}/>;
     }
+    case MaterialIconNames.FirstPage: {
+      return <FirstPage {...svgIconProps}/>;
+    }
     case MaterialIconNames.Home: {
       return <Home {...svgIconProps}/>;
     }
@@ -148,6 +159,9 @@ const MaterialIcon: React.FC<MaterialIconProps> = (props) => {
     }
     case MaterialIconNames.InsertDriveFile: {
       return <InsertDriveFile {...svgIconProps}/>;
+    }
+    case MaterialIconNames.LastPage: {
+      return <LastPage {...svgIconProps}/>;
     }
     case MaterialIconNames.LocalGroceryStore: {
       return <LocalGroceryStore {...svgIconProps}/>;
@@ -179,6 +193,9 @@ const MaterialIcon: React.FC<MaterialIconProps> = (props) => {
     case MaterialIconNames.PhoneIphone: {
       return <PhoneIphone {...svgIconProps}/>;
     }
+    case MaterialIconNames.PlayArrow: {
+      return <PlayArrow {...svgIconProps}/>;
+    }
     case MaterialIconNames.PlayCircleOutline: {
       return <PlayCircleOutline {...svgIconProps}/>;
     }
@@ -196,6 +213,9 @@ const MaterialIcon: React.FC<MaterialIconProps> = (props) => {
     }
     case MaterialIconNames.SpeakerNotes: {
       return <SpeakerNotes {...svgIconProps}/>;
+    }
+    case MaterialIconNames.Stop: {
+      return <Stop {...svgIconProps}/>;
     }
     case MaterialIconNames.ShowChart: {
       return <ShowChart {...svgIconProps}/>;
