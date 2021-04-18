@@ -3,6 +3,7 @@ import {Theme} from "@material-ui/core";
 import {History} from "history";
 import {NavigationDrawerMenuItem} from "../../../display/components/Navigation/NavigationDrawer/NavigationDrawer";
 import {TreeItem} from "../../../../../shared/types/data/Tree/TreeTypes";
+import {CasesDataObject} from "../../../../../shared/types/data/Cases/CasesTypes";
 
 export type AppAction = AppInitAction
 | AppSetIsInitCompleteAction
@@ -13,6 +14,7 @@ export type AppAction = AppInitAction
 | AppSetPageAction
 | AppSetMenuItemsAction
 | AppSetDataTreeAction
+| AppSetCasesDataObjectAction
 | AppGoToPageAction;
 
 export interface AppInitAction {
@@ -113,6 +115,17 @@ export const setDataTree = (dataTree: TreeItem): AppSetDataTreeAction => {
   return {
     type: AppActionTypes.SET_DATA_TREE,
     dataTree: dataTree,
+  };
+};
+
+export interface AppSetCasesDataObjectAction {
+  type: typeof AppActionTypes.SET_CASES_DATA_OBJECT;
+  casesDataObject: CasesDataObject;
+}
+export const setCasesDataObject = (casesDataObject: CasesDataObject): AppSetCasesDataObjectAction => {
+  return {
+    type: AppActionTypes.SET_CASES_DATA_OBJECT,
+    casesDataObject: casesDataObject,
   };
 };
 

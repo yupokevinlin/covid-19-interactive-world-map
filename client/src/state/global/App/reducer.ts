@@ -68,6 +68,12 @@ export const reducer = (state: AppState = initialState, action: AppAction): AppS
         dataTree: action.dataTree,
       }
     }
+    case AppActionTypes.SET_CASES_DATA_OBJECT: {
+      return {
+        ...state,
+        casesDataObject: action.casesDataObject,
+      }
+    }
     default:
       return state;
   }

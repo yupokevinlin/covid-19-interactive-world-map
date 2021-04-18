@@ -34,6 +34,8 @@ import {Store} from "../../store";
 import {TreeItem} from "../../../../../shared/types/data/Tree/TreeTypes";
 import {TreeApi} from "../../../api/TreeApi/TreeApi";
 import {destroyESRIMap} from "../../../display/components/ESRIMap/ESRIMap";
+import {CasesDataObject} from "../../../../../shared/types/data/Cases/CasesTypes";
+import {CasesApi} from "../../../api/CasesApi/CasesApi";
 
 export const appSagas = {
   initSaga: takeEvery(AppActionTypes.INIT, initSaga),
@@ -68,6 +70,12 @@ function * initSaga(action: AppInitAction): any {
   yield put({
     type: AppActionTypes.SET_DATA_TREE,
     dataTree: dataTree,
+  });
+
+  const casesDataObject: CasesDataObject = yield call(CasesApi.getAllCasesData);
+  yield put({
+    type: AppActionTypes.SET_CASES_DATA_OBJECT,
+    casesDataObject: casesDataObject,
   });
 
   yield put({
