@@ -30,6 +30,7 @@ import getMomentDateFromDateString = DateUtils.getMomentDateFromDateString;
 import {Moment} from "moment";
 import getDateStringFromMomentDate = DateUtils.getDateStringFromMomentDate;
 import Graphic = __esri.Graphic;
+import Polygon = __esri.Polygon;
 
 export type ESRIMapProps = ESRIMapDataProps & ESRIMapStyleProps & ESRIMapEventProps;
 
@@ -38,6 +39,7 @@ export interface ESRIMapDataProps {
   displayMode: ESRIMapModeNames;
   date: string;
   initialBaseMap: string;
+  focusMapGeometry: Array<Array<[number, number]>>;
 }
 
 export interface ESRIMapStyleProps {
@@ -83,6 +85,7 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
     displayMode,
     date,
     initialBaseMap,
+    focusMapGeometry,
     handleUpdateStart,
     handleUpdateComplete,
   } = props;
@@ -90,11 +93,11 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
   const prevProps: ESRIMapProps = usePreviousProps<ESRIMapProps>(props);
   useEffect(() => {
     loadModules(
-      ["esri/Map", "esri/views/MapView", "esri/layers/FeatureLayer", "esri/widgets/Legend", "esri/geometry/Point",],
+      ["esri/Map", "esri/views/MapView", "esri/layers/FeatureLayer", "esri/widgets/Legend", "esri/geometry/Point", "esri/geometry/Polygon"],
       {
         css: true,
       }
-    ).then(([Map, MapView, FeatureLayer, Legend, Point]) => {
+    ).then(([Map, MapView, FeatureLayer, Legend, Point, Polygon]) => {
 
       if (!map) {
         initialize(Map, MapView, FeatureLayer, Legend, Point);
@@ -110,10 +113,13 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
         if (prevProps.date !== date) {
           handleDateChange();
         }
+        if (prevProps.focusMapGeometry !== focusMapGeometry) {
+          handleFocusMapGeometryChange(Polygon);
+        }
       }
       return destroyESRIMap;
     });
-  }, [mapPolygons, displayMode, date]);
+  }, [mapPolygons, displayMode, date, focusMapGeometry]);
 
   const initialize = (Map, MapView, FeatureLayer, Legend, Point): void => {
     map = new Map({
@@ -278,6 +284,16 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
         updateFeatures: updateFeatures,
       }).then(rsp => {
       });
+    });
+  };
+
+  const handleFocusMapGeometryChange = (Polygon): void => {
+    const polygon: Polygon = new Polygon({
+      rings: focusMapGeometry,
+      spatialReference: { wkid: 4326 }
+    })
+    mapView.goTo(polygon.extent, {
+      duration: 1000
     });
   };
 
