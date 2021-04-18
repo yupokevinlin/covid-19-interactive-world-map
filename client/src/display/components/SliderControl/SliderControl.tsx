@@ -237,9 +237,14 @@ const SliderControl: React.FC<SliderControlProps> = (props) => {
   useInterval(() => {
     if (values.length > 0 && isAutoScrolling) {
       setValue(prevState => {
-        const newValue: number = Math.min(prevState + 1, values.length - 1)
-        handleChange(values[newValue]?.toString());
-        return newValue;
+        if (prevState + 1 === values.length) {
+          setIsAutoScrolling(false);
+          return prevState;
+        } else {
+          const newValue: number = prevState + 1;
+          handleChange(values[newValue]?.toString());
+          return newValue;
+        }
       });
     }
   }, 500);
