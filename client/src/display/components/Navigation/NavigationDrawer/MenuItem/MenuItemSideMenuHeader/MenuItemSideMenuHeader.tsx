@@ -1,10 +1,10 @@
 import React from "react";
-import {SLPages} from "../../../../../../../state/services/App/types";
 import {NavigationDrawerMenuItem} from "../../NavigationDrawer";
 import MenuItem from "@material-ui/core/MenuItem";
 import {createStyles, Theme, useTheme} from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import {makeStyles} from "@material-ui/core/styles";
+import {Pages} from "../../../../../../state/global/App/types";
 
 export type MenuItemSideMenuHeaderProps = MenuItemSideMenuHeaderDataProps & MenuItemSideMenuHeaderStyleProps & MenuItemSideMenuHeaderEventProps;
 
@@ -18,7 +18,7 @@ export interface MenuItemSideMenuHeaderStyleProps {
 }
 
 export interface MenuItemSideMenuHeaderEventProps {
-  handleSideMenuHeaderClick(parentKey: SLPages): void;
+  handleSideMenuHeaderClick(parentKey: Pages): void;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
