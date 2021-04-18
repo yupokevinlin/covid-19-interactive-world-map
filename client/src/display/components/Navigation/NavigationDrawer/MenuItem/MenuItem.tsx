@@ -142,7 +142,6 @@ const MenuItem: React.FC<MenuItemProps> = (props) => {
           renderSideMenu ? (
             <Menu
               {...bindMenu(popupState)}
-              getContentAnchorEl={null}
               anchorOrigin={{ vertical: "top", horizontal: "right" }}
               transformOrigin={{ vertical: "top", horizontal: "left" }}
             >

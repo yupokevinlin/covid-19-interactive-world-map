@@ -126,7 +126,6 @@ const ListMenu: React.FC<ListMenuProps> = props => {
       </StyledMenuButton>
       <Menu
         elevation={0}
-        getContentAnchorEl={null}
         anchorOrigin={{
           vertical: "bottom",
           horizontal: "center",
