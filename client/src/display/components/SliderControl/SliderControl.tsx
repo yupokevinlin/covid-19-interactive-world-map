@@ -3,6 +3,11 @@ import {createStyles, Slider, Theme, useTheme} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
 import {asyncScheduler, Observable, Subject} from "rxjs";
 import {distinctUntilChanged, throttleTime} from "rxjs/operators";
+import Typography from "@material-ui/core/Typography";
+import MaterialIcon, {MaterialIconNames} from "../MaterialIcon/MaterialIcon";
+import IconButton from "@material-ui/core/IconButton";
+import Tooltip from "@material-ui/core/Tooltip";
+import {useInterval} from "../../../hooks/useInterval";
 
 export type SliderControlProps = SliderControlDataProps & SliderControlStyleProps & SliderControlEventProps;
 
@@ -20,10 +25,11 @@ export interface SliderControlEventProps {
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: {
+    sliderWrapper: {
       display: "flex",
+      flexDirection: "row",
       alignItems: "center",
-      justifyContent: "center",
+      justifyContent: "flex-start",
       height: "42px",
       [theme.breakpoints.up("xs")]: {
         width: "calc(100% - 50px)",
@@ -41,8 +47,90 @@ const useStyles = makeStyles((theme: Theme) =>
         marginRight: "30px",
       },
     },
+    labelWrapper: {
+      display: "flex",
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      [theme.breakpoints.up("xs")]: {
+        width: "41px",
+      },
+      [theme.breakpoints.up("md")]: {
+        width: "48px",
+      },
+    },
+    label: {
+      [theme.breakpoints.up("xs")]: {
+        fontSize: "12px",
+        lineHeight: "12px",
+      },
+      [theme.breakpoints.up("md")]: {
+        fontSize: "14px",
+        lineHeight: "14px",
+      },
+    },
+    buttons: {
+      display: "flex",
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      [theme.breakpoints.up("xs")]: {
+        width: "60px",
+        paddingLeft: "15px",
+        paddingRight: "15px",
+      },
+      [theme.breakpoints.up("md")]: {
+        width: "75px",
+        paddingLeft: "20px",
+        paddingRight: "20px",
+      },
+    },
+    button: {
+      padding: "0px",
+      [theme.breakpoints.up("xs")]: {
+        width: "20px",
+        height: "20px",
+        "& .MuiIconButton-label": {
+          "& .MuiSvgIcon-root": {
+            width: "20px",
+            height: "20px",
+          }
+        }
+      },
+      [theme.breakpoints.up("md")]: {
+        width: "25px",
+        height: "25px",
+        "& .MuiIconButton-label": {
+          "& .MuiSvgIcon-root": {
+            width: "25px",
+            height: "25px",
+          }
+        }
+      },
+    },
+    toolTip: {
+      fontSize: 11,
+      height: 16,
+      lineHeight: "16px",
+      [theme.breakpoints.up("sm")]: {
+        fontSize: 11,
+        height: 16,
+        lineHeight: "16px",
+      },
+      [theme.breakpoints.up("md")]: {
+        fontSize: 12,
+        height: 18,
+        lineHeight: "18px",
+      },
+      [theme.breakpoints.up("lg")]: {
+        fontSize: 12,
+        height: 20,
+        lineHeight: "20px",
+      },
+    },
     slider: {
       [theme.breakpoints.up("xs")]: {
+        width: "calc(100% - 131px)",
         "& .MuiSlider-thumb": {
           "& .MuiSlider-valueLabel": {
             backgroundColor: theme.palette.primary.main,
@@ -93,6 +181,7 @@ const useStyles = makeStyles((theme: Theme) =>
         },
       },
       [theme.breakpoints.up("md")]: {
+        width: "calc(100% - 163px)",
         "& .MuiSlider-thumb": {
           "& .MuiSlider-valueLabel": {
             backgroundColor: theme.palette.primary.main,
@@ -131,6 +220,8 @@ const SliderControl: React.FC<SliderControlProps> = (props) => {
   } = props;
 
   const [subject, setSubject] = useState<Subject<string>>(new Subject());
+  const [value, setValue] = useState<number>(0);
+  const [isAutoScrolling, setIsAutoScrolling] = useState<boolean>(false);
 
   useEffect(() => {
     const observable: Observable<string> = subject.pipe(throttleTime(350, asyncScheduler, { leading: true, trailing: true }), distinctUntilChanged());
@@ -139,22 +230,93 @@ const SliderControl: React.FC<SliderControlProps> = (props) => {
     });
   }, []);
 
+  useEffect(() => {
+    setValue(values.length - 1);
+  }, [values]);
+
+  useInterval(() => {
+    if (values.length > 0 && isAutoScrolling) {
+      setValue(prevState => {
+        const newValue: number = Math.min(prevState + 1, values.length - 1)
+        handleChange(values[newValue]?.toString());
+        return newValue;
+      });
+    }
+  }, 500);
+
   const getValueText = (value: number): string => {
     return values[value]?.toString();
   };
 
   const onChange = (e: ChangeEvent, value: number): void => {
+    setValue(value);
     subject.next(values[value]?.toString());
+  };
+
+  const handleGoToStartButtonClick = (e: React.MouseEvent<HTMLButtonElement>): void => {
+    const newValue: number = 0;
+    setIsAutoScrolling(false);
+    setValue(newValue);
+    handleChange(values[newValue]?.toString());
+  };
+
+  const handleStopButtonClick = (e: React.MouseEvent<HTMLButtonElement>): void => {
+    setIsAutoScrolling(false);
+  };
+
+  const handleStartButtonClick = (e: React.MouseEvent<HTMLButtonElement>): void => {
+    setIsAutoScrolling(true);
+  };
+
+  const handleGoToEndButtonClick = (e: React.MouseEvent<HTMLButtonElement>): void => {
+    const newValue: number = values.length - 1;
+    setIsAutoScrolling(false);
+    setValue(newValue);
+    handleChange(values[newValue]?.toString());
   };
 
   if (values.length === 0) {
     return null;
   } else {
     return (
-      <div className={classes.root}>
+      <div className={classes.sliderWrapper}>
+        <div className={classes.labelWrapper}>
+          <Typography className={classes.label} variant={"h6"}>
+            {
+              values[value]?.toString()
+            }
+          </Typography>
+        </div>
+        <div className={classes.buttons}>
+          <Tooltip classes={{tooltip: classes.toolTip}} title={"Go To Start"} placement="top">
+            <IconButton className={classes.button} color={"primary"} onClick={handleGoToStartButtonClick}>
+              <MaterialIcon iconName={MaterialIconNames.FirstPage}/>
+            </IconButton>
+          </Tooltip>
+          {
+            isAutoScrolling ? (
+              <Tooltip classes={{tooltip: classes.toolTip}} title={"Stop"} placement="top">
+                <IconButton className={classes.button} color={"primary"} onClick={handleStopButtonClick}>
+                  <MaterialIcon iconName={MaterialIconNames.Stop}/>
+                </IconButton>
+              </Tooltip>
+            ) : (
+              <Tooltip classes={{tooltip: classes.toolTip}} title={"Auto Play"} placement="top">
+                <IconButton className={classes.button} color={"primary"} onClick={handleStartButtonClick}>
+                  <MaterialIcon iconName={MaterialIconNames.PlayArrow}/>
+                </IconButton>
+              </Tooltip>
+            )
+          }
+          <Tooltip classes={{tooltip: classes.toolTip}} title={"Go To End"} placement="top">
+            <IconButton className={classes.button} color={"primary"} onClick={handleGoToEndButtonClick}>
+              <MaterialIcon iconName={MaterialIconNames.LastPage}/>
+            </IconButton>
+          </Tooltip>
+        </div>
         <Slider
           className={classes.slider}
-          defaultValue={values.length - 1}
+          value={value}
           valueLabelDisplay="auto"
           valueLabelFormat={getValueText}
           min={0}
