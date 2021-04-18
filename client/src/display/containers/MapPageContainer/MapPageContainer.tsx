@@ -44,6 +44,10 @@ const MapPageContainer: React.FC<MapPageContainerProps> = (props) => {
 
   const handleRegionChange = (hierarchicalName: string): void => {
     setRegion(hierarchicalName);
+    mapPageDispatch({
+      type: MapPageActionTypes.HANDLE_REGION_CHANGE,
+      hierarchicalName: hierarchicalName,
+    });
   };
 
   const handleMapUpdateStart = (): void => {
