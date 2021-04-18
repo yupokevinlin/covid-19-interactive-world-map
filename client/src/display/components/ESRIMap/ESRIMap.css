@@ -47,7 +47,7 @@
   height: 100px;
 }
 
-@media (max-width: 710px) {
+@media (max-width: 960px) {
   .esri-legend__layer-body {
     display: flex;
     flex-direction: row-reverse;
