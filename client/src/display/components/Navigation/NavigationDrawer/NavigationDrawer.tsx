@@ -179,7 +179,7 @@ const NavigationDrawer: React.FC<NavigationDrawerProps> = (props) => {
               {
                 menuItems.map((menuItem, index) => {
                   return (
-                    <MenuItem index={index} menuItem={menuItem} drawerExpanded={drawerExpanded} iconFontSize={iconFontSize} handleMenuItemClick={handleMenuItemClick} handleMenuItemChildClick={handleMenuItemChildClick}/>
+                    <MenuItem key={index} index={index} menuItem={menuItem} drawerExpanded={drawerExpanded} iconFontSize={iconFontSize} handleMenuItemClick={handleMenuItemClick} handleMenuItemChildClick={handleMenuItemChildClick}/>
                   );
                 })
               }
