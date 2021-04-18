@@ -85,7 +85,9 @@ const NavigationContainer: React.FC<NavigationContainerProps> = (props) => {
           }
         </Router>
       </ThemeProvider>
-    ) : <LoadingPage width={width} text={"Loading data... Please wait."}/>
+    ) : (
+      <LoadingPage width={width} text={"Loading data... Please wait."}/>
+    )
   );
 };
 
