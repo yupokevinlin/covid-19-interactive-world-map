@@ -6,9 +6,10 @@ import {MapApi} from "../../../api/MapApi/MapApi";
 import {CasesData, CasesDataObject} from "../../../../../shared/types/data/Cases/CasesTypes";
 import {DateUtils} from "../../../helper/DateUtils";
 import {ESRIMapPolygon} from "../../../display/components/ESRIMap/types";
-import {getSequentialHierarchicalNames} from "../../../../../shared/helpers/General";
+import {getSequentialHierarchicalNames, getTreeItem} from "../../../../../shared/helpers/General";
 import {Store} from "../../store";
 import {AppState} from "../../global/App/types";
+import {TreeItem} from "../../../../../shared/types/data/Tree/TreeTypes";
 
 export const mapPageSagas = {
   initSaga: takeEvery(MapPageActionTypes.INIT, initSaga),
@@ -43,6 +44,7 @@ function * initSaga(action: MapPageInitAction): any {
 
 function * handleRegionChange(action: MapPageHandleRegionChangeAction): any {
   const appState: AppState = yield select(getAppStateSelector);
+  const dataTree: TreeItem = appState.dataTree;
   const casesDataObject: CasesDataObject = appState.casesDataObject;
   const layer0MapPolygons: Array<MapPolygon> = yield call(MapApi.getMapLayer0Data);
   if (action.hierarchicalName === "World") {
@@ -57,15 +59,26 @@ function * handleRegionChange(action: MapPageHandleRegionChangeAction): any {
     const sequentialHierarchicalNames: Array<string> = getSequentialHierarchicalNames(action.hierarchicalName);
     if (sequentialHierarchicalNames.length === 2) {
       const layer1HierarchicalName: string = sequentialHierarchicalNames[1];
-      const layer1MapPolygons: Array<MapPolygon> = yield call(MapApi.getMapLayer1Data, layer1HierarchicalName);
-      filteredMapPolygons.push(...layer1MapPolygons);
-      filteredMapPolygons = filteredMapPolygons.filter((mapPolygon) => mapPolygon.hierarchicalName !== layer1HierarchicalName);
-      const hierarchicalNames: Array<string> = filteredMapPolygons.map((mapPolygon) => mapPolygon.hierarchicalName);
-      const casesData: Array<CasesData> = getCasesDataByHierarchicalNames(casesDataObject, hierarchicalNames);
-      yield put({
-        type: MapPageActionTypes.SET_MAP_POLYGONS,
-        mapPolygons: getESRIMapPolygons(filteredMapPolygons, casesData),
-      });
+      const matchingTreeItem: TreeItem = getTreeItem(dataTree, layer1HierarchicalName);
+      if (matchingTreeItem.children.length > 0) {
+        const layer1MapPolygons: Array<MapPolygon> = yield call(MapApi.getMapLayer1Data, layer1HierarchicalName);
+        filteredMapPolygons.push(...layer1MapPolygons);
+        filteredMapPolygons = filteredMapPolygons.filter((mapPolygon) => mapPolygon.hierarchicalName !== layer1HierarchicalName);
+        const hierarchicalNames: Array<string> = filteredMapPolygons.map((mapPolygon) => mapPolygon.hierarchicalName);
+        const casesData: Array<CasesData> = getCasesDataByHierarchicalNames(casesDataObject, hierarchicalNames);
+        yield put({
+          type: MapPageActionTypes.SET_MAP_POLYGONS,
+          mapPolygons: getESRIMapPolygons(filteredMapPolygons, casesData),
+        });
+      } else {
+        const matchingPolygon: MapPolygon = filteredMapPolygons.find((mapPolygon) => mapPolygon.hierarchicalName === layer1HierarchicalName);
+        if (!!matchingPolygon) {
+          yield put({
+            type: MapPageActionTypes.SET_FOCUS_MAP_GEOMETRY,
+            focusMapGeometry: matchingPolygon.geometry,
+          });
+        }
+      }
     } else if (sequentialHierarchicalNames.length === 3) {
       const layer1HierarchicalName: string = sequentialHierarchicalNames[1];
       const layer2HierarchicalName: string = sequentialHierarchicalNames[2];
@@ -82,6 +95,8 @@ function * handleRegionChange(action: MapPageHandleRegionChangeAction): any {
         type: MapPageActionTypes.SET_MAP_POLYGONS,
         mapPolygons: getESRIMapPolygons(filteredMapPolygons, casesData),
       });
+    } else if (sequentialHierarchicalNames.length === 4) {
+
     }
   }
 }

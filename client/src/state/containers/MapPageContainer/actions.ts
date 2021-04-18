@@ -5,6 +5,7 @@ export type MapPageAction = MapPageInitAction
 | MapPageSetMapPolygonsAction
 | MapPageSetInitCompleteAction
 | MapPageSetDateValuesAction
+| MapPageSetFocusMapGeometryAction
 | MapPageHandleRegionChangeAction;
 
 export interface MapPageInitAction {
@@ -46,6 +47,17 @@ export const setDateValues = (dateValues: Array<string>): MapPageSetDateValuesAc
   return {
     type: MapPageActionTypes.SET_DATE_VALUES,
     dateValues: dateValues,
+  };
+};
+
+export interface MapPageSetFocusMapGeometryAction {
+  type: typeof MapPageActionTypes.SET_FOCUS_MAP_GEOMETRY;
+  focusMapGeometry: Array<Array<[number, number]>>
+}
+export const setFocusMapGeometry = (focusMapGeometry: Array<Array<[number, number]>>): MapPageSetFocusMapGeometryAction => {
+  return {
+    type: MapPageActionTypes.SET_FOCUS_MAP_GEOMETRY,
+    focusMapGeometry: focusMapGeometry,
   };
 };
 

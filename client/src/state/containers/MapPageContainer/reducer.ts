@@ -5,6 +5,7 @@ export const initialState: MapPageState = {
   initComplete: false,
   mapPolygons: [],
   dateValues: [],
+  focusMapGeometry: [],
 };
 
 export const reducer = (state: MapPageState = initialState, action: MapPageAction): MapPageState => {
@@ -25,6 +26,12 @@ export const reducer = (state: MapPageState = initialState, action: MapPageActio
       return {
         ...state,
         dateValues: [...action.dateValues],
+      }
+    }
+    case MapPageActionTypes.SET_FOCUS_MAP_GEOMETRY: {
+      return {
+        ...state,
+        focusMapGeometry: [...action.focusMapGeometry],
       }
     }
     default: {
