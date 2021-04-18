@@ -70,7 +70,7 @@ const MapPageContainer: React.FC<MapPageContainerProps> = (props) => {
 
   if (!!appState.casesDataObject) {
     return (
-      <MapPage dateValues={mapPageState.dateValues} dataTree={appState.dataTree} mapPolygons={mapPageState.mapPolygons} date={date} handleDateChange={handleDateChange} handleRegionChange={handleRegionChange} handleMapUpdateStart={handleMapUpdateStart} handleMapUpdateComplete={handleMapUpdateComplete}/>
+      <MapPage dateValues={mapPageState.dateValues} dataTree={appState.dataTree} mapPolygons={mapPageState.mapPolygons} date={date} focusMapGeometry={mapPageState.focusMapGeometry} handleDateChange={handleDateChange} handleRegionChange={handleRegionChange} handleMapUpdateStart={handleMapUpdateStart} handleMapUpdateComplete={handleMapUpdateComplete}/>
     );
   } else {
     return null;

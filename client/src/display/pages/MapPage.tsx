@@ -14,6 +14,7 @@ export interface MapPageDataProps {
   dataTree: TreeItem;
   date: string;
   mapPolygons: Array<ESRIMapPolygon>;
+  focusMapGeometry: Array<Array<[number, number]>>;
 }
 
 export interface MapPageStyleProps {
@@ -62,6 +63,7 @@ const MapPage: React.FC<MapPageProps> = (props) => {
     dataTree,
     date,
     mapPolygons,
+    focusMapGeometry,
     handleDateChange,
     handleRegionChange,
     handleMapUpdateStart,
@@ -74,7 +76,7 @@ const MapPage: React.FC<MapPageProps> = (props) => {
     <div className={classes.root}>
       <BreadcrumbsControl dataTree={dataTree} handleChange={handleRegionChange}/>
       <div className={classes.map}>
-        <ESRIMap mapPolygons={mapPolygons} displayMode={displayMode} date={date} initialBaseMap={"streets"} handleUpdateStart={handleMapUpdateStart} handleUpdateComplete={handleMapUpdateComplete}/>
+        <ESRIMap mapPolygons={mapPolygons} displayMode={displayMode} date={date} initialBaseMap={"streets"} focusMapGeometry={focusMapGeometry} handleUpdateStart={handleMapUpdateStart} handleUpdateComplete={handleMapUpdateComplete}/>
       </div>
       <SliderControl values={dateValues} handleChange={handleDateChange}/>
     </div>
