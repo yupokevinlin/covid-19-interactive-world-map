@@ -30,9 +30,11 @@ const MapPageContainer: React.FC<MapPageContainerProps> = (props) => {
   const mapPageDispatch: Dispatch<MapPageAction> = useDispatch<Dispatch<MapPageAction>>();
 
   useEffect(() => {
-    mapPageDispatch({
-      type: MapPageActionTypes.INIT,
-    });
+    if (!!appState.casesDataObject) {
+      mapPageDispatch({
+        type: MapPageActionTypes.INIT,
+      });
+    }
   }, []);
 
   const [date, setDate] = useState<string>(DateUtils.getCurrentDate());
@@ -66,9 +68,13 @@ const MapPageContainer: React.FC<MapPageContainerProps> = (props) => {
     });
   };
 
-  return (
-    <MapPage dateValues={mapPageState.dateValues} dataTree={appState.dataTree} mapPolygons={mapPageState.mapPolygons} date={date} handleDateChange={handleDateChange} handleRegionChange={handleRegionChange} handleMapUpdateStart={handleMapUpdateStart} handleMapUpdateComplete={handleMapUpdateComplete}/>
-  );
+  if (!!appState.casesDataObject) {
+    return (
+      <MapPage dateValues={mapPageState.dateValues} dataTree={appState.dataTree} mapPolygons={mapPageState.mapPolygons} date={date} handleDateChange={handleDateChange} handleRegionChange={handleRegionChange} handleMapUpdateStart={handleMapUpdateStart} handleMapUpdateComplete={handleMapUpdateComplete}/>
+    );
+  } else {
+    return null;
+  }
 };
 
 export default MapPageContainer;

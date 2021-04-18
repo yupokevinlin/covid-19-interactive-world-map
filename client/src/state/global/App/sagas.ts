@@ -34,8 +34,9 @@ import {Store} from "../../store";
 import {TreeItem} from "../../../../../shared/types/data/Tree/TreeTypes";
 import {TreeApi} from "../../../api/TreeApi/TreeApi";
 import {destroyESRIMap} from "../../../display/components/ESRIMap/ESRIMap";
-import {CasesDataObject} from "../../../../../shared/types/data/Cases/CasesTypes";
 import {CasesApi} from "../../../api/CasesApi/CasesApi";
+import {AppStore} from "../../../app/App";
+import {MapPageActionTypes} from "../../containers/MapPageContainer/types";
 
 export const appSagas = {
   initSaga: takeEvery(AppActionTypes.INIT, initSaga),
@@ -43,6 +44,7 @@ export const appSagas = {
 };
 
 function * initSaga(action: AppInitAction): any {
+  getCasesDataObject();
   const version: string = "0.0.1";
   yield put({
     type: AppActionTypes.SET_VERSION,
@@ -72,17 +74,34 @@ function * initSaga(action: AppInitAction): any {
     dataTree: dataTree,
   });
 
-  const casesDataObject: CasesDataObject = yield call(CasesApi.getAllCasesData);
-  yield put({
-    type: AppActionTypes.SET_CASES_DATA_OBJECT,
-    casesDataObject: casesDataObject,
-  });
-
   yield put({
     type: AppActionTypes.SET_IS_INIT_COMPLETE,
     isInitComplete: true,
   });
 }
+
+const getCasesDataObject = (): void => {
+  CasesApi.getAllCasesData().then((casesDataObject) => {
+    AppStore.store.dispatch({
+      type: AppActionTypes.SET_CASES_DATA_OBJECT,
+      casesDataObject: casesDataObject,
+    });
+    const store: Store = AppStore.store.getState();
+    if (store.app.page === Pages.MAP) {
+      if (!store.mapPage.initComplete) {
+        AppStore.store.dispatch({
+          type: MapPageActionTypes.INIT,
+        });
+      }
+      return;
+    }
+    AppStore.store.dispatch({
+      type: AppActionTypes.SET_IS_LOADING,
+      displayLoadingBar: false,
+      displayLoadingPage: false,
+    });
+  });
+};
 
 const getInitialMaterialUITheme = (): Theme => {
   let theme = createMuiTheme({
