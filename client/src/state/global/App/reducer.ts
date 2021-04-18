@@ -12,6 +12,7 @@ export const initialState: AppState = {
   subPage: null,
   menuItems: [],
   dataTree: null,
+  casesDataObject: null,
 };
 
 export const reducer = (state: AppState = initialState, action: AppAction): AppState => {
