@@ -330,18 +330,12 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
         const color: Color = colorScale(step);
         const minValue: number = Math.pow(10, step - 1);
         const maxValue: number = step === steps ? Number.MAX_SAFE_INTEGER : Math.pow(10, step) - 0.1;
-        let label: string = "";
-        // if (isSmall) {
-        //   label =
-        //     step === steps ? `>${MathUtils.abbreviateNumber(minValue)}` : `${MathUtils.abbreviateNumber(minValue)}'s`;
-        // } else {
-          label =
-            step === steps
-              ? `>${MathUtils.abbreviateNumber(minValue)}`
-              : `${MathUtils.abbreviateNumber(minValue)} - ${MathUtils.abbreviateNumber(
-              maxValue < 100 ? Math.floor(maxValue) : Math.ceil(maxValue)
-              )}`;
-        // }
+        const label: string = step === steps ?
+          `>${MathUtils.abbreviateNumber(minValue)}`
+            : 
+          `${MathUtils.abbreviateNumber(minValue)} - ${MathUtils.abbreviateNumber(
+            maxValue < 100 ? Math.floor(maxValue) : Math.ceil(maxValue)
+            )}`;
         classBreakInfos.push({
           minValue: minValue,
           maxValue: maxValue,
