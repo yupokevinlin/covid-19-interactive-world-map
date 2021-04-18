@@ -10,6 +10,14 @@ export namespace CasesEndpoints {
     }
   };
 
+  export const getCasesDataByHierarchicalNames = (req: Request, rsp: Response, next: NextFunction): any => {
+    try {
+      rsp.send(CasesService.getCasesDataByHierarchicalNames(JSON.parse(req.body.hierarchicalNames)));
+    } catch (e) {
+      next(e);
+    }
+  };
+
   export const getAllCasesData = (req: Request, rsp: Response, next: NextFunction): any => {
     try {
       rsp.send(CasesService.getAllCasesData());

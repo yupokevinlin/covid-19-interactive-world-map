@@ -12,6 +12,18 @@ export namespace CasesApi {
       return rsp.data;
     });
   };
+  export const getMultipleCasesData = (hierarchicalNames: Array<string>): Promise<Array<CasesData>> => {
+    const url: string = `${Api.serverLocation}/api/cases/multiple`;
+    return axios({
+      method: "POST",
+      url: url,
+      data: {
+        hierarchicalNames: JSON.stringify(hierarchicalNames),
+      },
+    }).then((rsp) => {
+      return rsp.data;
+    });
+  };
   export const getAllCasesData = (): Promise<CasesDataObject> => {
     const url: string = `${Api.serverLocation}/api/cases/all`;
     return axios({

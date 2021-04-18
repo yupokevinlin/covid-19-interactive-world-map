@@ -6,6 +6,10 @@ export namespace CasesService {
     return CasesUtils.data[hierarchicalName];
   };
 
+  export const getCasesDataByHierarchicalNames = (hierarchicalNames: Array<string>): Array<CasesData | undefined> => {
+    return hierarchicalNames.map((hierarchicalName) => getCasesDataByHierarchicalName(hierarchicalName));
+  };
+
   export const getAllCasesData = (): CasesDataObject => {
     return CasesUtils.data;
   };

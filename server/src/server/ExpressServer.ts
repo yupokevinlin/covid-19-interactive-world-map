@@ -59,6 +59,7 @@ export class ExpressServer {
     server.get("/api/map/layer1/:hierarchicalName", MapEndPoints.getMayLayer1Polygons);
     server.get("/api/map/layer2/:hierarchicalName", MapEndPoints.getMayLayer2Polygons);
     server.get("/api/cases/single/:hierarchicalName", CasesEndpoints.getCasesDataByHierarchicalName);
+    server.post("/api/cases/multiple", CasesEndpoints.getCasesDataByHierarchicalNames);
     server.get("/api/cases/all", CasesEndpoints.getAllCasesData);
     server.get("/api/tree/", TreeEndpoints.getTree);
   }
