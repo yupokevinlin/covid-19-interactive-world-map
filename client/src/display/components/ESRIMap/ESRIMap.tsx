@@ -8,7 +8,7 @@ import MapView = __esri.MapView;
 import FeatureLayer = __esri.FeatureLayer;
 import Legend = __esri.Legend;
 import {
-  ClassBreakColors,
+  ClassBreakColors, ESRIMapLayerNames,
   ESRIMapModeNames,
   ESRIMapPolygon,
   MapTotalCasesClassBreakColors,
@@ -16,7 +16,6 @@ import {
 } from "./types";
 import {usePreviousProps} from "../../../hooks/usePreviousProps";
 import {loadModules} from "esri-loader";
-import {ESRIMapLayerNames} from "./ESRIMapOld";
 import FieldProperties = __esri.FieldProperties;
 import chroma, {Color, Scale} from "chroma-js";
 import {MathUtils} from "../../../helper/MathUtils";
