@@ -13,6 +13,7 @@ import {AppAction} from "../../../state/global/App/actions";
 import HomePageContainer from "../HomePageContainer/HomePageContainer";
 import MapPageContainer from "../MapPageContainer/MapPageContainer";
 import ChartPageContainer from "../ChartPageContainer/ChartPageContainer";
+import LoadingPage from "../../pages/statelessPages/LoadingPage";
 
 
 
@@ -84,7 +85,7 @@ const NavigationContainer: React.FC<NavigationContainerProps> = (props) => {
           }
         </Router>
       </ThemeProvider>
-    ) : null
+    ) : <LoadingPage width={width} text={"Loading data... Please wait."}/>
   );
 };
 
