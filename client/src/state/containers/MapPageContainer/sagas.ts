@@ -36,6 +36,10 @@ function * initSaga(action: MapPageInitAction): any {
     type: MapPageActionTypes.SET_DATE_VALUES,
     dateValues: dateValues,
   });
+  yield put({
+    type: MapPageActionTypes.SET_INIT_COMPLETE,
+    initComplete: true,
+  });
 }
 
 function * handleRegionChange(action: MapPageHandleRegionChangeAction): any {

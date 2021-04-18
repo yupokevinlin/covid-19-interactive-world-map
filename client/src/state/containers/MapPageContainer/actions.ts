@@ -1,8 +1,9 @@
 import {MapPageActionTypes} from "./types";
-import {ESRIMapPolygon} from "../../../display/components/ESRIMap/ESRIMap";
+import { ESRIMapPolygon } from "src/display/components/ESRIMap/types";
 
 export type MapPageAction = MapPageInitAction
 | MapPageSetMapPolygonsAction
+| MapPageSetInitCompleteAction
 | MapPageSetDateValuesAction
 | MapPageHandleRegionChangeAction;
 
@@ -12,6 +13,17 @@ export interface MapPageInitAction {
 export const init = (): MapPageInitAction => {
   return {
     type: MapPageActionTypes.INIT
+  };
+};
+
+export interface MapPageSetInitCompleteAction {
+  type: typeof MapPageActionTypes.SET_INIT_COMPLETE;
+  initComplete: boolean;
+}
+export const setInitComplete = (initComplete: boolean): MapPageSetInitCompleteAction => {
+  return {
+    type: MapPageActionTypes.SET_INIT_COMPLETE,
+    initComplete: initComplete,
   };
 };
 
