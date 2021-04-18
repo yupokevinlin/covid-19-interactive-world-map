@@ -21,9 +21,11 @@ function * initSaga(action: MapPageInitAction): any {
     type: MapPageActionTypes.SET_MAP_POLYGONS,
     mapPolygons: [],
   });
+  const appState: AppState = yield select(getAppStateSelector);
+  const casesDataObject: CasesDataObject = appState.casesDataObject;
   const layer0MapPolygons: Array<MapPolygon> = yield call(MapApi.getMapLayer0Data);
   const hierarchicalNames: Array<string> = layer0MapPolygons.map((mapPolygon) => mapPolygon.hierarchicalName);
-  const casesData: Array<CasesData> = yield call(CasesApi.getMultipleCasesData, hierarchicalNames);
+  const casesData: Array<CasesData> = getCasesDataByHierarchicalNames(casesDataObject, hierarchicalNames);
   yield put({
     type: MapPageActionTypes.SET_MAP_POLYGONS,
     mapPolygons: getESRIMapPolygons(layer0MapPolygons, casesData),
