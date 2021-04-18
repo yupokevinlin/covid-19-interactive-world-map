@@ -4,7 +4,6 @@ import {MapPageHandleRegionChangeAction, MapPageInitAction} from "./actions";
 import {MapPolygon} from "../../../../../shared/types/data/Map/MapTypes";
 import {MapApi} from "../../../api/MapApi/MapApi";
 import {CasesData, CasesDataObject} from "../../../../../shared/types/data/Cases/CasesTypes";
-import {CasesApi} from "../../../api/CasesApi/CasesApi";
 import {DateUtils} from "../../../helper/DateUtils";
 import {ESRIMapPolygon} from "../../../display/components/ESRIMap/types";
 import {getSequentialHierarchicalNames} from "../../../../../shared/helpers/General";
