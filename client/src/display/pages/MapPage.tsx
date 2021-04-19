@@ -18,7 +18,8 @@ export interface MapPageDataProps {
   dataTree: TreeItem;
   date: string;
   mapPolygons: Array<ESRIMapPolygon>;
-  focusMapGeometry: Array<Array<[number, number]>>;
+  mapRegionUpdateGeometry: Array<Array<[number, number]>>;
+  breadcrumbsRegionUpdateGeometry: Array<Array<[number, number]>>;
   subPage: MapSubPages;
   countryCode: string;
   casesData: CasesData;
@@ -31,7 +32,8 @@ export interface MapPageStyleProps {
 
 export interface MapPageEventProps {
   handleDateChange(date: string): void;
-  handleRegionChange(hierarchicalName: string): void;
+  handleBreadCrumbsRegionChange(hierarchicalName: string): void;
+  handleMapRegionChange(hierarchicalName: string): void;
   handleMapUpdateStart(): void;
   handleMapUpdateComplete(): void;
 }
@@ -71,14 +73,16 @@ const MapPage: React.FC<MapPageProps> = (props) => {
     dataTree,
     date,
     mapPolygons,
-    focusMapGeometry,
+    mapRegionUpdateGeometry,
+    breadcrumbsRegionUpdateGeometry,
     subPage,
     countryCode,
     casesData,
     regionName,
     width,
     handleDateChange,
-    handleRegionChange,
+    handleBreadCrumbsRegionChange,
+    handleMapRegionChange,
     handleMapUpdateStart,
     handleMapUpdateComplete,
   } = props;
@@ -86,15 +90,15 @@ const MapPage: React.FC<MapPageProps> = (props) => {
   const [esriMapRegion, setEsriMapRegion] = useState<string>("World");
 
   const handleEsriMapRegionChange = (hierarchicalName: string): void => {
-    handleRegionChange(hierarchicalName);
+    handleMapRegionChange(hierarchicalName);
     setEsriMapRegion(hierarchicalName);
   };
 
   return (
     <div className={classes.root}>
-      <BreadcrumbsControl dataTree={dataTree} handleChange={handleRegionChange} value={esriMapRegion}/>
+      <BreadcrumbsControl dataTree={dataTree} handleChange={handleBreadCrumbsRegionChange} value={esriMapRegion}/>
       <div className={classes.map}>
-        <ESRIMap mapPolygons={mapPolygons} subPage={subPage} date={date} initialBaseMap={"streets"} focusMapGeometry={focusMapGeometry} width={width} handleUpdateStart={handleMapUpdateStart} handleUpdateComplete={handleMapUpdateComplete} handleRegionChange={handleEsriMapRegionChange}/>
+        <ESRIMap mapPolygons={mapPolygons} subPage={subPage} date={date} initialBaseMap={"streets"} mapRegionUpdateGeometry={mapRegionUpdateGeometry} breadcrumbsRegionUpdateGeometry={breadcrumbsRegionUpdateGeometry} width={width} handleUpdateStart={handleMapUpdateStart} handleUpdateComplete={handleMapUpdateComplete} handleRegionChange={handleEsriMapRegionChange}/>
       </div>
       <MapPageInformation date={date} casesData={casesData} subPage={subPage} countryCode={countryCode} regionName={regionName}/>
       <SliderControl values={dateValues} handleChange={handleDateChange}/>

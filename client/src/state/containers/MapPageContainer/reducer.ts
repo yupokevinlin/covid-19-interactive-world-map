@@ -5,7 +5,8 @@ export const initialState: MapPageState = {
   initComplete: false,
   mapPolygons: [],
   dateValues: [],
-  focusMapGeometry: [],
+  mapRegionUpdateGeometry: [],
+  breadcrumbsRegionUpdateGeometry: [],
   countryCode: "World",
 };
 
@@ -29,10 +30,18 @@ export const reducer = (state: MapPageState = initialState, action: MapPageActio
         dateValues: [...action.dateValues],
       }
     }
-    case MapPageActionTypes.SET_FOCUS_MAP_GEOMETRY: {
+    case MapPageActionTypes.SET_MAP_REGION_UPDATE_GEOMETRY: {
+      console.log(["map reducer", [action.regionUpdateGeometry]]);
       return {
         ...state,
-        focusMapGeometry: [...action.focusMapGeometry],
+        mapRegionUpdateGeometry: [...action.regionUpdateGeometry],
+      }
+    }
+    case MapPageActionTypes.SET_BREADCRUMBS_REGION_UPDATE_GEOMETRY: {
+      console.log(["breadcrumbs reducer", [action.regionUpdateGeometry]]);
+      return {
+        ...state,
+        breadcrumbsRegionUpdateGeometry: [...action.regionUpdateGeometry],
       }
     }
     case MapPageActionTypes.SET_COUNTRY_CODE: {

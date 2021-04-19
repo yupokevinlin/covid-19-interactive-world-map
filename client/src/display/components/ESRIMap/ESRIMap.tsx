@@ -42,7 +42,8 @@ export interface ESRIMapDataProps {
   mapPolygons: Array<ESRIMapPolygon>;
   date: string;
   initialBaseMap: string;
-  focusMapGeometry: Array<Array<[number, number]>>;
+  mapRegionUpdateGeometry: Array<Array<[number, number]>>;
+  breadcrumbsRegionUpdateGeometry: Array<Array<[number, number]>>;
 }
 
 export interface ESRIMapStyleProps {
@@ -91,7 +92,8 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
     subPage,
     date,
     initialBaseMap,
-    focusMapGeometry,
+    mapRegionUpdateGeometry,
+    breadcrumbsRegionUpdateGeometry,
     width,
     handleUpdateStart,
     handleUpdateComplete,
@@ -121,8 +123,11 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
         if (prevProps.date !== date) {
           handleDateChange();
         }
-        if (prevProps.focusMapGeometry !== focusMapGeometry) {
-          handleFocusMapGeometryChange(Polygon, Graphic);
+        if (prevProps.mapRegionUpdateGeometry !== mapRegionUpdateGeometry) {
+          handleMapRegionUpdateGeometryChange(Polygon, Graphic);
+        }
+        if (prevProps.breadcrumbsRegionUpdateGeometry !== breadcrumbsRegionUpdateGeometry) {
+          handleBreadcrumbsRegionUpdateGeometryChange(Polygon, Graphic);
         }
         if (prevProps.width !== width) {
           handleWidthChange();
@@ -130,7 +135,7 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
       }
       return destroyESRIMap;
     });
-  }, [mapPolygons, subPage, date, focusMapGeometry, width]);
+  }, [mapPolygons, subPage, date, mapRegionUpdateGeometry, breadcrumbsRegionUpdateGeometry, width]);
 
   const initialize = (Map, MapView, FeatureLayer, GraphicsLayer, Legend, Point): void => {
     map = new Map({
@@ -338,13 +343,41 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
     });
   };
 
-  const handleFocusMapGeometryChange = (Polygon, Graphic): void => {
-    if (focusMapGeometry.length === 0) {
+  const handleMapRegionUpdateGeometryChange = (Polygon, Graphic): void => {
+    if (mapRegionUpdateGeometry.length === 0) {
       highlightLayer.removeAll();
       return;
     }
     const polygon: Polygon = new Polygon({
-      rings: focusMapGeometry,
+      rings: mapRegionUpdateGeometry,
+      spatialReference: { wkid: 4326 }
+    })
+    if (!highlightLayer) {
+      return;
+    }
+    highlightLayer.removeAll();
+    const simpleFillSymbol = {
+      type: "simple-fill",
+      color: [0, 0, 0, 0],
+      outline: {
+        color: [128, 222, 234],
+        width: 3,
+      }
+    };
+    const polygonGraphic: Graphic = new Graphic({
+      geometry: polygon,
+      symbol: simpleFillSymbol,
+    })
+    highlightLayer.add(polygonGraphic);
+  };
+
+  const handleBreadcrumbsRegionUpdateGeometryChange = (Polygon, Graphic): void => {
+    if (breadcrumbsRegionUpdateGeometry.length === 0) {
+      highlightLayer.removeAll();
+      return;
+    }
+    const polygon: Polygon = new Polygon({
+      rings: breadcrumbsRegionUpdateGeometry,
       spatialReference: { wkid: 4326 }
     })
     mapView.goTo(polygon.extent, {

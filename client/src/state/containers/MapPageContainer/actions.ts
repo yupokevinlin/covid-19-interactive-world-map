@@ -5,9 +5,11 @@ export type MapPageAction = MapPageInitAction
 | MapPageSetMapPolygonsAction
 | MapPageSetInitCompleteAction
 | MapPageSetDateValuesAction
-| MapPageSetFocusMapGeometryAction
+| MapPageSetMapRegionUpdateGeometryAction
+| MapPageSetBreadcrumbsRegionUpdateGeometryAction
 | MapPageSetCountryCodeAction
-| MapPageHandleRegionChangeAction;
+| MapPageHandleMapRegionChangeAction
+| MapPageHandleBreadcrumbsRegionChangeAction;
 
 export interface MapPageInitAction {
   type: typeof MapPageActionTypes.INIT;
@@ -51,14 +53,25 @@ export const setDateValues = (dateValues: Array<string>): MapPageSetDateValuesAc
   };
 };
 
-export interface MapPageSetFocusMapGeometryAction {
-  type: typeof MapPageActionTypes.SET_FOCUS_MAP_GEOMETRY;
-  focusMapGeometry: Array<Array<[number, number]>>
+export interface MapPageSetMapRegionUpdateGeometryAction {
+  type: typeof MapPageActionTypes.SET_MAP_REGION_UPDATE_GEOMETRY;
+  regionUpdateGeometry: Array<Array<[number, number]>>;
 }
-export const setFocusMapGeometry = (focusMapGeometry: Array<Array<[number, number]>>): MapPageSetFocusMapGeometryAction => {
+export const setMapRegionUpdateGeometry = (regionUpdateGeometry: Array<Array<[number, number]>>): MapPageSetMapRegionUpdateGeometryAction => {
   return {
-    type: MapPageActionTypes.SET_FOCUS_MAP_GEOMETRY,
-    focusMapGeometry: focusMapGeometry,
+    type: MapPageActionTypes.SET_MAP_REGION_UPDATE_GEOMETRY,
+    regionUpdateGeometry: regionUpdateGeometry,
+  };
+};
+
+export interface MapPageSetBreadcrumbsRegionUpdateGeometryAction {
+  type: typeof MapPageActionTypes.SET_BREADCRUMBS_REGION_UPDATE_GEOMETRY;
+  regionUpdateGeometry: Array<Array<[number, number]>>;
+}
+export const setBreadcrumbsRegionUpdateGeometry = (regionUpdateGeometry: Array<Array<[number, number]>>): MapPageSetBreadcrumbsRegionUpdateGeometryAction => {
+  return {
+    type: MapPageActionTypes.SET_BREADCRUMBS_REGION_UPDATE_GEOMETRY,
+    regionUpdateGeometry: regionUpdateGeometry,
   };
 };
 
@@ -73,13 +86,24 @@ export const setCountryCode = (countryCode: string): MapPageSetCountryCodeAction
   };
 };
 
-export interface MapPageHandleRegionChangeAction {
-  type: typeof MapPageActionTypes.HANDLE_REGION_CHANGE;
+export interface MapPageHandleMapRegionChangeAction {
+  type: typeof MapPageActionTypes.HANDLE_MAP_REGION_CHANGE;
   hierarchicalName: string;
 }
-export const handleRegionChange = (hierarchicalName: string): MapPageHandleRegionChangeAction => {
+export const handleMapRegionChange = (hierarchicalName: string): MapPageHandleMapRegionChangeAction => {
   return {
-    type: MapPageActionTypes.HANDLE_REGION_CHANGE,
+    type: MapPageActionTypes.HANDLE_MAP_REGION_CHANGE,
+    hierarchicalName: hierarchicalName,
+  };
+};
+
+export interface MapPageHandleBreadcrumbsRegionChangeAction {
+  type: typeof MapPageActionTypes.HANDLE_BREADCRUMBS_REGION_CHANGE;
+  hierarchicalName: string;
+}
+export const handleBreadcrumbsRegionChange = (hierarchicalName: string): MapPageHandleBreadcrumbsRegionChangeAction => {
+  return {
+    type: MapPageActionTypes.HANDLE_BREADCRUMBS_REGION_CHANGE,
     hierarchicalName: hierarchicalName,
   };
 };

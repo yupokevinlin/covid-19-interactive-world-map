@@ -51,10 +51,18 @@ const MapPageContainer: React.FC<MapPageContainerProps> = (props) => {
     setDate(date);
   };
 
-  const handleRegionChange = (hierarchicalName: string): void => {
+  const handleMapRegionChange = (hierarchicalName: string): void => {
     setRegion(hierarchicalName);
     mapPageDispatch({
-      type: MapPageActionTypes.HANDLE_REGION_CHANGE,
+      type: MapPageActionTypes.HANDLE_MAP_REGION_CHANGE,
+      hierarchicalName: hierarchicalName,
+    });
+  };
+
+  const handleBreadcrumbsRegionChange = (hierarchicalName: string): void => {
+    setRegion(hierarchicalName);
+    mapPageDispatch({
+      type: MapPageActionTypes.HANDLE_BREADCRUMBS_REGION_CHANGE,
       hierarchicalName: hierarchicalName,
     });
   };
@@ -77,7 +85,7 @@ const MapPageContainer: React.FC<MapPageContainerProps> = (props) => {
 
   if (!!appState.casesDataObject) {
     return (
-      <MapPage dateValues={mapPageState.dateValues} dataTree={appState.dataTree} mapPolygons={mapPageState.mapPolygons} date={date} focusMapGeometry={mapPageState.focusMapGeometry} subPage={appState.subPage as MapSubPages} casesData={appState.casesDataObject[region]} countryCode={mapPageState.countryCode} regionName={getName(region)} width={width} handleDateChange={handleDateChange} handleRegionChange={handleRegionChange} handleMapUpdateStart={handleMapUpdateStart} handleMapUpdateComplete={handleMapUpdateComplete}/>
+      <MapPage dateValues={mapPageState.dateValues} dataTree={appState.dataTree} mapPolygons={mapPageState.mapPolygons} date={date} mapRegionUpdateGeometry={mapPageState.mapRegionUpdateGeometry} breadcrumbsRegionUpdateGeometry={mapPageState.breadcrumbsRegionUpdateGeometry} subPage={appState.subPage as MapSubPages} casesData={appState.casesDataObject[region]} countryCode={mapPageState.countryCode} regionName={getName(region)} width={width} handleDateChange={handleDateChange} handleMapRegionChange={handleMapRegionChange} handleBreadCrumbsRegionChange={handleBreadcrumbsRegionChange} handleMapUpdateStart={handleMapUpdateStart} handleMapUpdateComplete={handleMapUpdateComplete}/>
     );
   } else {
     return null;

@@ -4,7 +4,8 @@ export interface MapPageState {
   initComplete: boolean;
   mapPolygons: Array<ESRIMapPolygon>;
   dateValues: Array<string>;
-  focusMapGeometry: Array<Array<[number, number]>>;
+  mapRegionUpdateGeometry: Array<Array<[number, number]>>;
+  breadcrumbsRegionUpdateGeometry: Array<Array<[number, number]>>;
   countryCode: string;
 }
 
@@ -13,7 +14,9 @@ export enum MapPageActionTypes {
   SET_INIT_COMPLETE = "map.SET_INIT_COMPLETE",
   SET_MAP_POLYGONS = "map.SET_MAP_POLYGONS",
   SET_DATE_VALUES = "map.SET_DATE_VALUES",
-  SET_FOCUS_MAP_GEOMETRY = "map.SET_FOCUS_MAP_GEOMETRY",
+  SET_MAP_REGION_UPDATE_GEOMETRY = "map.SET_MAP_REGION_UPDATE_GEOMETRY",
+  SET_BREADCRUMBS_REGION_UPDATE_GEOMETRY = "map.SET_BREADCRUMBS_REGION_UPDATE_GEOMETRY",
   SET_COUNTRY_CODE = "map.SET_COUNTRY_CODE",
-  HANDLE_REGION_CHANGE = "map.HANDLE_REGION_CHANGE",
+  HANDLE_MAP_REGION_CHANGE = "map.HANDLE_MAP_REGION_CHANGE",
+  HANDLE_BREADCRUMBS_REGION_CHANGE = "map.HANDLE_BREADCRUMBS_REGION_CHANGE"
 }
