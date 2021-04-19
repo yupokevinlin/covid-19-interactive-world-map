@@ -73,11 +73,18 @@ const MapPage: React.FC<MapPageProps> = (props) => {
     handleMapUpdateComplete,
   } = props;
 
+  const [esriMapRegion, setEsriMapRegion] = useState<string>("World");
+
+  const handleEsriMapRegionChange = (hierarchicalName: string): void => {
+    handleRegionChange(hierarchicalName);
+    setEsriMapRegion(hierarchicalName);
+  };
+
   return (
     <div className={classes.root}>
-      <BreadcrumbsControl dataTree={dataTree} handleChange={handleRegionChange}/>
+      <BreadcrumbsControl dataTree={dataTree} handleChange={handleRegionChange} value={esriMapRegion}/>
       <div className={classes.map}>
-        <ESRIMap mapPolygons={mapPolygons} subPage={subPage} date={date} initialBaseMap={"streets"} focusMapGeometry={focusMapGeometry} handleUpdateStart={handleMapUpdateStart} handleUpdateComplete={handleMapUpdateComplete} handleRegionChange={handleRegionChange}/>
+        <ESRIMap mapPolygons={mapPolygons} subPage={subPage} date={date} initialBaseMap={"streets"} focusMapGeometry={focusMapGeometry} handleUpdateStart={handleMapUpdateStart} handleUpdateComplete={handleMapUpdateComplete} handleRegionChange={handleEsriMapRegionChange}/>
       </div>
       <SliderControl values={dateValues} handleChange={handleDateChange}/>
     </div>

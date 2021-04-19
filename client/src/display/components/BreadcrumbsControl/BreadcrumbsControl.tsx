@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {createStyles, Theme, useTheme} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
 import {TreeItem} from "../../../../../shared/types/data/Tree/TreeTypes";
@@ -12,6 +12,7 @@ export type BreadcrumbsControlProps = BreadcrumbsControlDataProps & BreadcrumbsC
 
 export interface BreadcrumbsControlDataProps {
   dataTree: TreeItem;
+  value: string;
 }
 
 export interface BreadcrumbsControlStyleProps {
@@ -113,8 +114,13 @@ const BreadcrumbsControl: React.FC<BreadcrumbsControlProps> = (props) => {
 
   const {
     dataTree,
+    value,
     handleChange,
   } = props;
+
+  useEffect(() => {
+    setCurrentSelection(value);
+  }, [value]);
 
   const [currentSelection, setCurrentSelection] = useState<string>("World");
   const treeItems: Array<TreeItem> = getSequentialHierarchicalNames(currentSelection).map((hierarchicalName) => getTreeItem(dataTree, hierarchicalName));
