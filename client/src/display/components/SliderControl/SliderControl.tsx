@@ -8,6 +8,7 @@ import MaterialIcon, {MaterialIconNames} from "../MaterialIcon/MaterialIcon";
 import IconButton from "@material-ui/core/IconButton";
 import Tooltip from "@material-ui/core/Tooltip";
 import {useInterval} from "../../../hooks/useInterval";
+import clsx from "clsx";
 
 export type SliderControlProps = SliderControlDataProps & SliderControlStyleProps & SliderControlEventProps;
 
@@ -16,7 +17,7 @@ export interface SliderControlDataProps {
 }
 
 export interface SliderControlStyleProps {
-
+  showLabel?: boolean;
 }
 
 export interface SliderControlEventProps {
@@ -75,12 +76,12 @@ const useStyles = makeStyles((theme: Theme) =>
       alignItems: "center",
       justifyContent: "space-between",
       [theme.breakpoints.up("xs")]: {
-        width: "60px",
+        width: "100px",
         paddingLeft: "15px",
         paddingRight: "15px",
       },
       [theme.breakpoints.up("md")]: {
-        width: "75px",
+        width: "125px",
         paddingLeft: "20px",
         paddingRight: "20px",
       },
@@ -130,7 +131,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     slider: {
       [theme.breakpoints.up("xs")]: {
-        width: "calc(100% - 131px)",
+        width: "calc(100% - 171px)",
         "& .MuiSlider-thumb": {
           "& .MuiSlider-valueLabel": {
             backgroundColor: theme.palette.primary.main,
@@ -156,6 +157,7 @@ const useStyles = makeStyles((theme: Theme) =>
         },
       },
       [theme.breakpoints.up("sm")]: {
+        width: "calc(100% - 171px)",
         "& .MuiSlider-thumb": {
           "& .MuiSlider-valueLabel": {
             backgroundColor: theme.palette.primary.main,
@@ -181,7 +183,87 @@ const useStyles = makeStyles((theme: Theme) =>
         },
       },
       [theme.breakpoints.up("md")]: {
-        width: "calc(100% - 163px)",
+        width: "calc(100% - 213px)",
+        "& .MuiSlider-thumb": {
+          "& .MuiSlider-valueLabel": {
+            backgroundColor: theme.palette.primary.main,
+            fontSize: "11px",
+            lineHeight: "11px",
+            width: "50px",
+            height: "32px",
+            "& span": {
+              width: "50px",
+              height: "50px",
+              display: "flex",
+              transform: "rotate(-45deg) translate(15px, -15px)",
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: "50% 50% 50% 0",
+              clipPath: "polygon(10% 0%,100% 90%,100% 100%,0% 100%,0% 0%)",
+              "& span": {
+                transform: "rotate(45deg) translateY(12px)",
+                clipPath: "polygon(0% 0%,100% 0%,100% 100%,0% 100%)",
+              }
+            }
+          }
+        },
+      },
+    },
+    noLabelSlider: {
+      [theme.breakpoints.up("xs")]: {
+        width: "calc(100% - 130px)",
+        "& .MuiSlider-thumb": {
+          "& .MuiSlider-valueLabel": {
+            backgroundColor: theme.palette.primary.main,
+            fontSize: "9px",
+            lineHeight: "9px",
+            width: "40px",
+            height: "32px",
+            "& span": {
+              width: "40px",
+              height: "40px",
+              display: "flex",
+              transform: "rotate(-45deg) translate(7px, -7px)",
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: "50% 50% 50% 0",
+              clipPath: "polygon(20% 0%,100% 80%,100% 100%,0% 100%,0% 0%)",
+              "& span": {
+                transform: "rotate(45deg) translateY(6px)",
+                clipPath: "polygon(0% 0%,100% 0%,100% 100%,0% 100%)",
+              }
+            }
+          }
+        },
+      },
+      [theme.breakpoints.up("sm")]: {
+        width: "calc(100% - 130px)",
+        "& .MuiSlider-thumb": {
+          "& .MuiSlider-valueLabel": {
+            backgroundColor: theme.palette.primary.main,
+            fontSize: "10px",
+            lineHeight: "10px",
+            width: "44px",
+            height: "32px",
+            "& span": {
+              width: "44px",
+              height: "44px",
+              display: "flex",
+              transform: "rotate(-45deg) translate(10px, -10px)",
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: "50% 50% 50% 0",
+              clipPath: "polygon(20% 0%,100% 80%,100% 100%,0% 100%,0% 0%)",
+              "& span": {
+                transform: "rotate(45deg) translateY(8px)",
+                clipPath: "polygon(0% 0%,100% 0%,100% 100%,0% 100%)",
+              }
+            }
+          }
+        },
+      },
+      [theme.breakpoints.up("md")]: {
+        width: "calc(100% - 165px)",
         "& .MuiSlider-thumb": {
           "& .MuiSlider-valueLabel": {
             backgroundColor: theme.palette.primary.main,
@@ -216,6 +298,7 @@ const SliderControl: React.FC<SliderControlProps> = (props) => {
 
   const {
     values,
+    showLabel,
     handleChange,
   } = props;
 
@@ -265,12 +348,30 @@ const SliderControl: React.FC<SliderControlProps> = (props) => {
     handleChange(values[newValue]?.toString());
   };
 
+  const handleDecrementButtonClick = (e: React.MouseEvent<HTMLButtonElement>): void => {
+    setIsAutoScrolling(false);
+    setValue(prevState => {
+      const newValue: number = Math.max(0, prevState - 1);
+      handleChange(values[newValue]?.toString());
+      return newValue;
+    });
+  };
+
   const handleStopButtonClick = (e: React.MouseEvent<HTMLButtonElement>): void => {
     setIsAutoScrolling(false);
   };
 
   const handleStartButtonClick = (e: React.MouseEvent<HTMLButtonElement>): void => {
     setIsAutoScrolling(true);
+  };
+
+  const handleIncrementButtonClick = (e: React.MouseEvent<HTMLButtonElement>): void => {
+    setIsAutoScrolling(false);
+    setValue(prevState => {
+      const newValue: number = Math.min(values.length - 1, prevState + 1);
+      handleChange(values[newValue]?.toString());
+      return newValue;
+    });
   };
 
   const handleGoToEndButtonClick = (e: React.MouseEvent<HTMLButtonElement>): void => {
@@ -285,17 +386,26 @@ const SliderControl: React.FC<SliderControlProps> = (props) => {
   } else {
     return (
       <div className={classes.sliderWrapper}>
-        <div className={classes.labelWrapper}>
-          <Typography className={classes.label} variant={"h6"}>
-            {
-              values[value]?.toString()
-            }
-          </Typography>
-        </div>
+        {
+          !!showLabel ? (
+            <div className={classes.labelWrapper}>
+              <Typography className={classes.label} variant={"h6"}>
+                {
+                  values[value]?.toString()
+                }
+              </Typography>
+            </div>
+          ) : null
+        }
         <div className={classes.buttons}>
           <Tooltip classes={{tooltip: classes.toolTip}} title={"Go To Start"} placement="top">
             <IconButton className={classes.button} color={"primary"} onClick={handleGoToStartButtonClick}>
               <MaterialIcon iconName={MaterialIconNames.FirstPage}/>
+            </IconButton>
+          </Tooltip>
+          <Tooltip classes={{tooltip: classes.toolTip}} title={"Decrement"} placement="top">
+            <IconButton className={classes.button} color={"primary"} onClick={handleDecrementButtonClick}>
+              <MaterialIcon iconName={MaterialIconNames.ChevronLeft}/>
             </IconButton>
           </Tooltip>
           {
@@ -313,6 +423,11 @@ const SliderControl: React.FC<SliderControlProps> = (props) => {
               </Tooltip>
             )
           }
+          <Tooltip classes={{tooltip: classes.toolTip}} title={"Increment"} placement="top">
+            <IconButton className={classes.button} color={"primary"} onClick={handleIncrementButtonClick}>
+              <MaterialIcon iconName={MaterialIconNames.ChevronRight}/>
+            </IconButton>
+          </Tooltip>
           <Tooltip classes={{tooltip: classes.toolTip}} title={"Go To End"} placement="top">
             <IconButton className={classes.button} color={"primary"} onClick={handleGoToEndButtonClick}>
               <MaterialIcon iconName={MaterialIconNames.LastPage}/>
@@ -320,7 +435,9 @@ const SliderControl: React.FC<SliderControlProps> = (props) => {
           </Tooltip>
         </div>
         <Slider
-          className={classes.slider}
+          className={clsx(classes.slider, {
+            [classes.noLabelSlider]: !showLabel
+          })}
           value={value}
           valueLabelDisplay="auto"
           valueLabelFormat={getValueText}
