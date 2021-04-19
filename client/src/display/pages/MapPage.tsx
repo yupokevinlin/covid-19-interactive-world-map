@@ -4,8 +4,9 @@ import {makeStyles} from "@material-ui/core/styles";
 import SliderControl from "../components/SliderControl/SliderControl";
 import {TreeItem} from "../../../../shared/types/data/Tree/TreeTypes";
 import BreadcrumbsControl from "../components/BreadcrumbsControl/BreadcrumbsControl";
-import {ESRIMapModeNames, ESRIMapPolygon} from "../components/ESRIMap/types";
+import {ESRIMapPolygon} from "../components/ESRIMap/types";
 import ESRIMap from "../components/ESRIMap/ESRIMap";
+import {MapSubPages} from "../../state/global/App/types";
 
 export type MapPageProps = MapPageDataProps & MapPageStyleProps & MapPageEventProps;
 
@@ -15,6 +16,7 @@ export interface MapPageDataProps {
   date: string;
   mapPolygons: Array<ESRIMapPolygon>;
   focusMapGeometry: Array<Array<[number, number]>>;
+  subPage: MapSubPages;
 }
 
 export interface MapPageStyleProps {
@@ -64,19 +66,18 @@ const MapPage: React.FC<MapPageProps> = (props) => {
     date,
     mapPolygons,
     focusMapGeometry,
+    subPage,
     handleDateChange,
     handleRegionChange,
     handleMapUpdateStart,
     handleMapUpdateComplete,
   } = props;
 
-  const [displayMode, setDisplayMode] = useState<ESRIMapModeNames>(ESRIMapModeNames.totalCases);
-
   return (
     <div className={classes.root}>
       <BreadcrumbsControl dataTree={dataTree} handleChange={handleRegionChange}/>
       <div className={classes.map}>
-        <ESRIMap mapPolygons={mapPolygons} displayMode={displayMode} date={date} initialBaseMap={"streets"} focusMapGeometry={focusMapGeometry} handleUpdateStart={handleMapUpdateStart} handleUpdateComplete={handleMapUpdateComplete}/>
+        <ESRIMap mapPolygons={mapPolygons} subPage={subPage} date={date} initialBaseMap={"streets"} focusMapGeometry={focusMapGeometry} handleUpdateStart={handleMapUpdateStart} handleUpdateComplete={handleMapUpdateComplete}/>
       </div>
       <SliderControl values={dateValues} handleChange={handleDateChange}/>
     </div>

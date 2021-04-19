@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import MapPage from "../../pages/MapPage";
-import {AppActionTypes, AppState} from "../../../state/global/App/types";
+import {AppActionTypes, AppState, MapSubPages} from "../../../state/global/App/types";
 import {Store} from "../../../state/store";
 import {Dispatch} from "redux";
 import {AppAction} from "../../../state/global/App/actions";
@@ -70,7 +70,7 @@ const MapPageContainer: React.FC<MapPageContainerProps> = (props) => {
 
   if (!!appState.casesDataObject) {
     return (
-      <MapPage dateValues={mapPageState.dateValues} dataTree={appState.dataTree} mapPolygons={mapPageState.mapPolygons} date={date} focusMapGeometry={mapPageState.focusMapGeometry} handleDateChange={handleDateChange} handleRegionChange={handleRegionChange} handleMapUpdateStart={handleMapUpdateStart} handleMapUpdateComplete={handleMapUpdateComplete}/>
+      <MapPage dateValues={mapPageState.dateValues} dataTree={appState.dataTree} mapPolygons={mapPageState.mapPolygons} date={date} focusMapGeometry={mapPageState.focusMapGeometry} subPage={appState.subPage as MapSubPages} handleDateChange={handleDateChange} handleRegionChange={handleRegionChange} handleMapUpdateStart={handleMapUpdateStart} handleMapUpdateComplete={handleMapUpdateComplete}/>
     );
   } else {
     return null;

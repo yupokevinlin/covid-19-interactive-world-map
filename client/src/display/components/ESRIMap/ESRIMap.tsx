@@ -1,33 +1,37 @@
-import React, {MutableRefObject, useEffect, useRef} from "react";
+import React, {MutableRefObject, useEffect, useRef, useState} from "react";
 import "./ESRIMap.css";
 import {createStyles, Theme, useTheme} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
-import ReactResizeDetector from "react-resize-detector";
-import Map = __esri.Map;
-import MapView = __esri.MapView;
-import FeatureLayer = __esri.FeatureLayer;
-import Legend = __esri.Legend;
 import {
-  ClassBreakColors, ESRIMapLayerNames,
+  ClassBreakColors, classBreakSteps,
+  ESRIMapLayerNames,
   ESRIMapModeNames,
   ESRIMapPolygon,
   MapTotalCasesClassBreakColors,
-  MapTotalCasesClassBreakDomain
+  MapTotalCasesClassBreakDomain,
+  MapTotalDeathsClassBreakColors,
+  MapTotalDeathsClassBreakDomain,
+  MapTotalRecoveriesClassBreakColors, MapTotalRecoveriesClassBreakDomain
 } from "./types";
 import {usePreviousProps} from "../../../hooks/usePreviousProps";
 import {loadModules} from "esri-loader";
-import FieldProperties = __esri.FieldProperties;
 import chroma, {Color, Scale} from "chroma-js";
 import {MathUtils} from "../../../helper/MathUtils";
-import ClassBreaksRenderer = __esri.ClassBreaksRenderer;
 import {
   DailyCasesData,
   DailyCasesDataNull,
   DailyCasesDataObject
 } from "../../../../../shared/types/data/Cases/CasesTypes";
 import {DateUtils} from "../../../helper/DateUtils";
-import getMomentDateFromDateString = DateUtils.getMomentDateFromDateString;
 import {Moment} from "moment";
+import {MapSubPages} from "../../../state/global/App/types";
+import Map = __esri.Map;
+import MapView = __esri.MapView;
+import FeatureLayer = __esri.FeatureLayer;
+import Legend = __esri.Legend;
+import FieldProperties = __esri.FieldProperties;
+import ClassBreaksRenderer = __esri.ClassBreaksRenderer;
+import getMomentDateFromDateString = DateUtils.getMomentDateFromDateString;
 import getDateStringFromMomentDate = DateUtils.getDateStringFromMomentDate;
 import Graphic = __esri.Graphic;
 import Polygon = __esri.Polygon;
@@ -35,8 +39,8 @@ import Polygon = __esri.Polygon;
 export type ESRIMapProps = ESRIMapDataProps & ESRIMapStyleProps & ESRIMapEventProps;
 
 export interface ESRIMapDataProps {
+  subPage: MapSubPages;
   mapPolygons: Array<ESRIMapPolygon>;
-  displayMode: ESRIMapModeNames;
   date: string;
   initialBaseMap: string;
   focusMapGeometry: Array<Array<[number, number]>>;
@@ -82,7 +86,7 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
 
   const {
     mapPolygons,
-    displayMode,
+    subPage,
     date,
     initialBaseMap,
     focusMapGeometry,
@@ -107,8 +111,8 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
         if (prevProps.mapPolygons !== mapPolygons) {
           handleMapPolygonsChange();
         }
-        if (prevProps.displayMode !== displayMode) {
-          handleDisplayedLayer();
+        if (prevProps.subPage !== subPage) {
+          handleSubPageChange();
         }
         if (prevProps.date !== date) {
           handleDateChange();
@@ -119,7 +123,7 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
       }
       return destroyESRIMap;
     });
-  }, [mapPolygons, displayMode, date, focusMapGeometry]);
+  }, [mapPolygons, subPage, date, focusMapGeometry]);
 
   const initialize = (Map, MapView, FeatureLayer, Legend, Point): void => {
     map = new Map({
@@ -246,8 +250,33 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
     });
   };
 
-  const handleDisplayedLayer = (): void => {
-
+  const handleSubPageChange = (): void => {
+    const steps: number = 8;
+    const renderer = (polygonLayer.renderer as __esri.ClassBreaksRenderer).clone();
+    switch (subPage) {
+      case MapSubPages.CASES: {
+        renderer.legendOptions = {
+          title: ESRIMapModeNames.totalCases,
+        };
+        renderer.classBreakInfos = generateLogarithmicClassStep(classBreakSteps, MapTotalCasesClassBreakColors, MapTotalCasesClassBreakDomain);
+        break;
+      }
+      case MapSubPages.DEATHS: {
+        renderer.legendOptions = {
+          title: ESRIMapModeNames.totalDeaths,
+        };
+        renderer.classBreakInfos = generateLogarithmicClassStep(classBreakSteps, MapTotalDeathsClassBreakColors, MapTotalDeathsClassBreakDomain);
+        break;
+      }
+      case MapSubPages.RECOVERIES: {
+        renderer.legendOptions = {
+          title: ESRIMapModeNames.totalRecovered,
+        };
+        renderer.classBreakInfos = generateLogarithmicClassStep(classBreakSteps, MapTotalRecoveriesClassBreakColors, MapTotalRecoveriesClassBreakDomain);
+        break;
+      }
+    }
+    polygonLayer.renderer = renderer;
   };
 
   const handleDateChange = (): void => {
@@ -297,10 +326,6 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
     });
   };
 
-  const onResize = (): void => {
-
-  };
-
   const generateLogarithmicClassStep = (steps: number, colors: ClassBreakColors, domain: Array<number>): Array<any> => {
     const backgroundOpacity: number = 0.4;
     const outlineOpacity: number = 1;
@@ -332,7 +357,7 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
         const maxValue: number = step === steps ? Number.MAX_SAFE_INTEGER : Math.pow(10, step) - 0.1;
         const label: string = step === steps ?
           `>${MathUtils.abbreviateNumber(minValue)}`
-            : 
+            :
           `${MathUtils.abbreviateNumber(minValue)} - ${MathUtils.abbreviateNumber(
             maxValue < 100 ? Math.floor(maxValue) : Math.ceil(maxValue)
             )}`;
@@ -400,7 +425,7 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
         },
       },
       defaultLabel: "no data",
-      classBreakInfos: generateLogarithmicClassStep(8, MapTotalCasesClassBreakColors, MapTotalCasesClassBreakDomain),
+      classBreakInfos: generateLogarithmicClassStep(classBreakSteps, MapTotalCasesClassBreakColors, MapTotalCasesClassBreakDomain),
     };
 
     return new FeatureLayer({
@@ -415,10 +440,7 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
   };
 
   return (
-    <React.Fragment>
-      <ReactResizeDetector handleWidth handleHeight onResize={onResize}/>
-      <div className={classes.root} ref={mapRef}/>
-    </React.Fragment>
+    <div className={classes.root} ref={mapRef}/>
   );
 };
 
