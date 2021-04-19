@@ -354,7 +354,7 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
   };
 
   const generateLogarithmicClassStep = (steps: number, colors: ClassBreakColors, domain: Array<number>): Array<any> => {
-    const backgroundOpacity: number = 0.4;
+    const backgroundOpacity: number = 0.3;
     const outlineOpacity: number = 1;
     const outlineWidth: number = 1;
     const classBreakInfos: Array<any> = [];
