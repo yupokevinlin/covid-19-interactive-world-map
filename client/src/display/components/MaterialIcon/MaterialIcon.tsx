@@ -12,39 +12,43 @@ import Build from "@material-ui/icons/Build";
 import InsertDriveFile from "@material-ui/icons/InsertDriveFile";
 import Memory from "@material-ui/icons/Memory";
 import SupervisorAccount from "@material-ui/icons/SupervisorAccount";
-import Notifications from '@material-ui/icons/Notifications';
-import Menu from '@material-ui/icons/Menu';
-import AccountCircle from '@material-ui/icons/AccountCircle';
-import Report from '@material-ui/icons/Report';
-import DesktopWindows from '@material-ui/icons/DesktopWindows'
-import Dashboard from '@material-ui/icons/Dashboard';
-import Event from '@material-ui/icons/Event';
-import Palette from '@material-ui/icons/Palette';
-import LocalGroceryStore from '@material-ui/icons/LocalGroceryStore';
-import Close from '@material-ui/icons/Close';
-import CheckBoxOutlineBlank from '@material-ui/icons/CheckBoxOutlineBlank';
-import CheckBox from '@material-ui/icons/CheckBox';
-import ExitToApp from '@material-ui/icons/ExitToApp';
-import Map from '@material-ui/icons/Map';
-import Redo from '@material-ui/icons/Redo';
-import SystemUpdateAlt from '@material-ui/icons/SystemUpdateAlt';
-import Storage from '@material-ui/icons/Storage';
-import PlayCircleOutline from '@material-ui/icons/PlayCircleOutline';
-import Widgets from '@material-ui/icons/Widgets';
-import AccessTime from '@material-ui/icons/AccessTime';
-import Extension from '@material-ui/icons/Extension';
-import AccountBalance from '@material-ui/icons/AccountBalance';
-import PriorityHigh from '@material-ui/icons/PriorityHigh';
-import PhoneIphone from '@material-ui/icons/PhoneIphone';
-import SpeakerNotes from '@material-ui/icons/SpeakerNotes';
-import VpnKey from '@material-ui/icons/VpnKey';
-import ShowChart from '@material-ui/icons/ShowChart';
-import BarChart from '@material-ui/icons/BarChart';
-import NavigateNext from '@material-ui/icons/NavigateNext';
-import FirstPage from '@material-ui/icons/FirstPage';
-import LastPage from '@material-ui/icons/LastPage';
-import Stop from '@material-ui/icons/Stop';
-import PlayArrow from '@material-ui/icons/PlayArrow';
+import Notifications from "@material-ui/icons/Notifications";
+import Menu from "@material-ui/icons/Menu";
+import AccountCircle from "@material-ui/icons/AccountCircle";
+import Report from "@material-ui/icons/Report";
+import DesktopWindows from "@material-ui/icons/DesktopWindows"
+import Dashboard from "@material-ui/icons/Dashboard";
+import Event from "@material-ui/icons/Event";
+import Palette from "@material-ui/icons/Palette";
+import LocalGroceryStore from "@material-ui/icons/LocalGroceryStore";
+import Close from "@material-ui/icons/Close";
+import CheckBoxOutlineBlank from "@material-ui/icons/CheckBoxOutlineBlank";
+import CheckBox from "@material-ui/icons/CheckBox";
+import ExitToApp from "@material-ui/icons/ExitToApp";
+import Map from "@material-ui/icons/Map";
+import Redo from "@material-ui/icons/Redo";
+import SystemUpdateAlt from "@material-ui/icons/SystemUpdateAlt";
+import Storage from "@material-ui/icons/Storage";
+import PlayCircleOutline from "@material-ui/icons/PlayCircleOutline";
+import Widgets from "@material-ui/icons/Widgets";
+import AccessTime from "@material-ui/icons/AccessTime";
+import Extension from "@material-ui/icons/Extension";
+import AccountBalance from "@material-ui/icons/AccountBalance";
+import PriorityHigh from "@material-ui/icons/PriorityHigh";
+import PhoneIphone from "@material-ui/icons/PhoneIphone";
+import SpeakerNotes from "@material-ui/icons/SpeakerNotes";
+import VpnKey from "@material-ui/icons/VpnKey";
+import ShowChart from "@material-ui/icons/ShowChart";
+import BarChart from "@material-ui/icons/BarChart";
+import NavigateNext from "@material-ui/icons/NavigateNext";
+import FirstPage from "@material-ui/icons/FirstPage";
+import LastPage from "@material-ui/icons/LastPage";
+import Stop from "@material-ui/icons/Stop";
+import PlayArrow from "@material-ui/icons/PlayArrow";
+import LocalHospital from "@material-ui/icons/LocalHospital";
+import AssignmentTurnedIn from "@material-ui/icons/AssignmentTurnedIn";
+
+import {SkullIcon as Skull} from "./SvgIcon/SvgIcons"
 
 export interface MaterialIconProps extends SvgIconProps {
   iconName: MaterialIconNames;
@@ -54,6 +58,7 @@ export enum MaterialIconNames {
   AccessTime = "AccessTime",
   AccountBalance = "AccountBalance",
   AccountCircle = "AccountCircle",
+  AssignmentTurnedIn = "AssignmentTurnedIn",
   BarChart = "BarChart",
   Build = "Build",
   CheckBox = "CheckBox",
@@ -72,6 +77,7 @@ export enum MaterialIconNames {
   InsertDriveFile = "InsertDriveFile",
   LastPage = "LastPage",
   LocalGroceryStore = "LocalGroceryStore",
+  LocalHospital = "LocalHospital",
   LocalShipping = "LocalShipping",
   Mail = "Mail",
   Map = "Map",
@@ -88,6 +94,7 @@ export enum MaterialIconNames {
   Report = "Report",
   Settings = "Settings",
   Shift = "Shift",
+  Skull = "Skull",
   ShowChart = "ShowChart",
   SpeakerNotes = "SpeakerNotes",
   Stop = "Stop",
@@ -111,6 +118,9 @@ const MaterialIcon: React.FC<MaterialIconProps> = (props) => {
     }
     case MaterialIconNames.AccountCircle: {
       return <AccountCircle {...svgIconProps}/>;
+    }
+    case MaterialIconNames.AssignmentTurnedIn: {
+      return <AssignmentTurnedIn {...svgIconProps}/>;
     }
     case MaterialIconNames.BarChart: {
       return <BarChart {...svgIconProps}/>;
@@ -166,6 +176,9 @@ const MaterialIcon: React.FC<MaterialIconProps> = (props) => {
     case MaterialIconNames.LocalGroceryStore: {
       return <LocalGroceryStore {...svgIconProps}/>;
     }
+    case MaterialIconNames.LocalHospital: {
+      return <LocalHospital {...svgIconProps}/>;
+    }
     case MaterialIconNames.LocalShipping: {
       return <LocalShipping {...svgIconProps}/>;
     }
@@ -216,6 +229,9 @@ const MaterialIcon: React.FC<MaterialIconProps> = (props) => {
     }
     case MaterialIconNames.Stop: {
       return <Stop {...svgIconProps}/>;
+    }
+    case MaterialIconNames.Skull: {
+      return <Skull {...svgIconProps}/>;
     }
     case MaterialIconNames.ShowChart: {
       return <ShowChart {...svgIconProps}/>;
