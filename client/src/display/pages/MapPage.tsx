@@ -7,6 +7,7 @@ import BreadcrumbsControl from "../components/BreadcrumbsControl/BreadcrumbsCont
 import {ESRIMapPolygon} from "../components/ESRIMap/types";
 import ESRIMap from "../components/ESRIMap/ESRIMap";
 import {MapSubPages} from "../../state/global/App/types";
+import {Breakpoint} from "@material-ui/core/styles/createBreakpoints";
 
 export type MapPageProps = MapPageDataProps & MapPageStyleProps & MapPageEventProps;
 
@@ -20,7 +21,7 @@ export interface MapPageDataProps {
 }
 
 export interface MapPageStyleProps {
-
+  width: Breakpoint;
 }
 
 export interface MapPageEventProps {
@@ -67,6 +68,7 @@ const MapPage: React.FC<MapPageProps> = (props) => {
     mapPolygons,
     focusMapGeometry,
     subPage,
+    width,
     handleDateChange,
     handleRegionChange,
     handleMapUpdateStart,
@@ -84,8 +86,9 @@ const MapPage: React.FC<MapPageProps> = (props) => {
     <div className={classes.root}>
       <BreadcrumbsControl dataTree={dataTree} handleChange={handleRegionChange} value={esriMapRegion}/>
       <div className={classes.map}>
-        <ESRIMap mapPolygons={mapPolygons} subPage={subPage} date={date} initialBaseMap={"streets"} focusMapGeometry={focusMapGeometry} handleUpdateStart={handleMapUpdateStart} handleUpdateComplete={handleMapUpdateComplete} handleRegionChange={handleEsriMapRegionChange}/>
+        <ESRIMap mapPolygons={mapPolygons} subPage={subPage} date={date} initialBaseMap={"streets"} focusMapGeometry={focusMapGeometry} width={width} handleUpdateStart={handleMapUpdateStart} handleUpdateComplete={handleMapUpdateComplete} handleRegionChange={handleEsriMapRegionChange}/>
       </div>
+
       <SliderControl values={dateValues} handleChange={handleDateChange}/>
     </div>
   );

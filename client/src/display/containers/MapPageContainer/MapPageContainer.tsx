@@ -8,6 +8,8 @@ import {shallowEqual, useDispatch, useSelector} from "react-redux";
 import {MapPageActionTypes, MapPageState} from "../../../state/containers/MapPageContainer/types";
 import {MapPageAction} from "../../../state/containers/MapPageContainer/actions";
 import {DateUtils} from "../../../helper/DateUtils";
+import {withWidth} from "@material-ui/core";
+import {Breakpoint} from "@material-ui/core/styles/createBreakpoints";
 
 export type MapPageContainerProps = MapPageContainerDataProps & MapPageContainerStyleProps & MapPageContainerEventProps;
 
@@ -16,7 +18,7 @@ export interface MapPageContainerDataProps {
 }
 
 export interface MapPageContainerStyleProps {
-
+  width: Breakpoint;
 }
 
 export interface MapPageContainerEventProps {
@@ -36,6 +38,10 @@ const MapPageContainer: React.FC<MapPageContainerProps> = (props) => {
       });
     }
   }, []);
+
+  const {
+    width,
+  } = props;
 
   const [date, setDate] = useState<string>(DateUtils.getCurrentDate());
   const [region, setRegion] = useState<string>("World");
@@ -70,12 +76,12 @@ const MapPageContainer: React.FC<MapPageContainerProps> = (props) => {
 
   if (!!appState.casesDataObject) {
     return (
-      <MapPage dateValues={mapPageState.dateValues} dataTree={appState.dataTree} mapPolygons={mapPageState.mapPolygons} date={date} focusMapGeometry={mapPageState.focusMapGeometry} subPage={appState.subPage as MapSubPages} handleDateChange={handleDateChange} handleRegionChange={handleRegionChange} handleMapUpdateStart={handleMapUpdateStart} handleMapUpdateComplete={handleMapUpdateComplete}/>
+      <MapPage dateValues={mapPageState.dateValues} dataTree={appState.dataTree} mapPolygons={mapPageState.mapPolygons} date={date} focusMapGeometry={mapPageState.focusMapGeometry} subPage={appState.subPage as MapSubPages} width={width} handleDateChange={handleDateChange} handleRegionChange={handleRegionChange} handleMapUpdateStart={handleMapUpdateStart} handleMapUpdateComplete={handleMapUpdateComplete}/>
     );
   } else {
     return null;
   }
 };
 
-export default MapPageContainer;
+export default withWidth()(MapPageContainer);
 

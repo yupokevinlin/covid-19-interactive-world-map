@@ -1,4 +1,4 @@
-import React, {MutableRefObject, useEffect, useRef, useState} from "react";
+import React, {MutableRefObject, useEffect, useRef} from "react";
 import "./ESRIMap.css";
 import {createStyles, Theme, useTheme} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
@@ -36,7 +36,7 @@ import getDateStringFromMomentDate = DateUtils.getDateStringFromMomentDate;
 import Graphic = __esri.Graphic;
 import Polygon = __esri.Polygon;
 import GraphicsLayer = __esri.GraphicsLayer;
-import {MapPolygon} from "../../../../../shared/types/data/Map/MapTypes";
+import {Breakpoint} from "@material-ui/core/styles/createBreakpoints";
 
 export type ESRIMapProps = ESRIMapDataProps & ESRIMapStyleProps & ESRIMapEventProps;
 
@@ -49,7 +49,7 @@ export interface ESRIMapDataProps {
 }
 
 export interface ESRIMapStyleProps {
-
+  width: Breakpoint;
 }
 
 export interface ESRIMapEventProps {
@@ -95,6 +95,7 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
     date,
     initialBaseMap,
     focusMapGeometry,
+    width,
     handleUpdateStart,
     handleUpdateComplete,
     handleRegionChange,
@@ -126,10 +127,13 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
         if (prevProps.focusMapGeometry !== focusMapGeometry) {
           handleFocusMapGeometryChange(Polygon, Graphic);
         }
+        if (prevProps.width !== width) {
+          handleWidthChange();
+        }
       }
       return destroyESRIMap;
     });
-  }, [mapPolygons, subPage, date, focusMapGeometry]);
+  }, [mapPolygons, subPage, date, focusMapGeometry, width]);
 
   const initialize = (Map, MapView, FeatureLayer, GraphicsLayer, Legend, Point): void => {
     map = new Map({
@@ -395,6 +399,10 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
     highlightLayer.add(polygonGraphic);
   };
 
+  const handleWidthChange = (): void => {
+    handleSubPageChange();
+  };
+
   const generateLogarithmicClassStep = (steps: number, colors: ClassBreakColors, domain: Array<number>): Array<any> => {
     const backgroundOpacity: number = 0.3;
     const outlineOpacity: number = 1;
@@ -424,12 +432,17 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
         const color: Color = colorScale(step);
         const minValue: number = Math.pow(10, step - 1);
         const maxValue: number = step === steps ? Number.MAX_SAFE_INTEGER : Math.pow(10, step) - 0.1;
-        const label: string = step === steps ?
-          `>${MathUtils.abbreviateNumber(minValue)}`
-            :
-          `${MathUtils.abbreviateNumber(minValue)} - ${MathUtils.abbreviateNumber(
-            maxValue < 100 ? Math.floor(maxValue) : Math.ceil(maxValue)
-            )}`;
+        let label: string = "";
+        if (width === "xs" || width === "sm") {
+          label =
+            step === steps ? `>${MathUtils.abbreviateNumber(minValue)}` : `${MathUtils.abbreviateNumber(minValue)}'s`;
+        } else {
+          label = step === steps ? (
+            `>${MathUtils.abbreviateNumber(minValue)}`
+          ) : (
+            `${MathUtils.abbreviateNumber(minValue)} - ${MathUtils.abbreviateNumber(maxValue < 100 ? Math.floor(maxValue) : Math.ceil(maxValue))}`
+          );
+        }
         classBreakInfos.push({
           minValue: minValue,
           maxValue: maxValue,
