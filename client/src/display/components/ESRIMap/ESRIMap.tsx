@@ -163,34 +163,43 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
     mapView.ui.add(legend, "bottom-left");
 
     mapView.on("click", (event) => {
-      mapView.hitTest(event).then((rsp => {
-        const hitResults: Array<any> = rsp.results;
-        hitResults.forEach(result => {
-          const sourceLayerName: string = result?.graphic?.sourceLayer?.id;
-          if (!!sourceLayerName) {
-            switch (sourceLayerName) {
-              case ESRIMapLayerNames.polygonLayer: {
-                const objectId: number = result.graphic.attributes.OBJECTID;
-                polygonLayer.queryFeatures().then((featureRsp) => {
-                  const features: Array<any> = featureRsp.features;
-                  for (let i = 0; i < features.length; i++) {
-                    const feature: any = features[i];
-                    if (feature.attributes.OBJECTID === objectId) {
-                      const hierarchicalName: string = feature.attributes.hierarchicalName;
-                      handleRegionChange(hierarchicalName);
-                      break;
-                    }
+      console.log(event.button);
+      switch (event.button) {
+        case 0: {
+          mapView.hitTest(event).then((rsp => {
+            const hitResults: Array<any> = rsp.results;
+            hitResults.forEach(result => {
+              const sourceLayerName: string = result?.graphic?.sourceLayer?.id;
+              if (!!sourceLayerName) {
+                switch (sourceLayerName) {
+                  case ESRIMapLayerNames.polygonLayer: {
+                    const objectId: number = result.graphic.attributes.OBJECTID;
+                    polygonLayer.queryFeatures().then((featureRsp) => {
+                      const features: Array<any> = featureRsp.features;
+                      for (let i = 0; i < features.length; i++) {
+                        const feature: any = features[i];
+                        if (feature.attributes.OBJECTID === objectId) {
+                          const hierarchicalName: string = feature.attributes.hierarchicalName;
+                          handleRegionChange(hierarchicalName);
+                          break;
+                        }
+                      }
+                    });
+                    break;
                   }
-                });
-                break;
+                  default: {
+                    break;
+                  }
+                }
               }
-              default: {
-                break;
-              }
-            }
-          }
-        });
-      }));
+            });
+          }));
+          break;
+        }
+        case 2: {
+          handleRegionChange("World");
+        }
+      }
     });
   };
 
