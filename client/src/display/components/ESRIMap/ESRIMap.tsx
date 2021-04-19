@@ -163,7 +163,6 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
     mapView.ui.add(legend, "bottom-left");
 
     mapView.on("click", (event) => {
-      console.log(event.button);
       switch (event.button) {
         case 0: {
           mapView.hitTest(event).then((rsp => {
