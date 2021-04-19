@@ -54,6 +54,10 @@ function * handleRegionChange(action: MapPageHandleRegionChangeAction): any {
       type: MapPageActionTypes.SET_MAP_POLYGONS,
       mapPolygons: getESRIMapPolygons(layer0MapPolygons, casesData),
     });
+    yield put({
+      type: MapPageActionTypes.SET_FOCUS_MAP_GEOMETRY,
+      focusMapGeometry: [],
+    });
   } else {
     let filteredMapPolygons: Array<MapPolygon> = layer0MapPolygons;
     const sequentialHierarchicalNames: Array<string> = getSequentialHierarchicalNames(action.hierarchicalName);
