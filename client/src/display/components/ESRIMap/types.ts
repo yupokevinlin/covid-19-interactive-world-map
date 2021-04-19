@@ -45,6 +45,7 @@ export const classBreakSteps: number = 8;
 
 export enum ESRIMapLayerNames {
   polygonLayer = "polygon-layer",
+  highlightLayer = "highlight-layer",
 }
 
 export enum ESRIMapModeNames {

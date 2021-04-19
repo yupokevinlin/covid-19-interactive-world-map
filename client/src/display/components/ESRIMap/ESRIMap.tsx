@@ -36,6 +36,7 @@ import getDateStringFromMomentDate = DateUtils.getDateStringFromMomentDate;
 import Graphic = __esri.Graphic;
 import Polygon = __esri.Polygon;
 import GraphicsLayer = __esri.GraphicsLayer;
+import {MapPolygon} from "../../../../../shared/types/data/Map/MapTypes";
 
 export type ESRIMapProps = ESRIMapDataProps & ESRIMapStyleProps & ESRIMapEventProps;
 
@@ -54,6 +55,7 @@ export interface ESRIMapStyleProps {
 export interface ESRIMapEventProps {
   handleUpdateStart(): void;
   handleUpdateComplete(): void;
+  handleRegionChange(hierarchicalName: string): void;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -95,6 +97,7 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
     focusMapGeometry,
     handleUpdateStart,
     handleUpdateComplete,
+    handleRegionChange,
   } = props;
 
   const prevProps: ESRIMapProps = usePreviousProps<ESRIMapProps>(props);
@@ -158,6 +161,37 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
     });
 
     mapView.ui.add(legend, "bottom-left");
+
+    mapView.on("click", (event) => {
+      mapView.hitTest(event).then((rsp => {
+        const hitResults: Array<any> = rsp.results;
+        hitResults.forEach(result => {
+          const sourceLayerName: string = result?.graphic?.sourceLayer?.id;
+          if (!!sourceLayerName) {
+            switch (sourceLayerName) {
+              case ESRIMapLayerNames.polygonLayer: {
+                const objectId: number = result.graphic.attributes.OBJECTID;
+                polygonLayer.queryFeatures().then((featureRsp) => {
+                  const features: Array<any> = featureRsp.features;
+                  for (let i = 0; i < features.length; i++) {
+                    const feature: any = features[i];
+                    if (feature.attributes.OBJECTID === objectId) {
+                      const hierarchicalName: string = feature.attributes.hierarchicalName;
+                      handleRegionChange(hierarchicalName);
+                      break;
+                    }
+                  }
+                });
+                break;
+              }
+              default: {
+                break;
+              }
+            }
+          }
+        });
+      }));
+    });
   };
 
   const getDailyCasesData = (dailyCasesDataObject: DailyCasesDataObject, dateString: string): DailyCasesData | DailyCasesDataNull => {
@@ -467,7 +501,9 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
   };
 
   const getHighlightLayer = (GraphicsLayer): GraphicsLayer => {
-    return new GraphicsLayer();
+    return new GraphicsLayer({
+      id: ESRIMapLayerNames.highlightLayer,
+    });
   };
 
   return (
