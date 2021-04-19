@@ -8,6 +8,15 @@ export const getNameArray = (hierarchicalName: string): Array<string> => {
   return hierarchicalName.split("_");
 };
 
+export const getName = (hierarchicalName: string): string => {
+  const nameArray: Array<string> = getNameArray(hierarchicalName);
+  if (nameArray.length === 0) {
+    return "";
+  } else {
+    return nameArray[nameArray.length - 1];
+  }
+};
+
 export const getSequentialHierarchicalNames = (hierarchicalName: string): Array<string> => {
   const name: Array<string> = getNameArray(hierarchicalName);
   const hierarchicalNames: Array<string> = [];
