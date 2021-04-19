@@ -14,7 +14,7 @@ export function useInterval(callback: any, delay: number) {
       }
     }
     if (delay !== null) {
-      let id = setInterval(tick, delay);
+      const id: NodeJS.Timeout = setInterval(tick, delay);
       return () => clearInterval(id);
     }
   }, [delay]);
