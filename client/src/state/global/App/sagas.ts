@@ -165,9 +165,21 @@ const getInitialMenuItems = (): Array<NavigationDrawerMenuItem> => {
       backgroundColor: PageBackgroundColors.MAP,
       children: [
         {
-          text: MapSubPages.HOME,
-          toolTip: MapSubPages.HOME,
-          iconName: MaterialIconNames.Home,
+          text: MapSubPages.CASES,
+          toolTip: MapSubPages.CASES,
+          iconName: MaterialIconNames.LocalHospital,
+          active: false,
+        },
+        {
+          text: MapSubPages.DEATHS,
+          toolTip: MapSubPages.DEATHS,
+          iconName: MaterialIconNames.Skull,
+          active: false,
+        },
+        {
+          text: MapSubPages.RECOVERIES,
+          toolTip: MapSubPages.RECOVERIES,
+          iconName: MaterialIconNames.AssignmentTurnedIn,
           active: false,
         },
       ],
@@ -278,7 +290,7 @@ const getDefaultSubPage = (page: Pages): SubPages => {
       break;
     }
     case Pages.MAP: {
-      newSubPage = MapSubPages.HOME;
+      newSubPage = MapSubPages.CASES;
       break;
     }
     case Pages.CHART: {
