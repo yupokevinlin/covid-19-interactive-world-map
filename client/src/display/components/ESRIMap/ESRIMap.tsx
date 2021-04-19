@@ -342,7 +342,7 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
       type: "simple-fill",
       color: [0, 0, 0, 0],
       outline: {
-        color: [0, 200, 255],
+        color: [79, 195, 247],
         width: 3,
       }
     };
