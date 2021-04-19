@@ -6,6 +6,7 @@ export const initialState: MapPageState = {
   mapPolygons: [],
   dateValues: [],
   focusMapGeometry: [],
+  countryCode: "World",
 };
 
 export const reducer = (state: MapPageState = initialState, action: MapPageAction): MapPageState => {
@@ -32,6 +33,12 @@ export const reducer = (state: MapPageState = initialState, action: MapPageActio
       return {
         ...state,
         focusMapGeometry: [...action.focusMapGeometry],
+      }
+    }
+    case MapPageActionTypes.SET_COUNTRY_CODE: {
+      return {
+        ...state,
+        countryCode: action.countryCode,
       }
     }
     default: {

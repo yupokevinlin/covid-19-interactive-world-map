@@ -6,6 +6,7 @@ export type MapPageAction = MapPageInitAction
 | MapPageSetInitCompleteAction
 | MapPageSetDateValuesAction
 | MapPageSetFocusMapGeometryAction
+| MapPageSetCountryCodeAction
 | MapPageHandleRegionChangeAction;
 
 export interface MapPageInitAction {
@@ -58,6 +59,17 @@ export const setFocusMapGeometry = (focusMapGeometry: Array<Array<[number, numbe
   return {
     type: MapPageActionTypes.SET_FOCUS_MAP_GEOMETRY,
     focusMapGeometry: focusMapGeometry,
+  };
+};
+
+export interface MapPageSetCountryCodeAction {
+  type: typeof MapPageActionTypes.SET_COUNTRY_CODE;
+  countryCode: string;
+}
+export const setCountryCode = (countryCode: string): MapPageSetCountryCodeAction => {
+  return {
+    type: MapPageActionTypes.SET_COUNTRY_CODE,
+    countryCode: countryCode,
   };
 };
 

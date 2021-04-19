@@ -58,6 +58,10 @@ function * handleRegionChange(action: MapPageHandleRegionChangeAction): any {
       type: MapPageActionTypes.SET_FOCUS_MAP_GEOMETRY,
       focusMapGeometry: [],
     });
+    yield put({
+      type: MapPageActionTypes.SET_COUNTRY_CODE,
+      countryCode: "World",
+    });
   } else {
     let filteredMapPolygons: Array<MapPolygon> = layer0MapPolygons;
     const sequentialHierarchicalNames: Array<string> = getSequentialHierarchicalNames(action.hierarchicalName);
@@ -80,6 +84,10 @@ function * handleRegionChange(action: MapPageHandleRegionChangeAction): any {
             type: MapPageActionTypes.SET_FOCUS_MAP_GEOMETRY,
             focusMapGeometry: layer0MatchingPolygon.geometry,
           });
+          yield put({
+            type: MapPageActionTypes.SET_COUNTRY_CODE,
+            countryCode: layer0MatchingPolygon.countryCode,
+          });
         }
       } else {
         const hierarchicalNames: Array<string> = layer0MapPolygons.map((mapPolygon) => mapPolygon.hierarchicalName);
@@ -93,6 +101,10 @@ function * handleRegionChange(action: MapPageHandleRegionChangeAction): any {
           yield put({
             type: MapPageActionTypes.SET_FOCUS_MAP_GEOMETRY,
             focusMapGeometry: layer0MatchingPolygon.geometry,
+          });
+          yield put({
+            type: MapPageActionTypes.SET_COUNTRY_CODE,
+            countryCode: layer0MatchingPolygon.countryCode,
           });
         }
       }
@@ -120,6 +132,10 @@ function * handleRegionChange(action: MapPageHandleRegionChangeAction): any {
             type: MapPageActionTypes.SET_FOCUS_MAP_GEOMETRY,
             focusMapGeometry: layer1MatchingPolygon.geometry,
           });
+          yield put({
+            type: MapPageActionTypes.SET_COUNTRY_CODE,
+            countryCode: layer1MatchingPolygon.countryCode,
+          });
         }
       } else {
         const layer1MapPolygons: Array<MapPolygon> = yield call(MapApi.getMapLayer1Data, layer0HierarchicalName);
@@ -132,17 +148,15 @@ function * handleRegionChange(action: MapPageHandleRegionChangeAction): any {
           type: MapPageActionTypes.SET_MAP_POLYGONS,
           mapPolygons: getESRIMapPolygons(filteredMapPolygons, casesData),
         });
-        if (!!layer0MatchingPolygon) {
-          yield put({
-            type: MapPageActionTypes.SET_FOCUS_MAP_GEOMETRY,
-            focusMapGeometry: layer0MatchingPolygon.geometry,
-          });
-        }
         const layer1MatchingPolygon: MapPolygon = filteredMapPolygons.find((mapPolygon) => mapPolygon.hierarchicalName === layer1HierarchicalName);
         if (!!layer1MatchingPolygon) {
           yield put({
             type: MapPageActionTypes.SET_FOCUS_MAP_GEOMETRY,
             focusMapGeometry: layer1MatchingPolygon.geometry,
+          });
+          yield put({
+            type: MapPageActionTypes.SET_COUNTRY_CODE,
+            countryCode: layer1MatchingPolygon.countryCode,
           });
         }
       }
@@ -164,17 +178,15 @@ function * handleRegionChange(action: MapPageHandleRegionChangeAction): any {
         type: MapPageActionTypes.SET_MAP_POLYGONS,
         mapPolygons: getESRIMapPolygons(filteredMapPolygons, casesData),
       });
-      if (!!layer1MatchingPolygon) {
-        yield put({
-          type: MapPageActionTypes.SET_FOCUS_MAP_GEOMETRY,
-          focusMapGeometry: layer1MatchingPolygon.geometry,
-        });
-      }
       const layer2MatchingPolygon: MapPolygon = filteredMapPolygons.find((mapPolygon) => mapPolygon.hierarchicalName === layer2HierarchicalName);
       if (!!layer2MatchingPolygon) {
         yield put({
           type: MapPageActionTypes.SET_FOCUS_MAP_GEOMETRY,
           focusMapGeometry: layer2MatchingPolygon.geometry,
+        });
+        yield put({
+          type: MapPageActionTypes.SET_COUNTRY_CODE,
+          countryCode: layer2MatchingPolygon.countryCode,
         });
       }
     }

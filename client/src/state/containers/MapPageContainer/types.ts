@@ -5,6 +5,7 @@ export interface MapPageState {
   mapPolygons: Array<ESRIMapPolygon>;
   dateValues: Array<string>;
   focusMapGeometry: Array<Array<[number, number]>>;
+  countryCode: string;
 }
 
 export enum MapPageActionTypes {
@@ -13,5 +14,6 @@ export enum MapPageActionTypes {
   SET_MAP_POLYGONS = "map.SET_MAP_POLYGONS",
   SET_DATE_VALUES = "map.SET_DATE_VALUES",
   SET_FOCUS_MAP_GEOMETRY = "map.SET_FOCUS_MAP_GEOMETRY",
+  SET_COUNTRY_CODE = "map.SET_COUNTRY_CODE",
   HANDLE_REGION_CHANGE = "map.HANDLE_REGION_CHANGE",
 }
