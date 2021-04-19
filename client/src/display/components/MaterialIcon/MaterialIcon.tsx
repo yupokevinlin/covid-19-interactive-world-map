@@ -47,6 +47,7 @@ import Stop from "@material-ui/icons/Stop";
 import PlayArrow from "@material-ui/icons/PlayArrow";
 import LocalHospital from "@material-ui/icons/LocalHospital";
 import AssignmentTurnedIn from "@material-ui/icons/AssignmentTurnedIn";
+import Language from "@material-ui/icons/Language";
 
 import {SkullIcon as Skull} from "./SvgIcon/SvgIcons"
 
@@ -75,6 +76,7 @@ export enum MaterialIconNames {
   Image = "Image",
   Inbox = "Inbox",
   InsertDriveFile = "InsertDriveFile",
+  Language = "Language",
   LastPage = "LastPage",
   LocalGroceryStore = "LocalGroceryStore",
   LocalHospital = "LocalHospital",
@@ -169,6 +171,9 @@ const MaterialIcon: React.FC<MaterialIconProps> = (props) => {
     }
     case MaterialIconNames.InsertDriveFile: {
       return <InsertDriveFile {...svgIconProps}/>;
+    }
+    case MaterialIconNames.Language: {
+      return <Language {...svgIconProps}/>;
     }
     case MaterialIconNames.LastPage: {
       return <LastPage {...svgIconProps}/>;
