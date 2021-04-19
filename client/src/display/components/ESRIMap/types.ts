@@ -23,23 +23,25 @@ export const MapTotalCasesClassBreakDomain: Array<number> = [0, 3, 5, 6, 8];
 
 export const MapTotalRecoveriesClassBreakColors: ClassBreakColors = {
   none: "#FFFFFF",
-  low: "#33FF33",
-  medium: "#006600",
-  high: "#006699",
-  extreme: "#000099",
+  low: "#AAFFAA",
+  medium: "#55FF55",
+  high: "#00FF00",
+  extreme: "#55AAFF",
 };
 
-export const MapTotalRecoveriesClassBreakDomain: Array<number> = [0, 1.5, 3, 5, 8];
+export const MapTotalRecoveriesClassBreakDomain: Array<number> = [0, 2, 4, 6, 8];
 
 export const MapTotalDeathsClassBreakColors: ClassBreakColors = {
   none: "#FFFFFF",
-  low: "#FF9999",
-  medium: "#FF3333",
-  high: "#9900FF",
-  extreme: "#000000",
+  low: "#FFAAAA",
+  medium: "#FF5555",
+  high: "#FF0000",
+  extreme: "#330000",
 };
 
-export const MapTotalDeathsClassBreakDomain: Array<number> = [0, 1.5, 3, 5, 8];
+export const MapTotalDeathsClassBreakDomain: Array<number> = [0, 2, 4, 6, 8];
+
+export const classBreakSteps: number = 8;
 
 export enum ESRIMapLayerNames {
   polygonLayer = "polygon-layer",
