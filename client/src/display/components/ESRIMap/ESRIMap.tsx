@@ -35,6 +35,7 @@ import getMomentDateFromDateString = DateUtils.getMomentDateFromDateString;
 import getDateStringFromMomentDate = DateUtils.getDateStringFromMomentDate;
 import Graphic = __esri.Graphic;
 import Polygon = __esri.Polygon;
+import GraphicsLayer = __esri.GraphicsLayer;
 
 export type ESRIMapProps = ESRIMapDataProps & ESRIMapStyleProps & ESRIMapEventProps;
 
@@ -68,6 +69,7 @@ let isInitialLoad: boolean = true;
 let map: Map = null;
 let mapView: MapView = null;
 let polygonLayer: FeatureLayer = null;
+let highlightLayer: GraphicsLayer = null;
 let localMapPolygons: Array<ESRIMapPolygon> = [];
 
 export const destroyESRIMap = (): void => {
@@ -75,6 +77,7 @@ export const destroyESRIMap = (): void => {
   map = null;
   mapView = null;
   polygonLayer = null;
+  highlightLayer = null;
   localMapPolygons = [];
 };
 
@@ -97,14 +100,14 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
   const prevProps: ESRIMapProps = usePreviousProps<ESRIMapProps>(props);
   useEffect(() => {
     loadModules(
-      ["esri/Map", "esri/views/MapView", "esri/layers/FeatureLayer", "esri/widgets/Legend", "esri/geometry/Point", "esri/geometry/Polygon"],
+      ["esri/Map", "esri/views/MapView", "esri/layers/FeatureLayer", "esri/layers/GraphicsLayer", "esri/widgets/Legend", "esri/geometry/Point", "esri/geometry/Polygon", "esri/Graphic"],
       {
         css: true,
       }
-    ).then(([Map, MapView, FeatureLayer, Legend, Point, Polygon]) => {
+    ).then(([Map, MapView, FeatureLayer, GraphicsLayer, Legend, Point, Polygon, Graphic]) => {
 
       if (!map) {
-        initialize(Map, MapView, FeatureLayer, Legend, Point);
+        initialize(Map, MapView, FeatureLayer, GraphicsLayer, Legend, Point);
       }
 
       if (prevProps) {
@@ -118,14 +121,14 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
           handleDateChange();
         }
         if (prevProps.focusMapGeometry !== focusMapGeometry) {
-          handleFocusMapGeometryChange(Polygon);
+          handleFocusMapGeometryChange(Polygon, Graphic);
         }
       }
       return destroyESRIMap;
     });
   }, [mapPolygons, subPage, date, focusMapGeometry]);
 
-  const initialize = (Map, MapView, FeatureLayer, Legend, Point): void => {
+  const initialize = (Map, MapView, FeatureLayer, GraphicsLayer, Legend, Point): void => {
     map = new Map({
       basemap: initialBaseMap,
     });
@@ -145,8 +148,9 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
     };
 
     polygonLayer = getPolygonLayer(FeatureLayer);
+    highlightLayer = getHighlightLayer(GraphicsLayer);
 
-    const layers: Array<FeatureLayer> = [polygonLayer];
+    const layers: Array<FeatureLayer | GraphicsLayer> = [polygonLayer, highlightLayer];
     layers.forEach(layer => map.add(layer));
 
     const legend: Legend = new Legend({
@@ -251,13 +255,13 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
   };
 
   const handleSubPageChange = (): void => {
-    const steps: number = 8;
     const renderer = (polygonLayer.renderer as __esri.ClassBreaksRenderer).clone();
     switch (subPage) {
       case MapSubPages.CASES: {
         renderer.legendOptions = {
           title: ESRIMapModeNames.totalCases,
         };
+        renderer.field = "totalCases";
         renderer.classBreakInfos = generateLogarithmicClassStep(classBreakSteps, MapTotalCasesClassBreakColors, MapTotalCasesClassBreakDomain);
         break;
       }
@@ -265,6 +269,7 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
         renderer.legendOptions = {
           title: ESRIMapModeNames.totalDeaths,
         };
+        renderer.field = "totalDeaths";
         renderer.classBreakInfos = generateLogarithmicClassStep(classBreakSteps, MapTotalDeathsClassBreakColors, MapTotalDeathsClassBreakDomain);
         break;
       }
@@ -272,6 +277,7 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
         renderer.legendOptions = {
           title: ESRIMapModeNames.totalRecovered,
         };
+        renderer.field = "totalRecoveries";
         renderer.classBreakInfos = generateLogarithmicClassStep(classBreakSteps, MapTotalRecoveriesClassBreakColors, MapTotalRecoveriesClassBreakDomain);
         break;
       }
@@ -316,7 +322,11 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
     });
   };
 
-  const handleFocusMapGeometryChange = (Polygon): void => {
+  const handleFocusMapGeometryChange = (Polygon, Graphic): void => {
+    if (focusMapGeometry.length === 0) {
+      highlightLayer.removeAll();
+      return;
+    }
     const polygon: Polygon = new Polygon({
       rings: focusMapGeometry,
       spatialReference: { wkid: 4326 }
@@ -324,6 +334,23 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
     mapView.goTo(polygon.extent, {
       duration: 1000
     });
+    if (!highlightLayer) {
+      return;
+    }
+    highlightLayer.removeAll();
+    const simpleFillSymbol = {
+      type: "simple-fill",
+      color: [0, 0, 0, 0],
+      outline: {
+        color: [0, 200, 255],
+        width: 3,
+      }
+    };
+    const polygonGraphic: Graphic = new Graphic({
+      geometry: polygon,
+      symbol: simpleFillSymbol,
+    })
+    highlightLayer.add(polygonGraphic);
   };
 
   const generateLogarithmicClassStep = (steps: number, colors: ClassBreakColors, domain: Array<number>): Array<any> => {
@@ -437,6 +464,10 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
       objectIdField: "OBJECTID",
       renderer: renderer,
     });
+  };
+
+  const getHighlightLayer = (GraphicsLayer): GraphicsLayer => {
+    return new GraphicsLayer();
   };
 
   return (
