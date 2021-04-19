@@ -20,10 +20,7 @@ import {MathUtils} from "../../../helper/MathUtils";
 import {
   DailyCasesData,
   DailyCasesDataNull,
-  DailyCasesDataObject
 } from "../../../../../shared/types/data/Cases/CasesTypes";
-import {DateUtils} from "../../../helper/DateUtils";
-import {Moment} from "moment";
 import {MapSubPages} from "../../../state/global/App/types";
 import Map = __esri.Map;
 import MapView = __esri.MapView;
@@ -31,12 +28,12 @@ import FeatureLayer = __esri.FeatureLayer;
 import Legend = __esri.Legend;
 import FieldProperties = __esri.FieldProperties;
 import ClassBreaksRenderer = __esri.ClassBreaksRenderer;
-import getMomentDateFromDateString = DateUtils.getMomentDateFromDateString;
-import getDateStringFromMomentDate = DateUtils.getDateStringFromMomentDate;
 import Graphic = __esri.Graphic;
 import Polygon = __esri.Polygon;
 import GraphicsLayer = __esri.GraphicsLayer;
 import {Breakpoint} from "@material-ui/core/styles/createBreakpoints";
+import {CasesUtils} from "../../../helper/CasesUtils";
+import getDailyCasesData = CasesUtils.getDailyCasesData;
 
 export type ESRIMapProps = ESRIMapDataProps & ESRIMapStyleProps & ESRIMapEventProps;
 
@@ -204,33 +201,6 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
         }
       }
     });
-  };
-
-  const getDailyCasesData = (dailyCasesDataObject: DailyCasesDataObject, dateString: string): DailyCasesData | DailyCasesDataNull => {
-    const data: DailyCasesData | undefined = dailyCasesDataObject[dateString];
-    if (!!data) {
-      return data;
-    } else {
-      const date: Moment = getMomentDateFromDateString(dateString);
-      for (let i = 0; i < 10; i++) {
-        date.subtract(1, "days");
-        const previousDayData: DailyCasesData | undefined = dailyCasesDataObject[getDateStringFromMomentDate(date)];
-        if (!!previousDayData) {
-          return previousDayData;
-        } else {
-          if (i === 9) {
-            console.error(`Unable to get cases data on day: ${dateString}.`);
-            console.error("Daily Cases Object");
-            console.log(dailyCasesDataObject);
-            return {
-              totalCases: null,
-              totalRecoveries: null,
-              totalDeaths: null,
-            }
-          }
-        }
-      }
-    }
   };
 
   const handleMapPolygonsChange = (): void => {
