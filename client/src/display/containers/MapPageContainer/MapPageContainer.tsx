@@ -10,6 +10,7 @@ import {MapPageAction} from "../../../state/containers/MapPageContainer/actions"
 import {DateUtils} from "../../../helper/DateUtils";
 import {withWidth} from "@material-ui/core";
 import {Breakpoint} from "@material-ui/core/styles/createBreakpoints";
+import {getName} from "../../../../../shared/helpers/General";
 
 export type MapPageContainerProps = MapPageContainerDataProps & MapPageContainerStyleProps & MapPageContainerEventProps;
 
@@ -76,7 +77,7 @@ const MapPageContainer: React.FC<MapPageContainerProps> = (props) => {
 
   if (!!appState.casesDataObject) {
     return (
-      <MapPage dateValues={mapPageState.dateValues} dataTree={appState.dataTree} mapPolygons={mapPageState.mapPolygons} date={date} focusMapGeometry={mapPageState.focusMapGeometry} subPage={appState.subPage as MapSubPages} width={width} handleDateChange={handleDateChange} handleRegionChange={handleRegionChange} handleMapUpdateStart={handleMapUpdateStart} handleMapUpdateComplete={handleMapUpdateComplete}/>
+      <MapPage dateValues={mapPageState.dateValues} dataTree={appState.dataTree} mapPolygons={mapPageState.mapPolygons} date={date} focusMapGeometry={mapPageState.focusMapGeometry} subPage={appState.subPage as MapSubPages} casesData={appState.casesDataObject[region]} countryCode={mapPageState.countryCode} regionName={getName(region)} width={width} handleDateChange={handleDateChange} handleRegionChange={handleRegionChange} handleMapUpdateStart={handleMapUpdateStart} handleMapUpdateComplete={handleMapUpdateComplete}/>
     );
   } else {
     return null;

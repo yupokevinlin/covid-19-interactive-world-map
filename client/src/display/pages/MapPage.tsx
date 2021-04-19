@@ -8,6 +8,8 @@ import {ESRIMapPolygon} from "../components/ESRIMap/types";
 import ESRIMap from "../components/ESRIMap/ESRIMap";
 import {MapSubPages} from "../../state/global/App/types";
 import {Breakpoint} from "@material-ui/core/styles/createBreakpoints";
+import {CasesData} from "../../../../shared/types/data/Cases/CasesTypes";
+import MapPageInformation from "../components/MapPageInformation/MapPageInformation";
 
 export type MapPageProps = MapPageDataProps & MapPageStyleProps & MapPageEventProps;
 
@@ -18,6 +20,9 @@ export interface MapPageDataProps {
   mapPolygons: Array<ESRIMapPolygon>;
   focusMapGeometry: Array<Array<[number, number]>>;
   subPage: MapSubPages;
+  countryCode: string;
+  casesData: CasesData;
+  regionName: string;
 }
 
 export interface MapPageStyleProps {
@@ -42,16 +47,16 @@ const useStyles = makeStyles((theme: Theme) =>
     map: {
       width: "100%",
       [theme.breakpoints.up("xs")]: {
-        height: "calc(100% - 69px)",
+        height: "calc(100% - 110px)",
       },
       [theme.breakpoints.up("sm")]: {
-        height: "calc(100% - 72px)",
+        height: "calc(100% - 120px)",
       },
       [theme.breakpoints.up("md")]: {
-        height: "calc(100% - 78px)",
+        height: "calc(100% - 132px)",
       },
       [theme.breakpoints.up("lg")]: {
-        height: "calc(100% - 84px)",
+        height: "calc(100% - 145px)",
       },
     }
   }),
@@ -68,6 +73,9 @@ const MapPage: React.FC<MapPageProps> = (props) => {
     mapPolygons,
     focusMapGeometry,
     subPage,
+    countryCode,
+    casesData,
+    regionName,
     width,
     handleDateChange,
     handleRegionChange,
@@ -88,7 +96,7 @@ const MapPage: React.FC<MapPageProps> = (props) => {
       <div className={classes.map}>
         <ESRIMap mapPolygons={mapPolygons} subPage={subPage} date={date} initialBaseMap={"streets"} focusMapGeometry={focusMapGeometry} width={width} handleUpdateStart={handleMapUpdateStart} handleUpdateComplete={handleMapUpdateComplete} handleRegionChange={handleEsriMapRegionChange}/>
       </div>
-
+      <MapPageInformation date={date} casesData={casesData} subPage={subPage} countryCode={countryCode} regionName={regionName}/>
       <SliderControl values={dateValues} handleChange={handleDateChange}/>
     </div>
   );
