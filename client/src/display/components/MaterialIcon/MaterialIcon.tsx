@@ -48,6 +48,10 @@ import PlayArrow from "@material-ui/icons/PlayArrow";
 import LocalHospital from "@material-ui/icons/LocalHospital";
 import AssignmentTurnedIn from "@material-ui/icons/AssignmentTurnedIn";
 import Language from "@material-ui/icons/Language";
+import Add from "@material-ui/icons/Add";
+import Remove from "@material-ui/icons/Remove";
+import ChevronLeft from "@material-ui/icons/ChevronLeft";
+import ChevronRight from "@material-ui/icons/ChevronRight";
 
 import {SkullIcon as Skull} from "./SvgIcon/SvgIcons"
 
@@ -59,11 +63,14 @@ export enum MaterialIconNames {
   AccessTime = "AccessTime",
   AccountBalance = "AccountBalance",
   AccountCircle = "AccountCircle",
+  Add = "Add",
   AssignmentTurnedIn = "AssignmentTurnedIn",
   BarChart = "BarChart",
   Build = "Build",
   CheckBox = "CheckBox",
   CheckBoxOutlineBlank = "CheckBoxOutlineBlank",
+  ChevronLeft = "ChevronLeft",
+  ChevronRight = "ChevronRight",
   Close = "Close",
   Dashboard = "Dashboard",
   Description = "Description",
@@ -93,6 +100,7 @@ export enum MaterialIconNames {
   PlayCircleOutline = "PlayCircleOutline",
   PriorityHigh = "PriorityHigh",
   Redo = "Redo",
+  Remove = "Remove",
   Report = "Report",
   Settings = "Settings",
   Shift = "Shift",
@@ -121,6 +129,9 @@ const MaterialIcon: React.FC<MaterialIconProps> = (props) => {
     case MaterialIconNames.AccountCircle: {
       return <AccountCircle {...svgIconProps}/>;
     }
+    case MaterialIconNames.Add: {
+      return <Add {...svgIconProps}/>;
+    }
     case MaterialIconNames.AssignmentTurnedIn: {
       return <AssignmentTurnedIn {...svgIconProps}/>;
     }
@@ -135,6 +146,12 @@ const MaterialIcon: React.FC<MaterialIconProps> = (props) => {
     }
     case MaterialIconNames.CheckBoxOutlineBlank: {
       return <CheckBoxOutlineBlank {...svgIconProps}/>;
+    }
+    case MaterialIconNames.ChevronLeft: {
+      return <ChevronLeft {...svgIconProps}/>;
+    }
+    case MaterialIconNames.ChevronRight: {
+      return <ChevronRight {...svgIconProps}/>;
     }
     case MaterialIconNames.Close: {
       return <Close {...svgIconProps}/>;
@@ -222,6 +239,9 @@ const MaterialIcon: React.FC<MaterialIconProps> = (props) => {
     }
     case MaterialIconNames.Redo: {
       return <Redo {...svgIconProps}/>;
+    }
+    case MaterialIconNames.Remove: {
+      return <Remove {...svgIconProps}/>;
     }
     case MaterialIconNames.Report: {
       return <Report {...svgIconProps}/>;
