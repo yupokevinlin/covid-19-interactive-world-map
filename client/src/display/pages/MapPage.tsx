@@ -44,6 +44,7 @@ export interface MapPageEventProps {
   handleMapRegionChange(hierarchicalName: string): void;
   handleMapUpdateStart(): void;
   handleMapUpdateComplete(): void;
+  handlePreloadClick(value): void;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -139,6 +140,7 @@ const MapPage: React.FC<MapPageProps> = (props) => {
     handleMapRegionChange,
     handleMapUpdateStart,
     handleMapUpdateComplete,
+    handlePreloadClick,
   } = props;
 
   const [esriMapRegion, setEsriMapRegion] = useState<string>("World");
@@ -189,7 +191,7 @@ const MapPage: React.FC<MapPageProps> = (props) => {
       </div>
       <div className={classes.informationSelectWrapper}>
         <div className={classes.selectWrapper}>
-          <MapDataTypeSelect initialValue={CasesDataTypes.Total} label={"Time Range"} data={casesDataTypeSelectControls} handleSelectionChange={handleCasesDataTypeChange}/>
+          <MapDataTypeSelect initialValue={CasesDataTypes.Total} label={"Time Range"} data={casesDataTypeSelectControls} handleSelectionChange={handleCasesDataTypeChange} handlePreloadClick={handlePreloadClick}/>
         </div>
         <div className={classes.informationWrapper}>
           <MapPageInformation date={date} casesData={casesData} subPage={subPage} countryCode={countryCode} regionName={regionName} casesDataType={casesDataType} dailyCasesInformationDataObject={dailyCasesInformationDataObject} weeklyCasesInformationDataObject={weeklyCasesInformationDataObject} monthlyCasesInformationDataObject={monthlyCasesInformationDataObject} yearlyCasesInformationDataObject={yearlyCasesInformationDataObject}/>
