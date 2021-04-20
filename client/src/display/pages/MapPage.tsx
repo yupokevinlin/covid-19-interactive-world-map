@@ -6,10 +6,13 @@ import {TreeItem} from "../../../../shared/types/data/Tree/TreeTypes";
 import BreadcrumbsControl from "../components/BreadcrumbsControl/BreadcrumbsControl";
 import {ESRIMapPolygon} from "../components/ESRIMap/types";
 import ESRIMap from "../components/ESRIMap/ESRIMap";
-import {MapSubPages} from "../../state/global/App/types";
+import {CasesDataTypes, MapSubPages} from "../../state/global/App/types";
 import {Breakpoint} from "@material-ui/core/styles/createBreakpoints";
 import {CasesData} from "../../../../shared/types/data/Cases/CasesTypes";
 import MapPageInformation from "../components/MapPageInformation/MapPageInformation";
+import {MapDataTypeSelectData} from "../components/MapDataTypeSelect/types";
+import MapDataTypeSelect from "../components/MapDataTypeSelect/MapDataTypeSelect";
+
 
 export type MapPageProps = MapPageDataProps & MapPageStyleProps & MapPageEventProps;
 
@@ -24,6 +27,7 @@ export interface MapPageDataProps {
   countryCode: string;
   casesData: CasesData;
   regionName: string;
+  casesDataTypeSelectControls: Array<MapDataTypeSelectData>;
 }
 
 export interface MapPageStyleProps {
@@ -60,6 +64,47 @@ const useStyles = makeStyles((theme: Theme) =>
       [theme.breakpoints.up("lg")]: {
         height: "calc(100% - 145px)",
       },
+    },
+    informationSelectWrapper: {
+      display: "flex",
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "flex-start",
+      width: "100%",
+      [theme.breakpoints.up("xs")]: {
+        height: "41px",
+      },
+      [theme.breakpoints.up("sm")]: {
+        height: "48px",
+      },
+      [theme.breakpoints.up("md")]: {
+        height: "54px",
+      },
+      [theme.breakpoints.up("lg")]: {
+        height: "61px",
+      },
+    },
+    informationWrapper: {
+      height: "100%",
+      [theme.breakpoints.up("xs")]: {
+        width: "calc(100% - 130px)",
+      },
+      [theme.breakpoints.up("md")]: {
+        width: "calc(100% - 165px)",
+      },
+    },
+    selectWrapper: {
+      display: "flex",
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      height: "100%",
+      [theme.breakpoints.up("xs")]: {
+        width: "130px",
+      },
+      [theme.breakpoints.up("md")]: {
+        width: "165px",
+      },
     }
   }),
 );
@@ -79,6 +124,7 @@ const MapPage: React.FC<MapPageProps> = (props) => {
     countryCode,
     casesData,
     regionName,
+    casesDataTypeSelectControls,
     width,
     handleDateChange,
     handleBreadCrumbsRegionChange,
@@ -88,10 +134,15 @@ const MapPage: React.FC<MapPageProps> = (props) => {
   } = props;
 
   const [esriMapRegion, setEsriMapRegion] = useState<string>("World");
+  const [casesDataType, setCasesDataType] = useState<CasesDataTypes>(CasesDataTypes.Total);
 
   const handleEsriMapRegionChange = (hierarchicalName: string): void => {
     handleMapRegionChange(hierarchicalName);
     setEsriMapRegion(hierarchicalName);
+  };
+
+  const handleCasesDataTypeChange = (value: string): void => {
+    setCasesDataType(value as CasesDataTypes);
   };
 
   return (
@@ -100,7 +151,14 @@ const MapPage: React.FC<MapPageProps> = (props) => {
       <div className={classes.map}>
         <ESRIMap mapPolygons={mapPolygons} subPage={subPage} date={date} initialBaseMap={"streets"} mapRegionUpdateGeometry={mapRegionUpdateGeometry} breadcrumbsRegionUpdateGeometry={breadcrumbsRegionUpdateGeometry} width={width} handleUpdateStart={handleMapUpdateStart} handleUpdateComplete={handleMapUpdateComplete} handleRegionChange={handleEsriMapRegionChange}/>
       </div>
-      <MapPageInformation date={date} casesData={casesData} subPage={subPage} countryCode={countryCode} regionName={regionName}/>
+      <div className={classes.informationSelectWrapper}>
+        <div className={classes.selectWrapper}>
+          <MapDataTypeSelect initialValue={CasesDataTypes.Total} label={"Data Type"} data={casesDataTypeSelectControls} handleSelectionChange={handleCasesDataTypeChange}/>
+        </div>
+        <div className={classes.informationWrapper}>
+          <MapPageInformation date={date} casesData={casesData} subPage={subPage} countryCode={countryCode} regionName={regionName}/>
+        </div>
+      </div>
       <SliderControl values={dateValues} handleChange={handleDateChange}/>
     </div>
   );
