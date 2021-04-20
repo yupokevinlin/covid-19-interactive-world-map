@@ -2,8 +2,8 @@
 import {Moment} from "moment";
 import {
   CasesData,
-  CasesDataObject, DailyCasesData,
-  DailyCasesDataObject
+  CasesDataObject, CasesInformationDataObject, DailyCasesData,
+  DailyCasesDataObject, DailyCasesInformationDataObject
 } from "../../../../shared/types/data/Cases/CasesTypes";
 import {MapPolygon, MapPolygonsObject} from "../../../../shared/types/data/Map/MapTypes";
 import {getHierarchicalName, getNameArray} from "../../../../shared/helpers/General";
@@ -20,6 +20,10 @@ const earlyCases: Array<any> = require("../../../../data/cases/early-cases.json"
 
 export namespace CasesUtils {
   export let data: CasesDataObject = {};
+  export let dailyInfoData: CasesInformationDataObject = {};
+  export let weeklyInfoData: CasesInformationDataObject = {};
+  export let monthlyInfoData: CasesInformationDataObject = {};
+  export let yearlyInfoData: CasesInformationDataObject = {};
   export const fetchCasesData = async (): Promise<boolean> => {
     try {
       data = {};
@@ -890,6 +894,7 @@ export namespace CasesUtils {
       };
 
       const generateUSStatesData = (): void => {
+        console.log("Generating US states data...");
         const uniqueStates: Array<string> = [];
         Object.keys(data).forEach((key) => {
           if (key.includes("United States of America")) {
@@ -944,6 +949,7 @@ export namespace CasesUtils {
       };
 
       const checkData = (): void => {
+        console.log("Checking data...");
         //Check if all layers have data.
         const existingLayers: Array<MapPolygon> = [];
         mapLayer0.forEach((layer0) => {
@@ -980,6 +986,7 @@ export namespace CasesUtils {
       };
 
       const generateWorldData = (): void => {
+        console.log("Generating world data...");
         //Generate World Data
         const layer0Data: Array<CasesData> = Object.entries(data).map(([key, data]) => data).filter((data) => getNameArray(data.hierarchicalName).length === 2);
         const worldPopulation: number = layer0Data.map(layer => layer.population).reduce((accumulator, value) => accumulator + value);
@@ -1005,6 +1012,7 @@ export namespace CasesUtils {
       };
 
       const addEarlyCasesData = (): void => {
+        console.log("Adding early cases data...");
         //Add data not present in JHU data
         const earlyDateStringArray: Array<string> = getDateStringArray("1/1/20", "1/21/20");
         Object.entries(data).forEach(([key, regionData]) => {
@@ -1054,6 +1062,7 @@ export namespace CasesUtils {
       };
 
       const sortData = (): void => {
+        console.log("Sorting data...");
         Object.entries(data).forEach(([key, value]) => {
           const oldDataObject: DailyCasesDataObject = data[key].data;
           const newDataObject: DailyCasesDataObject = {};
@@ -1073,6 +1082,66 @@ export namespace CasesUtils {
             ...value,
             data: newDataObject,
           };
+        });
+      };
+
+      const generateCasesInformationData = (): void => {
+        console.log("Generating extra cases information...");
+        Object.entries(data).forEach(([hierarchicalName, casesData]) => {
+          if (!casesData.isMissingData) {
+            const dailyDailyCasesInformationDataObject: DailyCasesInformationDataObject = {};
+            const weeklyDailyCasesInformationDataObject: DailyCasesInformationDataObject = {};
+            const monthlyDailyCasesInformationDataObject: DailyCasesInformationDataObject = {};
+            const yearlyDailyCasesInformationDataObject: DailyCasesInformationDataObject = {};
+
+            Object.entries(casesData.data).forEach(([date, dailyCasesData], index) => {
+              const daily: number = 1;
+              const weekly: number = 7;
+              const monthly: number = 30;
+              const yearly: number = 365;
+
+              const dailyCases: number = getPastDataSum(daily, date, "totalCases", casesData.data);
+              const weeklyCases: number = getPastDataSum(weekly, date, "totalCases", casesData.data);
+              const monthlyCases: number = getPastDataSum(monthly, date, "totalCases", casesData.data);
+              const yearlyCases: number = getPastDataSum(yearly, date, "totalCases", casesData.data);
+
+              const dailyRecoveries: number = getPastDataSum(daily, date, "totalRecoveries", casesData.data);
+              const weeklyRecoveries: number = getPastDataSum(weekly, date, "totalRecoveries", casesData.data);
+              const monthlyRecoveries: number = getPastDataSum(monthly, date, "totalRecoveries", casesData.data);
+              const yearlyRecoveries: number = getPastDataSum(yearly, date, "totalRecoveries", casesData.data);
+
+              const dailyDeaths: number = getPastDataSum(daily, date, "totalDeaths", casesData.data);
+              const weeklyDeaths: number = getPastDataSum(weekly, date, "totalDeaths", casesData.data);
+              const monthlyDeaths: number = getPastDataSum(monthly, date, "totalDeaths", casesData.data);
+              const yearlyDeaths: number = getPastDataSum(yearly, date, "totalDeaths", casesData.data);
+
+
+              dailyDailyCasesInformationDataObject[date] = {
+                cases: dailyCases,
+                recoveries: dailyRecoveries,
+                deaths: dailyDeaths,
+              };
+              weeklyDailyCasesInformationDataObject[date] = {
+                cases: weeklyCases,
+                recoveries: weeklyRecoveries,
+                deaths: weeklyDeaths,
+              }
+              monthlyDailyCasesInformationDataObject[date] = {
+                cases: monthlyCases,
+                recoveries: monthlyRecoveries,
+                deaths: monthlyDeaths,
+              }
+              yearlyDailyCasesInformationDataObject[date] = {
+                cases: yearlyCases,
+                recoveries: yearlyRecoveries,
+                deaths: yearlyDeaths,
+              }
+            });
+            dailyInfoData[hierarchicalName] = dailyDailyCasesInformationDataObject;
+            weeklyInfoData[hierarchicalName] = weeklyDailyCasesInformationDataObject;
+            monthlyInfoData[hierarchicalName] = monthlyDailyCasesInformationDataObject;
+            yearlyInfoData[hierarchicalName] = yearlyDailyCasesInformationDataObject;
+          }
         });
       };
 
@@ -1218,6 +1287,7 @@ export namespace CasesUtils {
       generateWorldData();
       addEarlyCasesData();
       sortData();
+      generateCasesInformationData();
 
       return true;
     } catch (e) {
@@ -1253,5 +1323,27 @@ export namespace CasesUtils {
       dateStringArray.push(newDateString);
     }
     return dateStringArray;
+  };
+
+  const getOffsetDateString = (dateString: string, offset: number): string => {
+    const date: Moment = getMomentDateFromDateString(dateString);
+    return date.add(offset, "days").format("M/D/YY");
+  };
+
+  const getPastDataSum = (days: number, date: string, key: keyof DailyCasesData, dailyCasesDataObject: DailyCasesDataObject): number => {
+    const endDailyCasesData: DailyCasesData | undefined = dailyCasesDataObject[date];
+    if (!endDailyCasesData) {
+      return 0;
+    } else {
+      const endNumber: number = endDailyCasesData[key];
+      const startDate: string = getOffsetDateString(date, -days);
+      const startDailyCasesData: DailyCasesData | undefined = dailyCasesDataObject[startDate];
+      if (!startDailyCasesData) {
+        return endNumber;
+      } else {
+        const startNumber: number = startDailyCasesData[key];
+        return endNumber - startNumber;
+      }
+    }
   };
 }

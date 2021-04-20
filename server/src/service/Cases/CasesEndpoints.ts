@@ -25,4 +25,36 @@ export namespace CasesEndpoints {
       next(e);
     }
   };
+
+  export const getAllDailyCasesInformationData = (req: Request, rsp: Response, next: NextFunction): any => {
+    try {
+      rsp.send(CasesService.getAllDailyCasesInformationData());
+    } catch (e) {
+      next(e);
+    }
+  };
+
+  export const getAllWeeklyCasesInformationData = (req: Request, rsp: Response, next: NextFunction): any => {
+    try {
+      rsp.send(CasesService.getAllWeeklyCasesInformationData());
+    } catch (e) {
+      next(e);
+    }
+  };
+
+  export const getAllMonthlyCasesInformationData = (req: Request, rsp: Response, next: NextFunction): any => {
+    try {
+      rsp.send(CasesService.getAllMonthlyCasesInformationData());
+    } catch (e) {
+      next(e);
+    }
+  };
+
+  export const getAllYearlyCasesInformationData = (req: Request, rsp: Response, next: NextFunction): any => {
+    try {
+      rsp.send(CasesService.getAllYearlyCasesInformationData());
+    } catch (e) {
+      next(e);
+    }
+  };
 }

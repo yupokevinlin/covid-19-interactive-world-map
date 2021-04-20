@@ -26,3 +26,18 @@ export interface DailyCasesDataNull {
 export interface CasesDataObject {
   [hierarchicalName: string]: CasesData;
 }
+
+export interface CasesInformationDataObject {
+  [hierarchicalName: string]: DailyCasesInformationDataObject;
+}
+
+export interface DailyCasesInformationDataObject {
+  [date: string]: DailyCasesInformationData;
+}
+
+export interface DailyCasesInformationData {
+  cases: number;
+  recoveries: number;
+  deaths: number;
+}
+

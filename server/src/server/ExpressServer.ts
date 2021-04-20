@@ -61,6 +61,10 @@ export class ExpressServer {
     server.get("/api/cases/single/:hierarchicalName", CasesEndpoints.getCasesDataByHierarchicalName);
     server.post("/api/cases/multiple", CasesEndpoints.getCasesDataByHierarchicalNames);
     server.get("/api/cases/all", CasesEndpoints.getAllCasesData);
+    server.get("/api/cases/daily/all", CasesEndpoints.getAllDailyCasesInformationData);
+    server.get("/api/cases/weekly/all", CasesEndpoints.getAllWeeklyCasesInformationData);
+    server.get("/api/cases/monthly/all", CasesEndpoints.getAllMonthlyCasesInformationData);
+    server.get("/api/cases/yearly/all", CasesEndpoints.getAllYearlyCasesInformationData);
     server.get("/api/tree/", TreeEndpoints.getTree);
   }
 }
