@@ -31,14 +31,12 @@ export const reducer = (state: MapPageState = initialState, action: MapPageActio
       }
     }
     case MapPageActionTypes.SET_MAP_REGION_UPDATE_GEOMETRY: {
-      console.log(["map reducer", [action.regionUpdateGeometry]]);
       return {
         ...state,
         mapRegionUpdateGeometry: [...action.regionUpdateGeometry],
       }
     }
     case MapPageActionTypes.SET_BREADCRUMBS_REGION_UPDATE_GEOMETRY: {
-      console.log(["breadcrumbs reducer", [action.regionUpdateGeometry]]);
       return {
         ...state,
         breadcrumbsRegionUpdateGeometry: [...action.regionUpdateGeometry],
