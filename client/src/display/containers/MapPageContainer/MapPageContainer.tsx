@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import MapPage from "../../pages/MapPage";
-import {AppActionTypes, AppState, CasesDataTypes, MapSubPages} from "../../../state/global/App/types";
+import {AppActionTypes, AppState, MapSubPages} from "../../../state/global/App/types";
 import {Store} from "../../../state/store";
 import {Dispatch} from "redux";
 import {AppAction} from "../../../state/global/App/actions";
@@ -10,9 +10,6 @@ import {MapPageAction} from "../../../state/containers/MapPageContainer/actions"
 import {DateUtils} from "../../../helper/DateUtils";
 import {withWidth} from "@material-ui/core";
 import {Breakpoint} from "@material-ui/core/styles/createBreakpoints";
-import {getName} from "../../../../../shared/helpers/General";
-import {MapDataTypeSelectData} from "../../components/MapDataTypeSelect/types";
-
 export type MapPageContainerProps = MapPageContainerDataProps & MapPageContainerStyleProps & MapPageContainerEventProps;
 
 export interface MapPageContainerDataProps {
@@ -84,37 +81,9 @@ const MapPageContainer: React.FC<MapPageContainerProps> = (props) => {
     });
   };
 
-  const casesDataTypeSelectControls: Array<MapDataTypeSelectData> = [
-    {
-      value: CasesDataTypes.Total,
-      text: CasesDataTypes.Total,
-      isLoaded: !!appState.casesDataObject,
-    },
-    {
-      value: CasesDataTypes.Daily,
-      text: CasesDataTypes.Daily,
-      isLoaded: !!appState.dailyCasesInformationDataObject,
-    },
-    {
-      value: CasesDataTypes.Weekly,
-      text: CasesDataTypes.Weekly,
-      isLoaded: !!appState.weeklyCasesInformationDataObject,
-    },
-    {
-      value: CasesDataTypes.Monthly,
-      text: CasesDataTypes.Monthly,
-      isLoaded: !!appState.monthlyCasesInformationDataObject,
-    },
-    {
-      value: CasesDataTypes.Yearly,
-      text: CasesDataTypes.Yearly,
-      isLoaded: !!appState.yearlyCasesInformationDataObject,
-    },
-  ];
-
   if (!!appState.casesDataObject) {
     return (
-      <MapPage dateValues={mapPageState.dateValues} dataTree={appState.dataTree} mapPolygons={mapPageState.mapPolygons} date={date} mapRegionUpdateGeometry={mapPageState.mapRegionUpdateGeometry} breadcrumbsRegionUpdateGeometry={mapPageState.breadcrumbsRegionUpdateGeometry} subPage={appState.subPage as MapSubPages} casesData={appState.casesDataObject[region]} countryCode={mapPageState.countryCode} regionName={getName(region)} casesDataTypeSelectControls={casesDataTypeSelectControls} width={width} handleDateChange={handleDateChange} handleMapRegionChange={handleMapRegionChange} handleBreadCrumbsRegionChange={handleBreadcrumbsRegionChange} handleMapUpdateStart={handleMapUpdateStart} handleMapUpdateComplete={handleMapUpdateComplete}/>
+      <MapPage dateValues={mapPageState.dateValues} dataTree={appState.dataTree} mapPolygons={mapPageState.mapPolygons} date={date} mapRegionUpdateGeometry={mapPageState.mapRegionUpdateGeometry} breadcrumbsRegionUpdateGeometry={mapPageState.breadcrumbsRegionUpdateGeometry} subPage={appState.subPage as MapSubPages} casesData={appState.casesDataObject[region]} countryCode={mapPageState.countryCode} regionName={region} casesDataObject={appState.casesDataObject} dailyCasesInformationDataObject={appState.dailyCasesInformationDataObject} weeklyCasesInformationDataObject={appState.weeklyCasesInformationDataObject} monthlyCasesInformationDataObject={appState.monthlyCasesInformationDataObject} yearlyCasesInformationDataObject={appState.yearlyCasesInformationDataObject} width={width} handleDateChange={handleDateChange} handleMapRegionChange={handleMapRegionChange} handleBreadCrumbsRegionChange={handleBreadcrumbsRegionChange} handleMapUpdateStart={handleMapUpdateStart} handleMapUpdateComplete={handleMapUpdateComplete}/>
     );
   } else {
     return null;
