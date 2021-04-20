@@ -1,6 +1,7 @@
 import { all } from "redux-saga/effects";
 import AppSagas from "./global/App/sagas";
 import MapPageSagas from "./containers/MapPageContainer/sagas";
+import chartPageSagas from "./containers/ChartPageContainer/sagas";
 
 function* rootSaga(): any {
   yield all({
@@ -9,6 +10,9 @@ function* rootSaga(): any {
     }),
     mapPage: all({
       ...MapPageSagas,
+    }),
+    chartPage: all({
+      ...chartPageSagas,
     }),
   });
 }
