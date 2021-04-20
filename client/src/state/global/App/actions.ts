@@ -3,7 +3,7 @@ import {Theme} from "@material-ui/core";
 import {History} from "history";
 import {NavigationDrawerMenuItem} from "../../../display/components/Navigation/NavigationDrawer/NavigationDrawer";
 import {TreeItem} from "../../../../../shared/types/data/Tree/TreeTypes";
-import {CasesDataObject} from "../../../../../shared/types/data/Cases/CasesTypes";
+import {CasesDataObject, CasesInformationDataObject} from "../../../../../shared/types/data/Cases/CasesTypes";
 
 export type AppAction = AppInitAction
 | AppSetIsInitCompleteAction
@@ -15,6 +15,10 @@ export type AppAction = AppInitAction
 | AppSetMenuItemsAction
 | AppSetDataTreeAction
 | AppSetCasesDataObjectAction
+| AppSetDailyCasesInformationDataObjectAction
+| AppSetWeeklyCasesInformationDataObjectAction
+| AppSetMonthlyCasesInformationDataObjectAction
+| AppSetYearlyCasesInformationDataObjectAction
 | AppGoToPageAction;
 
 export interface AppInitAction {
@@ -126,6 +130,54 @@ export const setCasesDataObject = (casesDataObject: CasesDataObject): AppSetCase
   return {
     type: AppActionTypes.SET_CASES_DATA_OBJECT,
     casesDataObject: casesDataObject,
+  };
+};
+
+export interface AppSetDailyCasesInformationDataObjectAction {
+  type: typeof AppActionTypes.SET_DAILY_CASES_INFORMATION_DATA_OBJECT;
+  casesInformationDataObject: CasesInformationDataObject;
+
+}
+export const setDailyCasesInformationDataObject = (casesInformationDataObject: CasesInformationDataObject): AppSetDailyCasesInformationDataObjectAction => {
+  return {
+    type: AppActionTypes.SET_DAILY_CASES_INFORMATION_DATA_OBJECT,
+    casesInformationDataObject: casesInformationDataObject,
+  };
+};
+
+export interface AppSetWeeklyCasesInformationDataObjectAction {
+  type: typeof AppActionTypes.SET_WEEKLY_CASES_INFORMATION_DATA_OBJECT;
+  casesInformationDataObject: CasesInformationDataObject;
+
+}
+export const setWeeklyCasesInformationDataObject = (casesInformationDataObject: CasesInformationDataObject): AppSetWeeklyCasesInformationDataObjectAction => {
+  return {
+    type: AppActionTypes.SET_WEEKLY_CASES_INFORMATION_DATA_OBJECT,
+    casesInformationDataObject: casesInformationDataObject,
+  };
+};
+
+export interface AppSetMonthlyCasesInformationDataObjectAction {
+  type: typeof AppActionTypes.SET_MONTHLY_CASES_INFORMATION_DATA_OBJECT;
+  casesInformationDataObject: CasesInformationDataObject;
+
+}
+export const setMonthlyCasesInformationDataObject = (casesInformationDataObject: CasesInformationDataObject): AppSetMonthlyCasesInformationDataObjectAction => {
+  return {
+    type: AppActionTypes.SET_MONTHLY_CASES_INFORMATION_DATA_OBJECT,
+    casesInformationDataObject: casesInformationDataObject,
+  };
+};
+
+export interface AppSetYearlyCasesInformationDataObjectAction {
+  type: typeof AppActionTypes.SET_YEARLY_CASES_INFORMATION_DATA_OBJECT;
+  casesInformationDataObject: CasesInformationDataObject;
+
+}
+export const setYearlyCasesInformationDataObject = (casesInformationDataObject: CasesInformationDataObject): AppSetYearlyCasesInformationDataObjectAction => {
+  return {
+    type: AppActionTypes.SET_YEARLY_CASES_INFORMATION_DATA_OBJECT,
+    casesInformationDataObject: casesInformationDataObject,
   };
 };
 

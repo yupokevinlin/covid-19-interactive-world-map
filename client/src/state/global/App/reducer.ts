@@ -13,6 +13,10 @@ export const initialState: AppState = {
   menuItems: [],
   dataTree: null,
   casesDataObject: null,
+  dailyCasesInformationDataObject: null,
+  weeklyCasesInformationDataObject: null,
+  monthlyCasesInformationDataObject: null,
+  yearlyCasesInformationDataObject: null,
 };
 
 export const reducer = (state: AppState = initialState, action: AppAction): AppState => {
@@ -73,6 +77,30 @@ export const reducer = (state: AppState = initialState, action: AppAction): AppS
       return {
         ...state,
         casesDataObject: action.casesDataObject,
+      }
+    }
+    case AppActionTypes.SET_DAILY_CASES_INFORMATION_DATA_OBJECT: {
+      return {
+        ...state,
+        dailyCasesInformationDataObject: action.casesInformationDataObject,
+      }
+    }
+    case AppActionTypes.SET_WEEKLY_CASES_INFORMATION_DATA_OBJECT: {
+      return {
+        ...state,
+        weeklyCasesInformationDataObject: action.casesInformationDataObject,
+      }
+    }
+    case AppActionTypes.SET_MONTHLY_CASES_INFORMATION_DATA_OBJECT: {
+      return {
+        ...state,
+        monthlyCasesInformationDataObject: action.casesInformationDataObject,
+      }
+    }
+    case AppActionTypes.SET_YEARLY_CASES_INFORMATION_DATA_OBJECT: {
+      return {
+        ...state,
+        yearlyCasesInformationDataObject: action.casesInformationDataObject,
       }
     }
     default:

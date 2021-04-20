@@ -1,7 +1,7 @@
 import {Theme} from "@material-ui/core";
 import {NavigationDrawerMenuItem} from "../../../display/components/Navigation/NavigationDrawer/NavigationDrawer";
 import {TreeItem} from "../../../../../shared/types/data/Tree/TreeTypes";
-import {CasesDataObject} from "../../../../../shared/types/data/Cases/CasesTypes";
+import {CasesDataObject, CasesInformationDataObject} from "../../../../../shared/types/data/Cases/CasesTypes";
 
 
 export interface AppState {
@@ -16,6 +16,10 @@ export interface AppState {
   menuItems: Array<NavigationDrawerMenuItem>;
   dataTree: TreeItem;
   casesDataObject: CasesDataObject;
+  dailyCasesInformationDataObject: CasesInformationDataObject;
+  weeklyCasesInformationDataObject: CasesInformationDataObject;
+  monthlyCasesInformationDataObject: CasesInformationDataObject;
+  yearlyCasesInformationDataObject: CasesInformationDataObject;
 }
 
 export enum AppActionTypes {
@@ -29,6 +33,10 @@ export enum AppActionTypes {
   SET_MENU_ITEMS = "app.SET_MENU_ITEMS",
   SET_DATA_TREE = "app.SET_DATA_TREE",
   SET_CASES_DATA_OBJECT = "app.SET_CASES_DATA_OBJECT",
+  SET_DAILY_CASES_INFORMATION_DATA_OBJECT = "app.SET_DAILY_CASES_INFORMATION_DATA_OBJECT",
+  SET_WEEKLY_CASES_INFORMATION_DATA_OBJECT = "app.SET_WEEKLY_CASES_INFORMATION_DATA_OBJECT",
+  SET_MONTHLY_CASES_INFORMATION_DATA_OBJECT = "app.SET_MONTHLY_CASES_INFORMATION_DATA_OBJECT",
+  SET_YEARLY_CASES_INFORMATION_DATA_OBJECT = "app.SET_YEARLY_CASES_INFORMATION_DATA_OBJECT",
   GO_TO_PAGE = "app.GO_TO_PAGE",
 }
 

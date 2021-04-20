@@ -93,12 +93,41 @@ const getCasesDataObject = (): void => {
           type: MapPageActionTypes.INIT,
         });
       }
+      getCasesInformationDataObject();
       return;
     }
     AppStore.store.dispatch({
       type: AppActionTypes.SET_IS_LOADING,
       displayLoadingBar: false,
       displayLoadingPage: false,
+    });
+    getCasesInformationDataObject();
+  });
+};
+
+const getCasesInformationDataObject = (): void => {
+  CasesApi.getAllDailyCasesInformationData().then((casesInformationDataObject) => {
+    AppStore.store.dispatch({
+      type: AppActionTypes.SET_DAILY_CASES_INFORMATION_DATA_OBJECT,
+      casesInformationDataObject: casesInformationDataObject,
+    });
+  });
+  CasesApi.getAllWeeklyCasesInformationData().then((casesInformationDataObject) => {
+    AppStore.store.dispatch({
+      type: AppActionTypes.SET_WEEKLY_CASES_INFORMATION_DATA_OBJECT,
+      casesInformationDataObject: casesInformationDataObject,
+    });
+  });
+  CasesApi.getAllMonthlyCasesInformationData().then((casesInformationDataObject) => {
+    AppStore.store.dispatch({
+      type: AppActionTypes.SET_MONTHLY_CASES_INFORMATION_DATA_OBJECT,
+      casesInformationDataObject: casesInformationDataObject,
+    });
+  });
+  CasesApi.getAllYearlyCasesInformationData().then((casesInformationDataObject) => {
+    AppStore.store.dispatch({
+      type: AppActionTypes.SET_YEARLY_CASES_INFORMATION_DATA_OBJECT,
+      casesInformationDataObject: casesInformationDataObject,
     });
   });
 };
