@@ -153,7 +153,7 @@ const MapPage: React.FC<MapPageProps> = (props) => {
       </div>
       <div className={classes.informationSelectWrapper}>
         <div className={classes.selectWrapper}>
-          <MapDataTypeSelect initialValue={CasesDataTypes.Total} label={"Data Type"} data={casesDataTypeSelectControls} handleSelectionChange={handleCasesDataTypeChange}/>
+          <MapDataTypeSelect initialValue={CasesDataTypes.Total} label={"Time Range"} data={casesDataTypeSelectControls} handleSelectionChange={handleCasesDataTypeChange}/>
         </div>
         <div className={classes.informationWrapper}>
           <MapPageInformation date={date} casesData={casesData} subPage={subPage} countryCode={countryCode} regionName={regionName}/>

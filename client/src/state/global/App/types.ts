@@ -133,9 +133,9 @@ export enum PageBackgroundColors {
 }
 
 export enum CasesDataTypes {
-  Total = "Total Data",
-  Daily = "Daily Data",
-  Weekly = "Weekly Data",
-  Monthly = "Monthly Data",
-  Yearly = "Yearly Data",
+  Total = "All Time",
+  Daily = "Past Day",
+  Weekly = "Past Week",
+  Monthly = "Past Month",
+  Yearly = "Past Year",
 }
