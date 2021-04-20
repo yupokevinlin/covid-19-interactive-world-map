@@ -42,7 +42,7 @@ const MapPageContainer: React.FC<MapPageContainerProps> = (props) => {
     width,
   } = props;
 
-  const [date, setDate] = useState<string>(DateUtils.getCurrentDate());
+  const [date, setDate] = useState<string>(DateUtils.getPreviousDate());
   const [region, setRegion] = useState<string>("World");
 
   const handleDateChange = (date: string): void => {

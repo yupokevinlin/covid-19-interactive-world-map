@@ -5,6 +5,10 @@ export namespace DateUtils {
     return moment().format("M/D/YY");
   };
 
+  export const getPreviousDate = (): string => {
+    return moment().subtract(1, "days").format("M/D/YY");
+  };
+
   export const getMomentDateFromDateString = (dateString: string): Moment => {
     const date: Moment = moment(dateString, "M/D/YY").startOf("day");
     return date;

@@ -7,8 +7,7 @@ import {
 } from "./actions";
 import {MapPolygon} from "../../../../../shared/types/data/Map/MapTypes";
 import {MapApi} from "../../../api/MapApi/MapApi";
-import {CasesData, CasesDataObject} from "../../../../../shared/types/data/Cases/CasesTypes";
-import {DateUtils} from "../../../helper/DateUtils";
+import {CasesData, CasesDataObject, DailyCasesDataObject} from "../../../../../shared/types/data/Cases/CasesTypes";
 import {ESRIMapPolygon} from "../../../display/components/ESRIMap/types";
 import {getSequentialHierarchicalNames, getTreeItem} from "../../../../../shared/helpers/General";
 import {Store} from "../../store";
@@ -36,7 +35,8 @@ function * initSaga(action: MapPageInitAction): any {
     mapPolygons: getESRIMapPolygons(layer0MapPolygons, casesData),
   });
 
-  const dateValues: Array<string> = DateUtils.getDateStringArray("1/1/20", DateUtils.getCurrentDate());
+  const worldDailyCasesDataObject: DailyCasesDataObject = casesDataObject["World"].data;
+  const dateValues: Array<string> = Object.keys(worldDailyCasesDataObject).map(key => key);
   yield put({
     type: MapPageActionTypes.SET_DATE_VALUES,
     dateValues: dateValues,
