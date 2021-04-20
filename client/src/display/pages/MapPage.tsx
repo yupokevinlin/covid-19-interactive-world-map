@@ -155,11 +155,6 @@ const MapPage: React.FC<MapPageProps> = (props) => {
 
   const casesDataTypeSelectControls: Array<MapDataTypeSelectData> = [
     {
-      value: CasesDataTypes.Total,
-      text: CasesDataTypes.Total,
-      isLoaded: !!casesDataObject,
-    },
-    {
       value: CasesDataTypes.Daily,
       text: CasesDataTypes.Daily,
       isLoaded: !!dailyCasesInformationDataObject,
@@ -178,6 +173,11 @@ const MapPage: React.FC<MapPageProps> = (props) => {
       value: CasesDataTypes.Yearly,
       text: CasesDataTypes.Yearly,
       isLoaded: !!yearlyCasesInformationDataObject,
+    },
+    {
+      value: CasesDataTypes.Total,
+      text: CasesDataTypes.Total,
+      isLoaded: !!casesDataObject,
     },
   ];
 
