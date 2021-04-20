@@ -1,6 +1,6 @@
 import {Api} from "../Api";
 import axios from "axios";
-import {CasesData, CasesDataObject} from "../../../../shared/types/data/Cases/CasesTypes";
+import {CasesData, CasesDataObject, CasesInformationDataObject} from "../../../../shared/types/data/Cases/CasesTypes";
 
 export namespace CasesApi {
   export const getCasesData = (hierarchicalName: string): Promise<CasesData> => {
@@ -26,6 +26,42 @@ export namespace CasesApi {
   };
   export const getAllCasesData = (): Promise<CasesDataObject> => {
     const url: string = `${Api.serverLocation}/api/cases/all`;
+    return axios({
+      method: "GET",
+      url: url,
+    }).then((rsp) => {
+      return rsp.data;
+    });
+  };
+  export const getAllDailyCasesInformationData = (): Promise<CasesInformationDataObject> => {
+    const url: string = `${Api.serverLocation}/api/cases/daily/all`;
+    return axios({
+      method: "GET",
+      url: url,
+    }).then((rsp) => {
+      return rsp.data;
+    });
+  };
+  export const getAllWeeklyCasesInformationData = (): Promise<CasesInformationDataObject> => {
+    const url: string = `${Api.serverLocation}/api/cases/weekly/all`;
+    return axios({
+      method: "GET",
+      url: url,
+    }).then((rsp) => {
+      return rsp.data;
+    });
+  };
+  export const getAllMonthlyCasesInformationData = (): Promise<CasesInformationDataObject> => {
+    const url: string = `${Api.serverLocation}/api/cases/monthly/all`;
+    return axios({
+      method: "GET",
+      url: url,
+    }).then((rsp) => {
+      return rsp.data;
+    });
+  };
+  export const getAllYearlyCasesInformationData = (): Promise<CasesInformationDataObject> => {
+    const url: string = `${Api.serverLocation}/api/cases/yearly/all`;
     return axios({
       method: "GET",
       url: url,
