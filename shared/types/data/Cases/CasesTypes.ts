@@ -41,3 +41,8 @@ export interface DailyCasesInformationData {
   deaths: number;
 }
 
+export interface DailyCasesInformationDataNull {
+  cases: null;
+  recoveries: null;
+  deaths: null;
+}
