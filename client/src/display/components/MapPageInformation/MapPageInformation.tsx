@@ -1,19 +1,32 @@
 import React from "react";
 import {createStyles, Theme, useTheme} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
-import {MapSubPages} from "../../../state/global/App/types";
-import {CasesData, DailyCasesData, DailyCasesDataNull} from "../../../../../shared/types/data/Cases/CasesTypes";
+import {CasesDataTypes, MapSubPages} from "../../../state/global/App/types";
+import {
+  CasesData, CasesInformationDataObject,
+  DailyCasesData,
+  DailyCasesDataNull,
+  DailyCasesInformationData, DailyCasesInformationDataObject
+} from "../../../../../shared/types/data/Cases/CasesTypes";
 import {CasesUtils} from "../../../helper/CasesUtils";
 import Typography from "@material-ui/core/Typography";
 import {findFlagUrlByIso3Code} from "country-flags-svg";
 import MaterialIcon, {MaterialIconNames} from "../MaterialIcon/MaterialIcon";
 import getDailyCasesData = CasesUtils.getDailyCasesData;
+import getDailyCasesInformationData = CasesUtils.getDailyCasesInformationData;
+import getCasesInformationDataObject = CasesUtils.getCasesInformationDataObject;
+import {getName} from "../../../../../shared/helpers/General";
 
 export type MapPageInformationProps = MapPageInformationDataProps & MapPageInformationStyleProps & MapPageInformationEventProps;
 
 export interface MapPageInformationDataProps {
   date: string;
   casesData: CasesData;
+  dailyCasesInformationDataObject: CasesInformationDataObject;
+  weeklyCasesInformationDataObject: CasesInformationDataObject;
+  monthlyCasesInformationDataObject: CasesInformationDataObject;
+  yearlyCasesInformationDataObject: CasesInformationDataObject;
+  casesDataType: CasesDataTypes;
   subPage: MapSubPages;
   countryCode: string;
   regionName: string;
@@ -161,43 +174,123 @@ const MapPageInformation: React.FC<MapPageInformationProps> = (props) => {
   const {
     date,
     casesData,
+    casesDataType,
+    dailyCasesInformationDataObject,
+    weeklyCasesInformationDataObject,
+    monthlyCasesInformationDataObject,
+    yearlyCasesInformationDataObject,
     subPage,
     countryCode,
     regionName,
   } = props;
 
-  const getDisplayedText = (subPage: MapSubPages): string => {
+  const getDisplayedText = (subPage: MapSubPages, casesDataType: CasesDataTypes): string => {
     switch (subPage) {
       case MapSubPages.CASES: {
-        return "Total Cases:";
+        switch (casesDataType) {
+          case CasesDataTypes.Total: {
+            return "Total Cases:";
+          }
+          case CasesDataTypes.Daily: {
+            return "Daily Cases:";
+          }
+          case CasesDataTypes.Weekly: {
+            return "Weekly Cases:";
+          }
+          case CasesDataTypes.Monthly: {
+            return "Monthly Cases:";
+          }
+          case CasesDataTypes.Yearly: {
+            return "Yearly Cases:";
+          }
+        }
+        break;
       }
       case MapSubPages.DEATHS: {
-        return "Total Deaths:";
+        switch (casesDataType) {
+          case CasesDataTypes.Total: {
+            return "Total Deaths:";
+          }
+          case CasesDataTypes.Daily: {
+            return "Daily Deaths:";
+          }
+          case CasesDataTypes.Weekly: {
+            return "Weekly Deaths:";
+          }
+          case CasesDataTypes.Monthly: {
+            return "Monthly Deaths:";
+          }
+          case CasesDataTypes.Yearly: {
+            return "Yearly Deaths:";
+          }
+        }
+        break;
       }
       case MapSubPages.RECOVERIES: {
-        return "Total Recoveries:";
+        switch (casesDataType) {
+          case CasesDataTypes.Total: {
+            return "Total Recoveries:";
+          }
+          case CasesDataTypes.Daily: {
+            return "Daily Recoveries:";
+          }
+          case CasesDataTypes.Weekly: {
+            return "Weekly Recoveries:";
+          }
+          case CasesDataTypes.Monthly: {
+            return "Monthly Recoveries:";
+          }
+          case CasesDataTypes.Yearly: {
+            return "Yearly Recoveries:";
+          }
+        }
+        break;
       }
     }
   };
 
-  const getDataNumber = (subPage: MapSubPages, casesData: CasesData, date: string): string => {
-    const dailyCasesData: DailyCasesData | DailyCasesDataNull = getDailyCasesData(casesData.data, date);
-    let dataNumber: number = 0;
-    switch (subPage) {
-      case MapSubPages.CASES: {
-        dataNumber = dailyCasesData.totalCases || 0;
-        break;
+  const getDataNumber = (subPage: MapSubPages, casesData: CasesData, date: string, casesDataType: CasesDataTypes, dailyCasesInformationDataObject: CasesInformationDataObject, weeklyCasesInformationDataObject: CasesInformationDataObject, monthlyCasesInformationDataObject: CasesInformationDataObject, yearlyCasesInformationDataObject: CasesInformationDataObject): string => {
+    if (casesDataType === CasesDataTypes.Total) {
+      const dailyCasesData: DailyCasesData | DailyCasesDataNull = getDailyCasesData(casesData.data, date);
+      let dataNumber: number = 0;
+      switch (subPage) {
+        case MapSubPages.CASES: {
+          dataNumber = dailyCasesData.totalCases || 0;
+          break;
+        }
+        case MapSubPages.DEATHS: {
+          dataNumber = dailyCasesData.totalDeaths || 0;
+          break;
+        }
+        case MapSubPages.RECOVERIES: {
+          dataNumber = dailyCasesData.totalRecoveries || 0;
+          break;
+        }
       }
-      case MapSubPages.DEATHS: {
-        dataNumber = dailyCasesData.totalDeaths || 0;
-        break;
+      return dataNumber.toLocaleString();
+    } else {
+      const matchingCasesInformationDataObject: CasesInformationDataObject | null = getCasesInformationDataObject(casesDataType, dailyCasesInformationDataObject, weeklyCasesInformationDataObject, monthlyCasesInformationDataObject, yearlyCasesInformationDataObject);
+      let dataNumber: number = 0;
+      if (!matchingCasesInformationDataObject) {
+        return dataNumber.toLocaleString();
       }
-      case MapSubPages.RECOVERIES: {
-        dataNumber = dailyCasesData.totalRecoveries || 0;
-        break;
+      const dailyCasesInformationData: DailyCasesInformationData = getDailyCasesInformationData(matchingCasesInformationDataObject[regionName], date);
+      switch (subPage) {
+        case MapSubPages.CASES: {
+          dataNumber = dailyCasesInformationData.cases || 0;
+          break;
+        }
+        case MapSubPages.DEATHS: {
+          dataNumber = dailyCasesInformationData.deaths || 0;
+          break;
+        }
+        case MapSubPages.RECOVERIES: {
+          dataNumber = dailyCasesInformationData.recoveries || 0;
+          break;
+        }
       }
+      return dataNumber.toLocaleString();
     }
-    return dataNumber.toLocaleString();
   };
 
   return (
@@ -213,17 +306,17 @@ const MapPageInformation: React.FC<MapPageInformationProps> = (props) => {
       }
       <Typography className={classes.text} variant={"h5"}>
         {
-          regionName
+          getName(regionName)
         }
       </Typography>
       <Typography className={classes.text} variant={"h5"}>
         {
-          getDisplayedText(subPage)
+          getDisplayedText(subPage, casesDataType)
         }
       </Typography>
       <Typography className={classes.text} variant={"h5"}>
         {
-          getDataNumber(subPage, casesData, date)
+          getDataNumber(subPage, casesData, date, casesDataType, dailyCasesInformationDataObject, weeklyCasesInformationDataObject, monthlyCasesInformationDataObject, yearlyCasesInformationDataObject)
         }
       </Typography>
       <Typography className={classes.text} variant={"h5"}>Date:</Typography>
