@@ -48,6 +48,26 @@ const useStyles = makeStyles((theme: Theme) =>
         marginRight: "30px",
       },
     },
+    noLabelSliderWrapper: {
+      display: "flex",
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "flex-start",
+      height: "42px",
+      marginLeft: "0px",
+      [theme.breakpoints.up("xs")]: {
+        width: "calc(100% - 25px)",
+        marginRight: "25px",
+      },
+      [theme.breakpoints.up("sm")]: {
+        width: "calc(100% - 27px)",
+        marginRight: "27px",
+      },
+      [theme.breakpoints.up("md")]: {
+        width: "calc(100% - 30px)",
+        marginRight: "30px",
+      },
+    },
     labelWrapper: {
       display: "flex",
       flexDirection: "row",
@@ -385,7 +405,9 @@ const SliderControl: React.FC<SliderControlProps> = (props) => {
     return null;
   } else {
     return (
-      <div className={classes.sliderWrapper}>
+      <div className={clsx(classes.sliderWrapper, {
+        [classes.noLabelSliderWrapper]: !showLabel
+      })}>
         {
           !!showLabel ? (
             <div className={classes.labelWrapper}>
