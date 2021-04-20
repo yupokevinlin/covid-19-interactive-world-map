@@ -3,7 +3,8 @@ import "./ESRIMap.css";
 import {createStyles, Theme, useTheme} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
 import {
-  ClassBreakColors, classBreakSteps,
+  ClassBreakColors,
+  classBreakSteps,
   ESRIMapLayerNames,
   ESRIMapModeNames,
   ESRIMapPolygon,
@@ -11,17 +12,23 @@ import {
   MapTotalCasesClassBreakDomain,
   MapTotalDeathsClassBreakColors,
   MapTotalDeathsClassBreakDomain,
-  MapTotalRecoveriesClassBreakColors, MapTotalRecoveriesClassBreakDomain
+  MapTotalRecoveriesClassBreakColors,
+  MapTotalRecoveriesClassBreakDomain
 } from "./types";
 import {usePreviousProps} from "../../../hooks/usePreviousProps";
 import {loadModules} from "esri-loader";
 import chroma, {Color, Scale} from "chroma-js";
 import {MathUtils} from "../../../helper/MathUtils";
 import {
+  CasesInformationDataObject,
   DailyCasesData,
   DailyCasesDataNull,
+  DailyCasesInformationData,
+  DailyCasesInformationDataNull,
 } from "../../../../../shared/types/data/Cases/CasesTypes";
-import {MapSubPages} from "../../../state/global/App/types";
+import {CasesDataTypes, MapSubPages} from "../../../state/global/App/types";
+import {Breakpoint} from "@material-ui/core/styles/createBreakpoints";
+import {CasesUtils} from "../../../helper/CasesUtils";
 import Map = __esri.Map;
 import MapView = __esri.MapView;
 import FeatureLayer = __esri.FeatureLayer;
@@ -31,9 +38,9 @@ import ClassBreaksRenderer = __esri.ClassBreaksRenderer;
 import Graphic = __esri.Graphic;
 import Polygon = __esri.Polygon;
 import GraphicsLayer = __esri.GraphicsLayer;
-import {Breakpoint} from "@material-ui/core/styles/createBreakpoints";
-import {CasesUtils} from "../../../helper/CasesUtils";
 import getDailyCasesData = CasesUtils.getDailyCasesData;
+import getDailyCasesInformationData = CasesUtils.getDailyCasesInformationData;
+import getCasesInformationDataObject = CasesUtils.getCasesInformationDataObject;
 
 export type ESRIMapProps = ESRIMapDataProps & ESRIMapStyleProps & ESRIMapEventProps;
 
@@ -44,6 +51,11 @@ export interface ESRIMapDataProps {
   initialBaseMap: string;
   mapRegionUpdateGeometry: Array<Array<[number, number]>>;
   breadcrumbsRegionUpdateGeometry: Array<Array<[number, number]>>;
+  casesDataType: CasesDataTypes;
+  dailyCasesInformationDataObject: CasesInformationDataObject;
+  weeklyCasesInformationDataObject: CasesInformationDataObject;
+  monthlyCasesInformationDataObject: CasesInformationDataObject;
+  yearlyCasesInformationDataObject: CasesInformationDataObject;
 }
 
 export interface ESRIMapStyleProps {
@@ -94,6 +106,11 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
     initialBaseMap,
     mapRegionUpdateGeometry,
     breadcrumbsRegionUpdateGeometry,
+    casesDataType,
+    dailyCasesInformationDataObject,
+    weeklyCasesInformationDataObject,
+    monthlyCasesInformationDataObject,
+    yearlyCasesInformationDataObject,
     width,
     handleUpdateStart,
     handleUpdateComplete,
@@ -129,13 +146,16 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
         if (prevProps.breadcrumbsRegionUpdateGeometry !== breadcrumbsRegionUpdateGeometry) {
           handleBreadcrumbsRegionUpdateGeometryChange(Polygon, Graphic);
         }
+        if (prevProps.casesDataType !== casesDataType) {
+          handleCasesDataTypeChange();
+        }
         if (prevProps.width !== width) {
           handleWidthChange();
         }
       }
       return destroyESRIMap;
     });
-  }, [mapPolygons, subPage, date, mapRegionUpdateGeometry, breadcrumbsRegionUpdateGeometry, width]);
+  }, [mapPolygons, subPage, date, mapRegionUpdateGeometry, breadcrumbsRegionUpdateGeometry, casesDataType, width]);
 
   const initialize = (Map, MapView, FeatureLayer, GraphicsLayer, Legend, Point): void => {
     map = new Map({
@@ -234,6 +254,9 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
               totalCases: null,
               totalRecoveries: null,
               totalDeaths: null,
+              cases: null,
+              recoveries: null,
+              deaths: null,
             },
             geometry: {
               type: "polygon",
@@ -245,20 +268,46 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
           }
         } else {
           const matchingDailyCasesData: DailyCasesData | DailyCasesDataNull = getDailyCasesData(mapPolygon.data, date);
-          return {
-            attributes: {
-              hierarchicalName: mapPolygon.hierarchicalName,
-              totalCases: matchingDailyCasesData.totalCases,
-              totalRecoveries: matchingDailyCasesData.totalRecoveries,
-              totalDeaths: matchingDailyCasesData.totalDeaths,
-            },
-            geometry: {
-              type: "polygon",
-              hasZ: false,
-              hasM: false,
-              rings: mapPolygon.geometry,
-              spatialReference: { wkid: 4326 },
-            },
+          const matchingCasesInformationDataObject: CasesInformationDataObject | null = getCasesInformationDataObject(casesDataType, dailyCasesInformationDataObject, weeklyCasesInformationDataObject, monthlyCasesInformationDataObject, yearlyCasesInformationDataObject);
+          if (!!matchingCasesInformationDataObject) {
+            const matchingDailyCasesInformationDataObject: DailyCasesInformationData | DailyCasesInformationDataNull = getDailyCasesInformationData(matchingCasesInformationDataObject[mapPolygon.hierarchicalName], date);
+            return {
+              attributes: {
+                hierarchicalName: mapPolygon.hierarchicalName,
+                totalCases: matchingDailyCasesData.totalCases,
+                totalRecoveries: matchingDailyCasesData.totalRecoveries,
+                totalDeaths: matchingDailyCasesData.totalDeaths,
+                cases: matchingDailyCasesInformationDataObject.cases,
+                recoveries: matchingDailyCasesInformationDataObject.recoveries,
+                deaths: matchingDailyCasesInformationDataObject.deaths,
+              },
+              geometry: {
+                type: "polygon",
+                hasZ: false,
+                hasM: false,
+                rings: mapPolygon.geometry,
+                spatialReference: { wkid: 4326 },
+              },
+            }
+          } else {
+            return {
+              attributes: {
+                hierarchicalName: mapPolygon.hierarchicalName,
+                totalCases: matchingDailyCasesData.totalCases,
+                totalRecoveries: matchingDailyCasesData.totalRecoveries,
+                totalDeaths: matchingDailyCasesData.totalDeaths,
+                cases: null,
+                recoveries: null,
+                deaths: null,
+              },
+              geometry: {
+                type: "polygon",
+                hasZ: false,
+                hasM: false,
+                rings: mapPolygon.geometry,
+                spatialReference: { wkid: 4326 },
+              },
+            }
           }
         }
       });
@@ -279,27 +328,138 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
     const renderer = (polygonLayer.renderer as __esri.ClassBreaksRenderer).clone();
     switch (subPage) {
       case MapSubPages.CASES: {
-        renderer.legendOptions = {
-          title: ESRIMapModeNames.totalCases,
-        };
-        renderer.field = "totalCases";
-        renderer.classBreakInfos = generateLogarithmicClassStep(classBreakSteps, MapTotalCasesClassBreakColors, MapTotalCasesClassBreakDomain);
+        switch (casesDataType) {
+          case CasesDataTypes.Total: {
+            renderer.legendOptions = {
+              title: ESRIMapModeNames.totalCases,
+            };
+            renderer.field = "totalCases";
+            renderer.classBreakInfos = generateLogarithmicClassStep(classBreakSteps, MapTotalCasesClassBreakColors, MapTotalCasesClassBreakDomain);
+            break;
+          }
+          case CasesDataTypes.Daily: {
+            renderer.legendOptions = {
+              title: `Daily Cases`,
+            };
+            renderer.field = "cases";
+            renderer.classBreakInfos = generateLogarithmicClassStep(classBreakSteps, MapTotalCasesClassBreakColors, MapTotalCasesClassBreakDomain);
+            break;
+          }
+          case CasesDataTypes.Weekly: {
+            renderer.legendOptions = {
+              title: `Weekly Cases`,
+            };
+            renderer.field = "cases";
+            renderer.classBreakInfos = generateLogarithmicClassStep(classBreakSteps, MapTotalCasesClassBreakColors, MapTotalCasesClassBreakDomain);
+            break;
+          }
+          case CasesDataTypes.Monthly: {
+            renderer.legendOptions = {
+              title: `Monthly Cases`,
+            };
+            renderer.field = "cases";
+            renderer.classBreakInfos = generateLogarithmicClassStep(classBreakSteps, MapTotalCasesClassBreakColors, MapTotalCasesClassBreakDomain);
+            break;
+          }
+          case CasesDataTypes.Yearly: {
+            renderer.legendOptions = {
+              title: `Yearly Cases`,
+            };
+            renderer.field = "cases";
+            renderer.classBreakInfos = generateLogarithmicClassStep(classBreakSteps, MapTotalCasesClassBreakColors, MapTotalCasesClassBreakDomain);
+            break;
+          }
+        }
         break;
       }
       case MapSubPages.DEATHS: {
-        renderer.legendOptions = {
-          title: ESRIMapModeNames.totalDeaths,
-        };
-        renderer.field = "totalDeaths";
-        renderer.classBreakInfos = generateLogarithmicClassStep(classBreakSteps, MapTotalDeathsClassBreakColors, MapTotalDeathsClassBreakDomain);
+        switch (casesDataType) {
+          case CasesDataTypes.Total: {
+            renderer.legendOptions = {
+              title: ESRIMapModeNames.totalDeaths,
+            };
+            renderer.field = "totalDeaths";
+            renderer.classBreakInfos = generateLogarithmicClassStep(classBreakSteps, MapTotalDeathsClassBreakColors, MapTotalDeathsClassBreakDomain);
+            break;
+          }
+          case CasesDataTypes.Daily: {
+            renderer.legendOptions = {
+              title: `Daily Deaths`,
+            };
+            renderer.field = "deaths";
+            renderer.classBreakInfos = generateLogarithmicClassStep(classBreakSteps, MapTotalDeathsClassBreakColors, MapTotalDeathsClassBreakDomain);
+            break;
+          }
+          case CasesDataTypes.Weekly: {
+            renderer.legendOptions = {
+              title: `Weekly Deaths`,
+            };
+            renderer.field = "deaths";
+            renderer.classBreakInfos = generateLogarithmicClassStep(classBreakSteps, MapTotalDeathsClassBreakColors, MapTotalDeathsClassBreakDomain);
+            break;
+          }
+          case CasesDataTypes.Monthly: {
+            renderer.legendOptions = {
+              title: `Monthly Deaths`,
+            };
+            renderer.field = "deaths";
+            renderer.classBreakInfos = generateLogarithmicClassStep(classBreakSteps, MapTotalDeathsClassBreakColors, MapTotalDeathsClassBreakDomain);
+            break;
+          }
+          case CasesDataTypes.Yearly: {
+            renderer.legendOptions = {
+              title: `Yearly Deaths`,
+            };
+            renderer.field = "deaths";
+            renderer.classBreakInfos = generateLogarithmicClassStep(classBreakSteps, MapTotalDeathsClassBreakColors, MapTotalDeathsClassBreakDomain);
+            break;
+          }
+        }
         break;
       }
       case MapSubPages.RECOVERIES: {
-        renderer.legendOptions = {
-          title: ESRIMapModeNames.totalRecovered,
-        };
-        renderer.field = "totalRecoveries";
-        renderer.classBreakInfos = generateLogarithmicClassStep(classBreakSteps, MapTotalRecoveriesClassBreakColors, MapTotalRecoveriesClassBreakDomain);
+        switch (casesDataType) {
+          case CasesDataTypes.Total: {
+            renderer.legendOptions = {
+              title: ESRIMapModeNames.totalRecovered,
+            };
+            renderer.field = "totalRecoveries";
+            renderer.classBreakInfos = generateLogarithmicClassStep(classBreakSteps, MapTotalRecoveriesClassBreakColors, MapTotalRecoveriesClassBreakDomain);
+            break;
+          }
+          case CasesDataTypes.Daily: {
+            renderer.legendOptions = {
+              title: `Daily Recoveries`,
+            };
+            renderer.field = "recoveries";
+            renderer.classBreakInfos = generateLogarithmicClassStep(classBreakSteps, MapTotalRecoveriesClassBreakColors, MapTotalRecoveriesClassBreakDomain);
+            break;
+          }
+          case CasesDataTypes.Weekly: {
+            renderer.legendOptions = {
+              title: `Weekly Recoveries`,
+            };
+            renderer.field = "recoveries";
+            renderer.classBreakInfos = generateLogarithmicClassStep(classBreakSteps, MapTotalRecoveriesClassBreakColors, MapTotalRecoveriesClassBreakDomain);
+            break;
+          }
+          case CasesDataTypes.Monthly: {
+            renderer.legendOptions = {
+              title: `Monthly Recoveries`,
+            };
+            renderer.field = "recoveries";
+            renderer.classBreakInfos = generateLogarithmicClassStep(classBreakSteps, MapTotalRecoveriesClassBreakColors, MapTotalRecoveriesClassBreakDomain);
+            break;
+          }
+          case CasesDataTypes.Yearly: {
+            renderer.legendOptions = {
+              title: `Yearly Recoveries`,
+            };
+            renderer.field = "recoveries";
+            renderer.classBreakInfos = generateLogarithmicClassStep(classBreakSteps, MapTotalRecoveriesClassBreakColors, MapTotalRecoveriesClassBreakDomain);
+            break;
+          }
+        }
         break;
       }
     }
@@ -325,8 +485,22 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
             existingFeature.attributes.totalCases = null;
             existingFeature.attributes.totalRecoveries = null;
             existingFeature.attributes.totalDeaths = null;
+            existingFeature.attributes.cases = null;
+            existingFeature.attributes.recoveries = null;
+            existingFeature.attributes.deaths = null;
           } else {
             const matchingDailyCasesData: DailyCasesData | DailyCasesDataNull = getDailyCasesData(matchingMapPolygon.data, date);
+            const matchingCasesInformationDataObject: CasesInformationDataObject | null = getCasesInformationDataObject(casesDataType, dailyCasesInformationDataObject, weeklyCasesInformationDataObject, monthlyCasesInformationDataObject, yearlyCasesInformationDataObject);
+            if (!!matchingCasesInformationDataObject) {
+              const matchingDailyCasesInformationDataObject: DailyCasesInformationData | DailyCasesInformationDataNull = getDailyCasesInformationData(matchingCasesInformationDataObject[matchingMapPolygon.hierarchicalName], date);
+              existingFeature.attributes.cases = matchingDailyCasesInformationDataObject.cases;
+              existingFeature.attributes.recoveries = matchingDailyCasesInformationDataObject.recoveries;
+              existingFeature.attributes.deaths = matchingDailyCasesInformationDataObject.deaths;
+            } else {
+              existingFeature.attributes.cases = null;
+              existingFeature.attributes.recoveries = null;
+              existingFeature.attributes.deaths = null;
+            }
             existingFeature.attributes.totalCases = matchingDailyCasesData.totalCases;
             existingFeature.attributes.totalRecoveries = matchingDailyCasesData.totalRecoveries;
             existingFeature.attributes.totalDeaths = matchingDailyCasesData.totalDeaths;
@@ -400,6 +574,53 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
       symbol: simpleFillSymbol,
     })
     highlightLayer.add(polygonGraphic);
+  };
+
+  const handleCasesDataTypeChange = (): void => {
+    if (!polygonLayer) {
+      return;
+    }
+
+    handleSubPageChange();
+
+    polygonLayer.queryFeatures().then(result => {
+      const renderer = (polygonLayer.renderer as ClassBreaksRenderer).clone();
+
+      const existingFeatures: Array<Graphic> = result.features;
+
+      const updateFeatures: Array<Graphic> = [];
+      existingFeatures.forEach((existingFeature) => {
+        const hierarchicalName: string = existingFeature.attributes.hierarchicalName;
+        const matchingMapPolygon: ESRIMapPolygon | null = mapPolygons.find(mapPolygon => mapPolygon.hierarchicalName === hierarchicalName);
+
+        if (!!matchingMapPolygon) {
+          if (matchingMapPolygon.isMissingData) {
+            existingFeature.attributes.totalCases = null;
+            existingFeature.attributes.totalRecoveries = null;
+            existingFeature.attributes.totalDeaths = null;
+          } else {
+            const matchingCasesInformationDataObject: CasesInformationDataObject | null = getCasesInformationDataObject(casesDataType, dailyCasesInformationDataObject, weeklyCasesInformationDataObject, monthlyCasesInformationDataObject, yearlyCasesInformationDataObject);
+            if (!!matchingCasesInformationDataObject) {
+              const matchingDailyCasesInformationDataObject: DailyCasesInformationData | DailyCasesInformationDataNull = getDailyCasesInformationData(matchingCasesInformationDataObject[matchingMapPolygon.hierarchicalName], date);
+              existingFeature.attributes.cases = matchingDailyCasesInformationDataObject.cases;
+              existingFeature.attributes.recoveries = matchingDailyCasesInformationDataObject.recoveries;
+              existingFeature.attributes.deaths = matchingDailyCasesInformationDataObject.deaths;
+            } else {
+              existingFeature.attributes.cases = null;
+              existingFeature.attributes.recoveries = null;
+              existingFeature.attributes.deaths = null;
+            }
+          }
+        }
+        updateFeatures.push(existingFeature);
+      });
+
+      polygonLayer.renderer = renderer;
+      polygonLayer.applyEdits({
+        updateFeatures: updateFeatures,
+      }).then(rsp => {
+      });
+    });
   };
 
   const handleWidthChange = (): void => {
@@ -490,6 +711,21 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
       {
         name: "totalDeaths",
         alias: "totalDeaths",
+        type: "integer",
+      },
+      {
+        name: "cases",
+        alias: "cases",
+        type: "integer",
+      },
+      {
+        name: "recoveries",
+        alias: "recoveries",
+        type: "integer",
+      },
+      {
+        name: "deaths",
+        alias: "deaths",
         type: "integer",
       },
     ];
