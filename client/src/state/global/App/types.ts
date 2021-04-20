@@ -131,3 +131,11 @@ export enum PageBackgroundColors {
   UNUSED_9 = "#f0f0f0",
   UNUSED_10 = "#ebe6e4",
 }
+
+export enum CasesDataTypes {
+  Total = "Total Data",
+  Daily = "Daily Data",
+  Weekly = "Weekly Data",
+  Monthly = "Monthly Data",
+  Yearly = "Yearly Data",
+}
