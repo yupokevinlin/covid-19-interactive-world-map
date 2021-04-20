@@ -20,8 +20,8 @@ export const MapTotalCasesClassBreakColors: ClassBreakColors = {
 };
 
 export const MapTotalCasesClassBreakDomain: Array<number> = [0, 3, 5, 6, 8];
-export const MapDailyCasesClassBreakDomain: Array<number> = [0, 1, 3, 4, 6];
-export const MapWeeklyCasesClassBreakDomain: Array<number> = [0, 1, 3, 4, 6];
+export const MapDailyCasesClassBreakDomain: Array<number> = [0, 2, 4, 5, 7];
+export const MapWeeklyCasesClassBreakDomain: Array<number> = [0, 2, 4, 5, 7];
 export const MapMonthlyCasesClassBreakDomain: Array<number> = [0, 3, 5, 6, 8];
 export const MapYearlyCasesClassBreakDomain: Array<number> = [0, 3, 5, 6, 8];
 
