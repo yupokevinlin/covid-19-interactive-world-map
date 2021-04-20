@@ -20,6 +20,10 @@ export const MapTotalCasesClassBreakColors: ClassBreakColors = {
 };
 
 export const MapTotalCasesClassBreakDomain: Array<number> = [0, 3, 5, 6, 8];
+export const MapDailyCasesClassBreakDomain: Array<number> = [0, 1, 3, 4, 6];
+export const MapWeeklyCasesClassBreakDomain: Array<number> = [0, 1, 3, 4, 6];
+export const MapMonthlyCasesClassBreakDomain: Array<number> = [0, 3, 5, 6, 8];
+export const MapYearlyCasesClassBreakDomain: Array<number> = [0, 3, 5, 6, 8];
 
 export const MapTotalRecoveriesClassBreakColors: ClassBreakColors = {
   none: "#FFFFFF",
@@ -29,7 +33,12 @@ export const MapTotalRecoveriesClassBreakColors: ClassBreakColors = {
   extreme: "#55AAFF",
 };
 
-export const MapTotalRecoveriesClassBreakDomain: Array<number> = [0, 2, 4, 6, 8];
+export const MapTotalRecoveriesClassBreakDomain: Array<number> = [0, 3, 5, 6, 8];
+export const MapDailyRecoveriesClassBreakDomain: Array<number> = [0, 1, 3, 4, 6];
+export const MapWeeklyRecoveriesClassBreakDomain: Array<number> = [0, 1, 3, 4, 6];
+export const MapMonthlyRecoveriesClassBreakDomain: Array<number> = [0, 3, 5, 6, 8];
+export const MapYearlyRecoveriesClassBreakDomain: Array<number> = [0, 3, 5, 6, 8];
+
 
 export const MapTotalDeathsClassBreakColors: ClassBreakColors = {
   none: "#FFFFFF",
@@ -39,9 +48,11 @@ export const MapTotalDeathsClassBreakColors: ClassBreakColors = {
   extreme: "#330000",
 };
 
-export const MapTotalDeathsClassBreakDomain: Array<number> = [0, 2, 4, 6, 8];
-
-export const classBreakSteps: number = 8;
+export const MapTotalDeathsClassBreakDomain: Array<number> = [0, 1, 3, 4, 6];
+export const MapDailyDeathsClassBreakDomain: Array<number> = [0, 1, 2, 3, 5];
+export const MapWeeklyDeathsClassBreakDomain: Array<number> = [0, 1, 2, 3, 5];
+export const MapMonthlyDeathsClassBreakDomain: Array<number> = [0, 1, 3, 4, 6];
+export const MapYearlyDeathsClassBreakDomain: Array<number> = [0, 1, 3, 4, 6];
 
 export enum ESRIMapLayerNames {
   polygonLayer = "polygon-layer",

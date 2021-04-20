@@ -4,16 +4,21 @@ import {createStyles, Theme, useTheme} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
 import {
   ClassBreakColors,
-  classBreakSteps,
   ESRIMapLayerNames,
   ESRIMapModeNames,
   ESRIMapPolygon,
+  MapDailyCasesClassBreakDomain,
+  MapDailyDeathsClassBreakDomain, MapDailyRecoveriesClassBreakDomain,
+  MapMonthlyCasesClassBreakDomain, MapMonthlyDeathsClassBreakDomain, MapMonthlyRecoveriesClassBreakDomain,
   MapTotalCasesClassBreakColors,
   MapTotalCasesClassBreakDomain,
   MapTotalDeathsClassBreakColors,
   MapTotalDeathsClassBreakDomain,
   MapTotalRecoveriesClassBreakColors,
-  MapTotalRecoveriesClassBreakDomain
+  MapTotalRecoveriesClassBreakDomain,
+  MapWeeklyCasesClassBreakDomain,
+  MapWeeklyDeathsClassBreakDomain, MapWeeklyRecoveriesClassBreakDomain,
+  MapYearlyCasesClassBreakDomain, MapYearlyDeathsClassBreakDomain, MapYearlyRecoveriesClassBreakDomain
 } from "./types";
 import {usePreviousProps} from "../../../hooks/usePreviousProps";
 import {loadModules} from "esri-loader";
@@ -334,7 +339,7 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
               title: ESRIMapModeNames.totalCases,
             };
             renderer.field = "totalCases";
-            renderer.classBreakInfos = generateLogarithmicClassStep(classBreakSteps, MapTotalCasesClassBreakColors, MapTotalCasesClassBreakDomain);
+            renderer.classBreakInfos = generateLogarithmicClassStep(MapTotalCasesClassBreakDomain[4], MapTotalCasesClassBreakColors, MapTotalCasesClassBreakDomain);
             break;
           }
           case CasesDataTypes.Daily: {
@@ -342,7 +347,7 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
               title: `Daily Cases`,
             };
             renderer.field = "cases";
-            renderer.classBreakInfos = generateLogarithmicClassStep(classBreakSteps, MapTotalCasesClassBreakColors, MapTotalCasesClassBreakDomain);
+            renderer.classBreakInfos = generateLogarithmicClassStep(MapDailyCasesClassBreakDomain[4], MapTotalCasesClassBreakColors, MapDailyCasesClassBreakDomain);
             break;
           }
           case CasesDataTypes.Weekly: {
@@ -350,7 +355,7 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
               title: `Weekly Cases`,
             };
             renderer.field = "cases";
-            renderer.classBreakInfos = generateLogarithmicClassStep(classBreakSteps, MapTotalCasesClassBreakColors, MapTotalCasesClassBreakDomain);
+            renderer.classBreakInfos = generateLogarithmicClassStep(MapWeeklyCasesClassBreakDomain[4], MapTotalCasesClassBreakColors, MapWeeklyCasesClassBreakDomain);
             break;
           }
           case CasesDataTypes.Monthly: {
@@ -358,7 +363,7 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
               title: `Monthly Cases`,
             };
             renderer.field = "cases";
-            renderer.classBreakInfos = generateLogarithmicClassStep(classBreakSteps, MapTotalCasesClassBreakColors, MapTotalCasesClassBreakDomain);
+            renderer.classBreakInfos = generateLogarithmicClassStep(MapMonthlyCasesClassBreakDomain[4], MapTotalCasesClassBreakColors, MapMonthlyCasesClassBreakDomain);
             break;
           }
           case CasesDataTypes.Yearly: {
@@ -366,7 +371,7 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
               title: `Yearly Cases`,
             };
             renderer.field = "cases";
-            renderer.classBreakInfos = generateLogarithmicClassStep(classBreakSteps, MapTotalCasesClassBreakColors, MapTotalCasesClassBreakDomain);
+            renderer.classBreakInfos = generateLogarithmicClassStep(MapYearlyCasesClassBreakDomain[4], MapTotalCasesClassBreakColors, MapYearlyCasesClassBreakDomain);
             break;
           }
         }
@@ -379,7 +384,7 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
               title: ESRIMapModeNames.totalDeaths,
             };
             renderer.field = "totalDeaths";
-            renderer.classBreakInfos = generateLogarithmicClassStep(classBreakSteps, MapTotalDeathsClassBreakColors, MapTotalDeathsClassBreakDomain);
+            renderer.classBreakInfos = generateLogarithmicClassStep(MapTotalDeathsClassBreakDomain[4], MapTotalDeathsClassBreakColors, MapTotalDeathsClassBreakDomain);
             break;
           }
           case CasesDataTypes.Daily: {
@@ -387,7 +392,7 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
               title: `Daily Deaths`,
             };
             renderer.field = "deaths";
-            renderer.classBreakInfos = generateLogarithmicClassStep(classBreakSteps, MapTotalDeathsClassBreakColors, MapTotalDeathsClassBreakDomain);
+            renderer.classBreakInfos = generateLogarithmicClassStep(MapDailyDeathsClassBreakDomain[4], MapTotalDeathsClassBreakColors, MapDailyDeathsClassBreakDomain);
             break;
           }
           case CasesDataTypes.Weekly: {
@@ -395,7 +400,7 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
               title: `Weekly Deaths`,
             };
             renderer.field = "deaths";
-            renderer.classBreakInfos = generateLogarithmicClassStep(classBreakSteps, MapTotalDeathsClassBreakColors, MapTotalDeathsClassBreakDomain);
+            renderer.classBreakInfos = generateLogarithmicClassStep(MapWeeklyDeathsClassBreakDomain[4], MapTotalDeathsClassBreakColors, MapWeeklyDeathsClassBreakDomain);
             break;
           }
           case CasesDataTypes.Monthly: {
@@ -403,7 +408,7 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
               title: `Monthly Deaths`,
             };
             renderer.field = "deaths";
-            renderer.classBreakInfos = generateLogarithmicClassStep(classBreakSteps, MapTotalDeathsClassBreakColors, MapTotalDeathsClassBreakDomain);
+            renderer.classBreakInfos = generateLogarithmicClassStep(MapMonthlyDeathsClassBreakDomain[4], MapTotalDeathsClassBreakColors, MapMonthlyDeathsClassBreakDomain);
             break;
           }
           case CasesDataTypes.Yearly: {
@@ -411,7 +416,7 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
               title: `Yearly Deaths`,
             };
             renderer.field = "deaths";
-            renderer.classBreakInfos = generateLogarithmicClassStep(classBreakSteps, MapTotalDeathsClassBreakColors, MapTotalDeathsClassBreakDomain);
+            renderer.classBreakInfos = generateLogarithmicClassStep(MapYearlyDeathsClassBreakDomain[4], MapTotalDeathsClassBreakColors, MapYearlyDeathsClassBreakDomain);
             break;
           }
         }
@@ -424,7 +429,7 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
               title: ESRIMapModeNames.totalRecovered,
             };
             renderer.field = "totalRecoveries";
-            renderer.classBreakInfos = generateLogarithmicClassStep(classBreakSteps, MapTotalRecoveriesClassBreakColors, MapTotalRecoveriesClassBreakDomain);
+            renderer.classBreakInfos = generateLogarithmicClassStep(MapTotalRecoveriesClassBreakDomain[4], MapTotalRecoveriesClassBreakColors, MapTotalRecoveriesClassBreakDomain);
             break;
           }
           case CasesDataTypes.Daily: {
@@ -432,7 +437,7 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
               title: `Daily Recoveries`,
             };
             renderer.field = "recoveries";
-            renderer.classBreakInfos = generateLogarithmicClassStep(classBreakSteps, MapTotalRecoveriesClassBreakColors, MapTotalRecoveriesClassBreakDomain);
+            renderer.classBreakInfos = generateLogarithmicClassStep(MapDailyRecoveriesClassBreakDomain[4], MapTotalRecoveriesClassBreakColors, MapDailyRecoveriesClassBreakDomain);
             break;
           }
           case CasesDataTypes.Weekly: {
@@ -440,7 +445,7 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
               title: `Weekly Recoveries`,
             };
             renderer.field = "recoveries";
-            renderer.classBreakInfos = generateLogarithmicClassStep(classBreakSteps, MapTotalRecoveriesClassBreakColors, MapTotalRecoveriesClassBreakDomain);
+            renderer.classBreakInfos = generateLogarithmicClassStep(MapWeeklyRecoveriesClassBreakDomain[4], MapTotalRecoveriesClassBreakColors, MapWeeklyRecoveriesClassBreakDomain);
             break;
           }
           case CasesDataTypes.Monthly: {
@@ -448,7 +453,7 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
               title: `Monthly Recoveries`,
             };
             renderer.field = "recoveries";
-            renderer.classBreakInfos = generateLogarithmicClassStep(classBreakSteps, MapTotalRecoveriesClassBreakColors, MapTotalRecoveriesClassBreakDomain);
+            renderer.classBreakInfos = generateLogarithmicClassStep(MapMonthlyRecoveriesClassBreakDomain[4], MapTotalRecoveriesClassBreakColors, MapMonthlyRecoveriesClassBreakDomain);
             break;
           }
           case CasesDataTypes.Yearly: {
@@ -456,7 +461,7 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
               title: `Yearly Recoveries`,
             };
             renderer.field = "recoveries";
-            renderer.classBreakInfos = generateLogarithmicClassStep(classBreakSteps, MapTotalRecoveriesClassBreakColors, MapTotalRecoveriesClassBreakDomain);
+            renderer.classBreakInfos = generateLogarithmicClassStep(MapYearlyRecoveriesClassBreakDomain[4], MapTotalRecoveriesClassBreakColors, MapYearlyRecoveriesClassBreakDomain);
             break;
           }
         }
@@ -746,7 +751,7 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
         },
       },
       defaultLabel: "no data",
-      classBreakInfos: generateLogarithmicClassStep(classBreakSteps, MapTotalCasesClassBreakColors, MapTotalCasesClassBreakDomain),
+      classBreakInfos: generateLogarithmicClassStep(MapTotalCasesClassBreakDomain[4], MapTotalCasesClassBreakColors, MapTotalCasesClassBreakDomain),
     };
 
     return new FeatureLayer({
