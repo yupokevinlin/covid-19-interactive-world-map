@@ -1,11 +1,11 @@
 import {call, put, select, takeEvery} from "redux-saga/effects";
 import {
-  AppGoToPageAction,
+  AppGoToPageAction, AppHandleStartCasesInformationDataObjectLoadAction,
   AppInitAction,
 } from "./actions";
 import {
   AppActionTypes,
-  AppState,
+  AppState, CasesDataTypes,
   ChartSubPages,
   HomeSubPages,
   MapSubPages,
@@ -37,9 +37,11 @@ import {destroyESRIMap} from "../../../display/components/ESRIMap/ESRIMap";
 import {CasesApi} from "../../../api/CasesApi/CasesApi";
 import {AppStore} from "../../../app/App";
 import {MapPageActionTypes} from "../../containers/MapPageContainer/types";
+import {CasesInformationDataObject} from "../../../../../shared/types/data/Cases/CasesTypes";
 
 export const appSagas = {
   initSaga: takeEvery(AppActionTypes.INIT, initSaga),
+  handleStartCasesInformationDataObjectLoadSaga: takeEvery(AppActionTypes.HANDLE_START_CASES_INFORMATION_DATA_OBJECT_LOAD, handleStartCasesInformationDataObjectLoadSaga),
   goToPageSaga: takeEvery(AppActionTypes.GO_TO_PAGE, goToPageSaga),
 };
 
@@ -93,41 +95,12 @@ const getCasesDataObject = (): void => {
           type: MapPageActionTypes.INIT,
         });
       }
-      getCasesInformationDataObject();
       return;
     }
     AppStore.store.dispatch({
       type: AppActionTypes.SET_IS_LOADING,
       displayLoadingBar: false,
       displayLoadingPage: false,
-    });
-    getCasesInformationDataObject();
-  });
-};
-
-const getCasesInformationDataObject = (): void => {
-  CasesApi.getAllDailyCasesInformationData().then((casesInformationDataObject) => {
-    AppStore.store.dispatch({
-      type: AppActionTypes.SET_DAILY_CASES_INFORMATION_DATA_OBJECT,
-      casesInformationDataObject: casesInformationDataObject,
-    });
-  });
-  CasesApi.getAllWeeklyCasesInformationData().then((casesInformationDataObject) => {
-    AppStore.store.dispatch({
-      type: AppActionTypes.SET_WEEKLY_CASES_INFORMATION_DATA_OBJECT,
-      casesInformationDataObject: casesInformationDataObject,
-    });
-  });
-  CasesApi.getAllMonthlyCasesInformationData().then((casesInformationDataObject) => {
-    AppStore.store.dispatch({
-      type: AppActionTypes.SET_MONTHLY_CASES_INFORMATION_DATA_OBJECT,
-      casesInformationDataObject: casesInformationDataObject,
-    });
-  });
-  CasesApi.getAllYearlyCasesInformationData().then((casesInformationDataObject) => {
-    AppStore.store.dispatch({
-      type: AppActionTypes.SET_YEARLY_CASES_INFORMATION_DATA_OBJECT,
-      casesInformationDataObject: casesInformationDataObject,
     });
   });
 };
@@ -231,6 +204,43 @@ const getInitialMenuItems = (): Array<NavigationDrawerMenuItem> => {
     },
   ];
 };
+
+function * handleStartCasesInformationDataObjectLoadSaga(action: AppHandleStartCasesInformationDataObjectLoadAction): any {
+  switch (action.casesDataType) {
+    case CasesDataTypes.Daily: {
+      const casesInformationDataObject: CasesInformationDataObject = yield call(CasesApi.getAllDailyCasesInformationData);
+      yield put({
+        type: AppActionTypes.SET_DAILY_CASES_INFORMATION_DATA_OBJECT,
+        casesInformationDataObject: casesInformationDataObject,
+      });
+      break;
+    }
+    case CasesDataTypes.Weekly: {
+      const casesInformationDataObject: CasesInformationDataObject = yield call(CasesApi.getAllWeeklyCasesInformationData);
+      yield put({
+        type: AppActionTypes.SET_WEEKLY_CASES_INFORMATION_DATA_OBJECT,
+        casesInformationDataObject: casesInformationDataObject,
+      });
+      break;
+    }
+    case CasesDataTypes.Monthly: {
+      const casesInformationDataObject: CasesInformationDataObject = yield call(CasesApi.getAllMonthlyCasesInformationData);
+      yield put({
+        type: AppActionTypes.SET_MONTHLY_CASES_INFORMATION_DATA_OBJECT,
+        casesInformationDataObject: casesInformationDataObject,
+      });
+      break;
+    }
+    case CasesDataTypes.Yearly: {
+      const casesInformationDataObject: CasesInformationDataObject = yield call(CasesApi.getAllYearlyCasesInformationData);
+      yield put({
+        type: AppActionTypes.SET_YEARLY_CASES_INFORMATION_DATA_OBJECT,
+        casesInformationDataObject: casesInformationDataObject,
+      });
+      break;
+    }
+  }
+}
 
 function * goToPageSaga(action: AppGoToPageAction): any {
   const appState: AppState = yield select(getAppStateSelector);

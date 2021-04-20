@@ -1,4 +1,4 @@
-import {AppActionTypes, Pages, SubPages} from "./types";
+import {AppActionTypes, CasesDataTypes, Pages, SubPages} from "./types";
 import {Theme} from "@material-ui/core";
 import {History} from "history";
 import {NavigationDrawerMenuItem} from "../../../display/components/Navigation/NavigationDrawer/NavigationDrawer";
@@ -19,6 +19,7 @@ export type AppAction = AppInitAction
 | AppSetWeeklyCasesInformationDataObjectAction
 | AppSetMonthlyCasesInformationDataObjectAction
 | AppSetYearlyCasesInformationDataObjectAction
+| AppHandleStartCasesInformationDataObjectLoadAction
 | AppGoToPageAction;
 
 export interface AppInitAction {
@@ -178,6 +179,17 @@ export const setYearlyCasesInformationDataObject = (casesInformationDataObject: 
   return {
     type: AppActionTypes.SET_YEARLY_CASES_INFORMATION_DATA_OBJECT,
     casesInformationDataObject: casesInformationDataObject,
+  };
+};
+
+export interface AppHandleStartCasesInformationDataObjectLoadAction {
+  type: typeof AppActionTypes.HANDLE_START_CASES_INFORMATION_DATA_OBJECT_LOAD;
+  casesDataType: CasesDataTypes;
+}
+export const handleStartCasesInformationDataObjectLoad = (casesDataType: CasesDataTypes): AppHandleStartCasesInformationDataObjectLoadAction => {
+  return {
+    type: AppActionTypes.HANDLE_START_CASES_INFORMATION_DATA_OBJECT_LOAD,
+    casesDataType: casesDataType,
   };
 };
 
