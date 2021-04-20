@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import {createStyles, Theme, useTheme} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
 import {MapDataTypeSelectData} from "../types";
@@ -18,6 +18,7 @@ export interface MapDataTypeSelectItemStyleProps {
 
 export interface MapDataTypeSelectItemEventProps {
   handleClick(value): void;
+  handlePreloadClick(value): void;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -75,20 +76,34 @@ const MapDataTypeSelectItem: React.FC<MapDataTypeSelectItemProps> = (props) => {
     value,
     text,
     handleClick,
+    handlePreloadClick,
   } = props;
+
+  const [hasStartedLoading, setHasStartedLoading] = useState<boolean>(false);
 
   const onClick = (e: React.MouseEvent<HTMLLIElement>): void => {
     if (isLoaded) {
       handleClick(value);
+    } else {
+      if (!hasStartedLoading) {
+        setHasStartedLoading(prevState => {
+          if (!prevState) {
+            handlePreloadClick(value);
+          }
+          return true;
+        });
+      }
     }
   };
 
+  const showProgress: boolean = isLoaded || (!isLoaded && !hasStartedLoading);
+
   return (
     <MenuItem className={clsx(classes.menuItem, {
-      [classes.menuItemDisabled]: !isLoaded
+      [classes.menuItemDisabled]: !showProgress
     })} onClick={onClick}>
       {
-        isLoaded ? (
+        showProgress ? (
           <div className={classes.progress}/>
         ) : (
           <CircularProgress className={classes.progress} disableShrink/>

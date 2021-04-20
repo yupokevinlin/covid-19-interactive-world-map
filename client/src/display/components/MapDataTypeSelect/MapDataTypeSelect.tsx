@@ -21,6 +21,7 @@ export interface MapDataTypeSelectStyleProps {
 
 export interface MapDataTypeSelectEventProps {
   handleSelectionChange(value: string): void;
+  handlePreloadClick(value: string): void;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -92,6 +93,7 @@ const MapDataTypeSelect: React.FC<MapDataTypeSelectProps> = (props) => {
     label,
     data,
     initialValue,
+    handlePreloadClick,
     handleSelectionChange,
   } = props;
 
@@ -134,10 +136,11 @@ const MapDataTypeSelect: React.FC<MapDataTypeSelectProps> = (props) => {
           horizontal: "center",
           vertical: "bottom",
         }}
+        keepMounted
       >
         {
           data.map((selectItemData, index) => (
-            <MapDataTypeSelectItem key={index} {...selectItemData} handleClick={handleMapDataTypeSelectItemClick}/>
+            <MapDataTypeSelectItem key={index} {...selectItemData} handleClick={handleMapDataTypeSelectItemClick} handlePreloadClick={handlePreloadClick}/>
           ))
         }
       </Menu>
