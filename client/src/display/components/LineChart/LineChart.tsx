@@ -57,7 +57,7 @@ const LineChart: React.FC<LineChartProps> = (props) => {
     const marginTop: number = 30;
     const marginBottom: number = 30;
     const marginRight: number = 30;
-    const marginLeft: number = 50;
+    const marginLeft: number = 55;
 
     //Get svg element
     const svg = d3.select(`#${chartId}`);
@@ -72,9 +72,8 @@ const LineChart: React.FC<LineChartProps> = (props) => {
     svg.append("g").attr("transform", `translate(0, ${detectedHeight - marginBottom})`).call(xAxis);
 
     //Generate Y Axis
-    const yAxisFormat = fs => s => d3.format(fs)(s).replace(/G/, "B");
     const yScale = d3.scaleLinear().domain([maxY, minY]).range([marginTop, detectedHeight - marginBottom]);
-    const yAxis = d3.axisLeft(yScale).tickFormat(yAxisFormat(".0s"));
+    const yAxis = d3.axisLeft(yScale).tickFormat(d => abbreviateNumber(d as number, 1));
     svg.append("g").attr("transform", `translate(${marginLeft}, 0)`).call(yAxis);
   });
 
