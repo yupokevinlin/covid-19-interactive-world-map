@@ -140,3 +140,9 @@ export enum CasesDataTypes {
   Monthly = "Past Month",
   Yearly = "Past Year",
 }
+
+export enum CasesTypes {
+  CASES = "Cases",
+  RECOVERIES = "Recoveries",
+  DEATHS = "Deaths",
+}
