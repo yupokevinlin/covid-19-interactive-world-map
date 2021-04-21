@@ -1,10 +1,12 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import ChartPage from "../../pages/ChartPage";
-import {AppActionTypes, AppState} from "../../../state/global/App/types";
+import {AppState} from "../../../state/global/App/types";
 import {Store} from "../../../state/store";
 import {Dispatch} from "redux";
 import {AppAction} from "../../../state/global/App/actions";
 import {shallowEqual, useDispatch, useSelector} from "react-redux";
+import {ChartPageActionTypes, ChartPageState} from "../../../state/containers/ChartPageContainer/types";
+import {ChartPageAction} from "../../../state/containers/ChartPageContainer/actions";
 
 export type ChartPageContainerProps = ChartPageContainerDataProps & ChartPageContainerStyleProps & ChartPageContainerEventProps;
 
@@ -23,18 +25,35 @@ export interface ChartPageContainerEventProps {
 const ChartPageContainer: React.FC<ChartPageContainerProps> = (props) => {
   const appState: AppState = useSelector<Store, AppState>(store => store.app, shallowEqual);
   const appDispatch: Dispatch<AppAction> = useDispatch<Dispatch<AppAction>>();
+  const chartPageState: ChartPageState = useSelector<Store, ChartPageState>(store => store.chartPage, shallowEqual);
+  const chartPageDispatch: Dispatch<ChartPageAction> = useDispatch<Dispatch<ChartPageAction>>();
 
-  const handleLoaded = (): void => {
-    appDispatch({
-      type: AppActionTypes.SET_IS_LOADING,
-      displayLoadingBar: false,
-      displayLoadingPage: false,
-    });
+  useEffect(() => {
+    if (!!appState.casesDataObject) {
+      chartPageDispatch({
+        type: ChartPageActionTypes.INIT,
+      });
+    }
+  }, []);
+
+  const [region, setRegion] = useState<string>("World");
+
+  const handleBreadcrumbsRegionChange = (hierarchicalName: string): void => {
+    setRegion(hierarchicalName);
+    // chartPageDispatch({
+    //   type: ChartPageActionTypes.HANDLE_BREADCRUMBS_REGION_CHANGE,
+    //   hierarchicalName: hierarchicalName,
+    // });
   };
 
-  return (
-    <ChartPage handleLoaded={handleLoaded}/>
-  )
+
+  if (!!appState.casesDataObject) {
+    return (
+      <ChartPage dataTree={appState.dataTree} region={region} casesDataObject={appState.casesDataObject} dailyCasesInformationDataObject={appState.dailyCasesInformationDataObject} weeklyCasesInformationDataObject={appState.weeklyCasesInformationDataObject} monthlyCasesInformationDataObject={appState.monthlyCasesInformationDataObject} yearlyCasesInformationDataObject={appState.yearlyCasesInformationDataObject} handleBreadCrumbsRegionChange={handleBreadcrumbsRegionChange}/>
+    );
+  } else {
+    return null;
+  }
 };
 
 export default ChartPageContainer;
