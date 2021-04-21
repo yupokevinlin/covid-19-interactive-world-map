@@ -3,7 +3,7 @@ export namespace MathUtils {
     return Math.log(value) / Math.log(base);
   };
 
-  export const abbreviateNumber = (number: number, digits?: number): string => {
+  export const abbreviateNumber = (number: number, showDecimalForOnes?: boolean): string => {
     const SI_SYMBOL: Array<string> = ["", "k", "M", "B", "T", "P", "E"];
 
     const tier: number = (Math.log10(number) / 3) | 0;
@@ -15,6 +15,11 @@ export namespace MathUtils {
     const suffix: string = SI_SYMBOL[tier];
     const scale: number = Math.pow(10, tier * 3);
     const scaled: number = number / scale;
-    return scaled.toFixed(digits || 0) + suffix;
+    if (!!showDecimalForOnes) {
+      const addDecimal: boolean = scaled % 1 > 0;
+      return scaled.toFixed(addDecimal ? 1 : 0) + suffix;
+    } else {
+      return scaled.toFixed(0) + suffix;
+    }
   };
 }
