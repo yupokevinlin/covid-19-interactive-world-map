@@ -73,7 +73,7 @@ const LineChart: React.FC<LineChartProps> = (props) => {
 
     //Generate Y Axis
     const yScale = d3.scaleLinear().domain([maxY, minY]).range([marginTop, detectedHeight - marginBottom]);
-    const yAxis = d3.axisLeft(yScale).tickFormat(d => abbreviateNumber(d as number, 1));
+    const yAxis = d3.axisLeft(yScale).tickFormat(d => abbreviateNumber(d as number, true));
     svg.append("g").attr("transform", `translate(${marginLeft}, 0)`).call(yAxis);
   });
 
