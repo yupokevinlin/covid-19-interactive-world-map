@@ -34,4 +34,9 @@ export namespace DateUtils {
     }
     return dateStringArray;
   };
+
+  export const getDateFromDateString = (dateString: string): Date => {
+    const date: Moment = getMomentDateFromDateString(dateString);
+    return new Date(date.year(), date.month(), date.date());
+  };
 }
