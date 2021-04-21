@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 
 
-const ChartPageChartPageLineChart: React.FC<ChartPageLineChartProps> = (props) => {
+const ChartPageLineChart: React.FC<ChartPageLineChartProps> = (props) => {
   const theme: Theme = useTheme();
   const classes = useStyles();
   const chartId: string = "line-chart";
@@ -57,48 +57,56 @@ const ChartPageChartPageLineChart: React.FC<ChartPageLineChartProps> = (props) =
   const detectedWidth: number = width || 0;
   const detectedHeight: number = height || 0;
 
+  const renderChart = (): void => {
+    try {
+      const breakpoint: number = 960;
+      const isMd: boolean = detectedWidth >= breakpoint;
+      const marginTop: number = 30;
+      const marginBottom: number = 30;
+      const marginRight: number = 30;
+      const marginLeft: number = 55;
+
+      //Get svg element
+      const svg = d3.select(`#${chartId}`);
+
+      //Remove all elements
+      svg.selectAll("*").remove();
+
+      //Generate X Axis
+      const xScale = d3.scaleTime().domain([startDate, endDate]).range([marginLeft, detectedWidth - marginRight]);
+      const xAxisSteps: number = isMd ? 1 : 3;
+      const xAxis = d3.axisBottom(xScale).ticks(d3.timeMonth.every(xAxisSteps));
+      svg.append("g").attr("transform", `translate(0, ${detectedHeight - marginBottom})`).call(xAxis);
+
+      //Generate Y Axis
+      const yScale = d3.scaleLinear().domain([maxValue, minValue]).range([marginTop, detectedHeight - marginBottom]);
+      const yAxis = d3.axisLeft(yScale).tickFormat(d => abbreviateNumber(d as number, true));
+      svg.append("g").attr("transform", `translate(${marginLeft}, 0)`).call(yAxis);
+
+      //Generate line
+      const dataLine: any = d3.line()
+        .x((d) => {
+          const data: ChartPageLineChartData = d as unknown as ChartPageLineChartData;
+          return xScale(data.date)
+        })
+        .y((d) => {
+          const data: ChartPageLineChartData = d as unknown as ChartPageLineChartData;
+          return yScale(data.value)
+        });
+      svg.append("path")
+        .data([data])
+        .attr("class", "line")
+        .attr("d", dataLine)
+        .attr("stroke", theme.palette.primary.main)
+        .attr("stroke-width", 3)
+        .style("fill", "none");
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   useEffect(() => {
-    const breakpoint: number = 960;
-    const isMd: boolean = detectedWidth >= breakpoint;
-    const marginTop: number = 30;
-    const marginBottom: number = 30;
-    const marginRight: number = 30;
-    const marginLeft: number = 55;
-
-    //Get svg element
-    const svg = d3.select(`#${chartId}`);
-
-    //Remove all elements
-    svg.selectAll("*").remove();
-
-    //Generate X Axis
-    const xScale = d3.scaleTime().domain([startDate, endDate]).range([marginLeft, detectedWidth - marginRight]);
-    const xAxisSteps: number = isMd ? 1 : 3;
-    const xAxis = d3.axisBottom(xScale).ticks(d3.timeMonth.every(xAxisSteps));
-    svg.append("g").attr("transform", `translate(0, ${detectedHeight - marginBottom})`).call(xAxis);
-
-    //Generate Y Axis
-    const yScale = d3.scaleLinear().domain([maxValue, minValue]).range([marginTop, detectedHeight - marginBottom]);
-    const yAxis = d3.axisLeft(yScale).tickFormat(d => abbreviateNumber(d as number, true));
-    svg.append("g").attr("transform", `translate(${marginLeft}, 0)`).call(yAxis);
-
-    //Generate line
-    const dataLine: any = d3.line()
-      .x((d) => {
-        const data: ChartPageLineChartData = d as unknown as ChartPageLineChartData;
-        return xScale(data.date)
-      })
-      .y((d) => {
-        const data: ChartPageLineChartData = d as unknown as ChartPageLineChartData;
-        return yScale(data.value)
-      });
-    svg.append("path")
-      .data([data])
-      .attr("class", "line")
-      .attr("d", dataLine)
-      .attr("stroke", theme.palette.primary.main)
-      .attr("stroke-width", 3)
-      .style("fill", "none")
+    renderChart();
   });
 
   return (
@@ -108,5 +116,5 @@ const ChartPageChartPageLineChart: React.FC<ChartPageLineChartProps> = (props) =
   );
 };
 
-export default ChartPageChartPageLineChart;
+export default ChartPageLineChart;
 
