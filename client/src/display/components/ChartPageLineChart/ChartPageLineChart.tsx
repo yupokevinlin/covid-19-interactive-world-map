@@ -61,10 +61,10 @@ const ChartPageLineChart: React.FC<ChartPageLineChartProps> = (props) => {
     try {
       const breakpoint: number = 960;
       const isMd: boolean = detectedWidth >= breakpoint;
-      const marginTop: number = 30;
-      const marginBottom: number = 30;
-      const marginRight: number = 30;
-      const marginLeft: number = 55;
+      const marginTop: number = isMd ? 20 : 15;
+      const marginBottom: number = isMd ? 40 : 30;
+      const marginRight: number = isMd ? 40 : 30;
+      const marginLeft: number = isMd ? 60 : 55
 
       //Get svg element
       const svg = d3.select(`#${chartId}`);
@@ -76,12 +76,12 @@ const ChartPageLineChart: React.FC<ChartPageLineChartProps> = (props) => {
       const xScale = d3.scaleTime().domain([startDate, endDate]).range([marginLeft, detectedWidth - marginRight]);
       const xAxisSteps: number = isMd ? 1 : 3;
       const xAxis = d3.axisBottom(xScale).ticks(d3.timeMonth.every(xAxisSteps));
-      svg.append("g").attr("transform", `translate(0, ${detectedHeight - marginBottom})`).call(xAxis);
+      svg.append("g").attr("transform", `translate(0, ${detectedHeight - marginBottom})`).style("font-size", isMd ? "12px" : "10px").call(xAxis);
 
       //Generate Y Axis
       const yScale = d3.scaleLinear().domain([maxValue, minValue]).range([marginTop, detectedHeight - marginBottom]);
       const yAxis = d3.axisLeft(yScale).tickFormat(d => abbreviateNumber(d as number, true));
-      svg.append("g").attr("transform", `translate(${marginLeft}, 0)`).call(yAxis);
+      svg.append("g").attr("transform", `translate(${marginLeft}, 0)`).style("font-size", isMd ? "12px" : "10px").call(yAxis);
 
       //Generate line
       const dataLine: any = d3.line()
