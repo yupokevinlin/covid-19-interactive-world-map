@@ -38,6 +38,7 @@ import {CasesApi} from "../../../api/CasesApi/CasesApi";
 import {AppStore} from "../../../app/App";
 import {MapPageActionTypes} from "../../containers/MapPageContainer/types";
 import {CasesInformationDataObject} from "../../../../../shared/types/data/Cases/CasesTypes";
+import {ChartPageActionTypes} from "../../containers/ChartPageContainer/types";
 
 export const appSagas = {
   initSaga: takeEvery(AppActionTypes.INIT, initSaga),
@@ -96,6 +97,13 @@ const getCasesDataObject = (): void => {
         });
       }
       return;
+    }
+    if (store.app.page === Pages.CHART) {
+      if (!store.chartPage.initComplete) {
+        AppStore.store.dispatch({
+          type: ChartPageActionTypes.INIT,
+        });
+      }
     }
     AppStore.store.dispatch({
       type: AppActionTypes.SET_IS_LOADING,
