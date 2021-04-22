@@ -11,7 +11,7 @@ import {getName} from "../../../shared/helpers/General";
 
 export namespace ChartUtils {
   import getDateFromDateString = DateUtils.getDateFromDateString;
-  export const getChartPageLineChartDataPropsFromCasesDataObject = (casesDataObject: CasesDataObject, hierarchicalName: string, casesType: CasesTypes): ChartPageLineChartDataProps => {
+  export const getChartPageLineChartDataPropsFromCasesDataObject = (casesDataObject: CasesDataObject, hierarchicalName: string, caseType: CasesTypes): ChartPageLineChartDataProps => {
     const matchingCasesData: CasesData | null = casesDataObject[hierarchicalName];
     const data: ChartPageLineChartDataProps = {
       maxValue: 0,
@@ -35,7 +35,7 @@ export namespace ChartUtils {
       let endDateString: string = "";
       const chartData: Array<ChartPageLineChartData> = Object.entries(matchingDailyCasesData).map(([dateString, dailyCasesData], index) => {
         let number: number = 0;
-        switch (casesType) {
+        switch (caseType) {
           case CasesTypes.CASES: {
             number = dailyCasesData.totalCases;
             break;
@@ -68,7 +68,7 @@ export namespace ChartUtils {
       let yLabel: string = "";
       let yTooltip: string = "";
 
-      switch (casesType) {
+      switch (caseType) {
         case CasesTypes.CASES: {
           yLabel = "Total Cases";
           yTooltip = "Cases";

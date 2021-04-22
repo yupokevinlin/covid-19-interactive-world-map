@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import ChartPage from "../../pages/ChartPage";
-import {AppState} from "../../../state/global/App/types";
+import {AppState, CasesTypes, ChartSubPages} from "../../../state/global/App/types";
 import {Store} from "../../../state/store";
 import {Dispatch} from "redux";
 import {AppAction} from "../../../state/global/App/actions";
@@ -46,10 +46,25 @@ const ChartPageContainer: React.FC<ChartPageContainerProps> = (props) => {
     // });
   };
 
+  const chartSubPage: ChartSubPages = appState.subPage as ChartSubPages;
+
+  const getCaseType = (chartSubPage: ChartSubPages): CasesTypes => {
+    switch (chartSubPage) {
+      case ChartSubPages.CASES: {
+        return CasesTypes.CASES;
+      }
+      case ChartSubPages.DEATHS: {
+        return CasesTypes.DEATHS;
+      }
+      case ChartSubPages.RECOVERIES: {
+        return CasesTypes.RECOVERIES;
+      }
+    }
+  }
 
   if (!!appState.casesDataObject) {
     return (
-      <ChartPage dataTree={appState.dataTree} region={region} casesDataObject={appState.casesDataObject} dailyCasesInformationDataObject={appState.dailyCasesInformationDataObject} weeklyCasesInformationDataObject={appState.weeklyCasesInformationDataObject} monthlyCasesInformationDataObject={appState.monthlyCasesInformationDataObject} yearlyCasesInformationDataObject={appState.yearlyCasesInformationDataObject} handleBreadCrumbsRegionChange={handleBreadcrumbsRegionChange}/>
+      <ChartPage dataTree={appState.dataTree} region={region} casesDataObject={appState.casesDataObject} dailyCasesInformationDataObject={appState.dailyCasesInformationDataObject} weeklyCasesInformationDataObject={appState.weeklyCasesInformationDataObject} monthlyCasesInformationDataObject={appState.monthlyCasesInformationDataObject} yearlyCasesInformationDataObject={appState.yearlyCasesInformationDataObject} caseType={getCaseType(chartSubPage)} handleBreadCrumbsRegionChange={handleBreadcrumbsRegionChange}/>
     );
   } else {
     return null;
