@@ -207,7 +207,7 @@ const ChartPageLineChart: React.FC<ChartPageLineChartProps> = (props) => {
             .style("display", null);
 
           const toolTipHeight: number = isMd ? 30 : 26;
-          const toolTipWidth: number = isMd ? 100 : 80;
+          const toolTipWidth: number = isMd ? 125 : 105;
           const paddingTopBottom: number = isMd ? 5 : 3;
           const paddingLeftRight: number = isMd ? 5 : 3;
           const tooltipElementHeight: number = isMd ? 12 : 10;
