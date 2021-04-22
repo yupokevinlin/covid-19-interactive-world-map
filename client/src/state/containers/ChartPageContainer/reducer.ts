@@ -3,6 +3,7 @@ import {ChartPageAction} from "./actions";
 
 export const initialState: ChartPageState = {
   initComplete: false,
+  countryCode: "World",
 };
 
 export const reducer = (state: ChartPageState = initialState, action: ChartPageAction): ChartPageState => {
@@ -11,6 +12,12 @@ export const reducer = (state: ChartPageState = initialState, action: ChartPageA
       return {
         ...state,
         initComplete: action.initComplete,
+      }
+    }
+    case ChartPageActionTypes.SET_COUNTRY_CODE: {
+      return {
+        ...state,
+        countryCode: action.countryCode,
       }
     }
     default: {
