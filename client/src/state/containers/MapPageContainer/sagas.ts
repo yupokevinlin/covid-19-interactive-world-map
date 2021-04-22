@@ -11,7 +11,7 @@ import {CasesData, CasesDataObject, DailyCasesDataObject} from "../../../../../s
 import {ESRIMapPolygon} from "../../../display/components/ESRIMap/types";
 import {getSequentialHierarchicalNames, getTreeItem} from "../../../../../shared/helpers/General";
 import {Store} from "../../store";
-import {AppState} from "../../global/App/types";
+import {AppActionTypes, AppState} from "../../global/App/types";
 import {TreeItem} from "../../../../../shared/types/data/Tree/TreeTypes";
 
 export const mapPageSagas = {
@@ -48,6 +48,11 @@ function * initSaga(action: MapPageInitAction): any {
 }
 
 function * handleMapRegionChange(action: MapPageHandleMapRegionChangeAction): any {
+  yield put({
+    type: AppActionTypes.SET_IS_LOADING,
+    displayLoadingBar: true,
+    displayLoadingPage: false,
+  });
   const appState: AppState = yield select(getAppStateSelector);
   const dataTree: TreeItem = appState.dataTree;
   const casesDataObject: CasesDataObject = appState.casesDataObject;
@@ -197,6 +202,11 @@ function * handleMapRegionChange(action: MapPageHandleMapRegionChangeAction): an
 }
 
 function * handleBreadcrumbsRegionChange(action: MapPageHandleBreadcrumbsRegionChangeAction): any {
+  yield put({
+    type: AppActionTypes.SET_IS_LOADING,
+    displayLoadingBar: true,
+    displayLoadingPage: false,
+  });
   const appState: AppState = yield select(getAppStateSelector);
   const dataTree: TreeItem = appState.dataTree;
   const casesDataObject: CasesDataObject = appState.casesDataObject;
