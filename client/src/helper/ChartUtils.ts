@@ -7,6 +7,7 @@ import {ChartPageLineChartDataProps} from "../display/components/ChartPageLineCh
 import {ChartPageLineChartData} from "../display/components/ChartPageLineChart/types";
 import {CasesTypes} from "../state/global/App/types";
 import {DateUtils} from "./DateUtils";
+import {getName} from "../../../shared/helpers/General";
 
 export namespace ChartUtils {
   import getDateFromDateString = DateUtils.getDateFromDateString;
@@ -18,6 +19,11 @@ export namespace ChartUtils {
       startDate: new Date(),
       endDate: new Date(),
       data: [],
+      title: "",
+      yAxisLabel: "",
+      xAxisLabel: "",
+      yAxisTooltip: "",
+      xAxisTooltip: "",
     };
     if (!matchingCasesData) {
       return data;
@@ -59,12 +65,40 @@ export namespace ChartUtils {
       const startDate: Date = getDateFromDateString(startDateString);
       const endDate: Date = getDateFromDateString(endDateString);
 
+      let yLabel: string = "";
+      let yTooltip: string = "";
+
+      switch (casesType) {
+        case CasesTypes.CASES: {
+          yLabel = "Total Cases";
+          yTooltip = "Cases";
+          break;
+        }
+        case CasesTypes.DEATHS: {
+          yLabel = "Total Deaths";
+          yTooltip = "Deaths";
+          break;
+        }
+        case CasesTypes.RECOVERIES: {
+          yLabel = "Total Recoveries";
+          yTooltip = "Recoveries";
+          break;
+        }
+      }
+
+      const name: string = getName(hierarchicalName);
+      const title: string = `${name} - ${yLabel}`;
       return {
         startDate: startDate,
         endDate: endDate,
         maxValue: maxValue,
         minValue: minValue,
         data: chartData,
+        title: title,
+        yAxisLabel: yLabel,
+        xAxisLabel: "Date",
+        yAxisTooltip: yTooltip,
+        xAxisTooltip: "Date",
       }
     }
   };
