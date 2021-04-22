@@ -60,7 +60,9 @@ export enum MapSubPages {
 }
 
 export enum ChartSubPages {
-  HOME = "Home"
+  CASES = "Cases",
+  RECOVERIES = "Recoveries",
+  DEATHS = "Deaths",
 }
 
 export enum PageURLs {

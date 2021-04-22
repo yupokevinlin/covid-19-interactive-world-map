@@ -203,9 +203,21 @@ const getInitialMenuItems = (): Array<NavigationDrawerMenuItem> => {
       backgroundColor: PageBackgroundColors.CHART,
       children: [
         {
-          text: HomeSubPages.HOME,
-          toolTip: HomeSubPages.HOME,
-          iconName: MaterialIconNames.Home,
+          text: ChartSubPages.CASES,
+          toolTip: ChartSubPages.CASES,
+          iconName: MaterialIconNames.LocalHospital,
+          active: false,
+        },
+        {
+          text: ChartSubPages.DEATHS,
+          toolTip: ChartSubPages.DEATHS,
+          iconName: MaterialIconNames.Skull,
+          active: false,
+        },
+        {
+          text: ChartSubPages.RECOVERIES,
+          toolTip: ChartSubPages.RECOVERIES,
+          iconName: MaterialIconNames.AssignmentTurnedIn,
           active: false,
         },
       ],
@@ -341,7 +353,7 @@ const getDefaultSubPage = (page: Pages): SubPages => {
       break;
     }
     case Pages.CHART: {
-      newSubPage = ChartSubPages.HOME;
+      newSubPage = ChartSubPages.CASES;
       break;
     }
   }
