@@ -39,4 +39,8 @@ export namespace DateUtils {
     const date: Moment = getMomentDateFromDateString(dateString);
     return new Date(date.year(), date.month(), date.date());
   };
+
+  export const getDateStringFromDate = (date: Date): string => {
+    return getDateStringFromMomentDate(moment(date));
+  };
 }
