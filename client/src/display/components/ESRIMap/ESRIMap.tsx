@@ -31,7 +31,7 @@ import {
   DailyCasesInformationData,
   DailyCasesInformationDataNull,
 } from "../../../../../shared/types/data/Cases/CasesTypes";
-import {CasesDataTypes, MapSubPages} from "../../../state/global/App/types";
+import {CasesDataTypes, CasesTypes} from "../../../state/global/App/types";
 import {Breakpoint} from "@material-ui/core/styles/createBreakpoints";
 import {CasesUtils} from "../../../helper/CasesUtils";
 import Map = __esri.Map;
@@ -50,7 +50,7 @@ import getCasesInformationDataObject = CasesUtils.getCasesInformationDataObject;
 export type ESRIMapProps = ESRIMapDataProps & ESRIMapStyleProps & ESRIMapEventProps;
 
 export interface ESRIMapDataProps {
-  subPage: MapSubPages;
+  caseType: CasesTypes;
   mapPolygons: Array<ESRIMapPolygon>;
   date: string;
   initialBaseMap: string;
@@ -106,7 +106,7 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
 
   const {
     mapPolygons,
-    subPage,
+    caseType,
     date,
     initialBaseMap,
     mapRegionUpdateGeometry,
@@ -139,8 +139,8 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
         if (prevProps.mapPolygons !== mapPolygons) {
           handleMapPolygonsChange();
         }
-        if (prevProps.subPage !== subPage) {
-          handleSubPageChange();
+        if (prevProps.caseType !== caseType) {
+          handleCaseTypeChange();
         }
         if (prevProps.date !== date) {
           handleDateChange();
@@ -160,7 +160,7 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
       }
       return destroyESRIMap;
     });
-  }, [mapPolygons, subPage, date, mapRegionUpdateGeometry, breadcrumbsRegionUpdateGeometry, casesDataType, width]);
+  }, [mapPolygons, caseType, date, mapRegionUpdateGeometry, breadcrumbsRegionUpdateGeometry, casesDataType, width]);
 
   const initialize = (Map, MapView, FeatureLayer, GraphicsLayer, Legend, Point): void => {
     map = new Map({
@@ -329,10 +329,10 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
     });
   };
 
-  const handleSubPageChange = (): void => {
+  const handleCaseTypeChange = (): void => {
     const renderer = (polygonLayer.renderer as __esri.ClassBreaksRenderer).clone();
-    switch (subPage) {
-      case MapSubPages.CASES: {
+    switch (caseType) {
+      case CasesTypes.CASES: {
         switch (casesDataType) {
           case CasesDataTypes.Total: {
             renderer.legendOptions = {
@@ -377,7 +377,7 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
         }
         break;
       }
-      case MapSubPages.DEATHS: {
+      case CasesTypes.DEATHS: {
         switch (casesDataType) {
           case CasesDataTypes.Total: {
             renderer.legendOptions = {
@@ -422,7 +422,7 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
         }
         break;
       }
-      case MapSubPages.RECOVERIES: {
+      case CasesTypes.RECOVERIES: {
         switch (casesDataType) {
           case CasesDataTypes.Total: {
             renderer.legendOptions = {
@@ -586,7 +586,7 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
       return;
     }
 
-    handleSubPageChange();
+    handleCaseTypeChange();
 
     polygonLayer.queryFeatures().then(result => {
       const renderer = (polygonLayer.renderer as ClassBreaksRenderer).clone();
@@ -629,7 +629,7 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
   };
 
   const handleWidthChange = (): void => {
-    handleSubPageChange();
+    handleCaseTypeChange();
   };
 
   const generateLogarithmicClassStep = (steps: number, colors: ClassBreakColors, domain: Array<number>): Array<any> => {

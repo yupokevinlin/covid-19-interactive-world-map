@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import MapPage from "../../pages/MapPage";
-import {AppActionTypes, AppState, CasesDataTypes, MapSubPages} from "../../../state/global/App/types";
+import {AppActionTypes, AppState, CasesDataTypes, CasesTypes, MapSubPages} from "../../../state/global/App/types";
 import {Store} from "../../../state/store";
 import {Dispatch} from "redux";
 import {AppAction} from "../../../state/global/App/actions";
@@ -88,9 +88,25 @@ const MapPageContainer: React.FC<MapPageContainerProps> = (props) => {
     })
   };
 
+  const mapSubPage: MapSubPages = appState.subPage as MapSubPages;
+
+  const getCaseType = (mapSubPage: MapSubPages): CasesTypes => {
+    switch (mapSubPage) {
+      case MapSubPages.CASES: {
+        return CasesTypes.CASES;
+      }
+      case MapSubPages.DEATHS: {
+        return CasesTypes.DEATHS;
+      }
+      case MapSubPages.RECOVERIES: {
+        return CasesTypes.RECOVERIES;
+      }
+    }
+  }
+
   if (!!appState.casesDataObject) {
     return (
-      <MapPage dateValues={mapPageState.dateValues} dataTree={appState.dataTree} mapPolygons={mapPageState.mapPolygons} date={date} mapRegionUpdateGeometry={mapPageState.mapRegionUpdateGeometry} breadcrumbsRegionUpdateGeometry={mapPageState.breadcrumbsRegionUpdateGeometry} subPage={appState.subPage as MapSubPages} casesData={appState.casesDataObject[region]} countryCode={mapPageState.countryCode} regionName={region} casesDataObject={appState.casesDataObject} dailyCasesInformationDataObject={appState.dailyCasesInformationDataObject} weeklyCasesInformationDataObject={appState.weeklyCasesInformationDataObject} monthlyCasesInformationDataObject={appState.monthlyCasesInformationDataObject} yearlyCasesInformationDataObject={appState.yearlyCasesInformationDataObject} width={width} handleDateChange={handleDateChange} handleMapRegionChange={handleMapRegionChange} handleBreadCrumbsRegionChange={handleBreadcrumbsRegionChange} handleMapUpdateStart={handleMapUpdateStart} handleMapUpdateComplete={handleMapUpdateComplete} handlePreloadClick={handlePreloadClick}/>
+      <MapPage dateValues={mapPageState.dateValues} dataTree={appState.dataTree} mapPolygons={mapPageState.mapPolygons} date={date} mapRegionUpdateGeometry={mapPageState.mapRegionUpdateGeometry} breadcrumbsRegionUpdateGeometry={mapPageState.breadcrumbsRegionUpdateGeometry} caseType={getCaseType(mapSubPage)} casesData={appState.casesDataObject[region]} countryCode={mapPageState.countryCode} regionName={region} casesDataObject={appState.casesDataObject} dailyCasesInformationDataObject={appState.dailyCasesInformationDataObject} weeklyCasesInformationDataObject={appState.weeklyCasesInformationDataObject} monthlyCasesInformationDataObject={appState.monthlyCasesInformationDataObject} yearlyCasesInformationDataObject={appState.yearlyCasesInformationDataObject} width={width} handleDateChange={handleDateChange} handleMapRegionChange={handleMapRegionChange} handleBreadCrumbsRegionChange={handleBreadcrumbsRegionChange} handleMapUpdateStart={handleMapUpdateStart} handleMapUpdateComplete={handleMapUpdateComplete} handlePreloadClick={handlePreloadClick}/>
     );
   } else {
     return null;

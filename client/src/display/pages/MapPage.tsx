@@ -6,7 +6,7 @@ import {TreeItem} from "../../../../shared/types/data/Tree/TreeTypes";
 import BreadcrumbsControl from "../components/BreadcrumbsControl/BreadcrumbsControl";
 import {ESRIMapPolygon} from "../components/ESRIMap/types";
 import ESRIMap from "../components/ESRIMap/ESRIMap";
-import {CasesDataTypes, MapSubPages} from "../../state/global/App/types";
+import {CasesDataTypes, CasesTypes} from "../../state/global/App/types";
 import {Breakpoint} from "@material-ui/core/styles/createBreakpoints";
 import {CasesData, CasesDataObject, CasesInformationDataObject} from "../../../../shared/types/data/Cases/CasesTypes";
 import MapPageInformation from "../components/MapPageInformation/MapPageInformation";
@@ -23,7 +23,7 @@ export interface MapPageDataProps {
   mapPolygons: Array<ESRIMapPolygon>;
   mapRegionUpdateGeometry: Array<Array<[number, number]>>;
   breadcrumbsRegionUpdateGeometry: Array<Array<[number, number]>>;
-  subPage: MapSubPages;
+  caseType: CasesTypes;
   countryCode: string;
   casesData: CasesData;
   regionName: string;
@@ -125,7 +125,7 @@ const MapPage: React.FC<MapPageProps> = (props) => {
     mapPolygons,
     mapRegionUpdateGeometry,
     breadcrumbsRegionUpdateGeometry,
-    subPage,
+    caseType,
     countryCode,
     casesData,
     regionName,
@@ -187,14 +187,14 @@ const MapPage: React.FC<MapPageProps> = (props) => {
     <div className={classes.root}>
       <BreadcrumbsControl dataTree={dataTree} handleChange={handleBreadCrumbsRegionChange} value={esriMapRegion}/>
       <div className={classes.map}>
-        <ESRIMap mapPolygons={mapPolygons} subPage={subPage} date={date} initialBaseMap={"streets"} mapRegionUpdateGeometry={mapRegionUpdateGeometry} breadcrumbsRegionUpdateGeometry={breadcrumbsRegionUpdateGeometry} casesDataType={casesDataType} dailyCasesInformationDataObject={dailyCasesInformationDataObject} weeklyCasesInformationDataObject={weeklyCasesInformationDataObject} monthlyCasesInformationDataObject={monthlyCasesInformationDataObject} yearlyCasesInformationDataObject={yearlyCasesInformationDataObject} width={width} handleUpdateStart={handleMapUpdateStart} handleUpdateComplete={handleMapUpdateComplete} handleRegionChange={handleEsriMapRegionChange}/>
+        <ESRIMap mapPolygons={mapPolygons} caseType={caseType} date={date} initialBaseMap={"streets"} mapRegionUpdateGeometry={mapRegionUpdateGeometry} breadcrumbsRegionUpdateGeometry={breadcrumbsRegionUpdateGeometry} casesDataType={casesDataType} dailyCasesInformationDataObject={dailyCasesInformationDataObject} weeklyCasesInformationDataObject={weeklyCasesInformationDataObject} monthlyCasesInformationDataObject={monthlyCasesInformationDataObject} yearlyCasesInformationDataObject={yearlyCasesInformationDataObject} width={width} handleUpdateStart={handleMapUpdateStart} handleUpdateComplete={handleMapUpdateComplete} handleRegionChange={handleEsriMapRegionChange}/>
       </div>
       <div className={classes.informationSelectWrapper}>
         <div className={classes.selectWrapper}>
           <MapDataTypeSelect initialValue={CasesDataTypes.Total} label={"Time Range"} data={casesDataTypeSelectControls} handleSelectionChange={handleCasesDataTypeChange} handlePreloadClick={handlePreloadClick}/>
         </div>
         <div className={classes.informationWrapper}>
-          <MapPageInformation date={date} casesData={casesData} subPage={subPage} countryCode={countryCode} regionName={regionName} casesDataType={casesDataType} dailyCasesInformationDataObject={dailyCasesInformationDataObject} weeklyCasesInformationDataObject={weeklyCasesInformationDataObject} monthlyCasesInformationDataObject={monthlyCasesInformationDataObject} yearlyCasesInformationDataObject={yearlyCasesInformationDataObject}/>
+          <MapPageInformation date={date} casesData={casesData} caseType={caseType} countryCode={countryCode} regionName={regionName} casesDataType={casesDataType} dailyCasesInformationDataObject={dailyCasesInformationDataObject} weeklyCasesInformationDataObject={weeklyCasesInformationDataObject} monthlyCasesInformationDataObject={monthlyCasesInformationDataObject} yearlyCasesInformationDataObject={yearlyCasesInformationDataObject}/>
         </div>
       </div>
       <SliderControl values={dateValues} handleChange={handleDateChange}/>

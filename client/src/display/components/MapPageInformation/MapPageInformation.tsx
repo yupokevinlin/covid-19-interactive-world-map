@@ -1,12 +1,12 @@
 import React from "react";
 import {createStyles, Theme, useTheme} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
-import {CasesDataTypes, MapSubPages} from "../../../state/global/App/types";
+import {CasesDataTypes, CasesTypes} from "../../../state/global/App/types";
 import {
   CasesData, CasesInformationDataObject,
   DailyCasesData,
   DailyCasesDataNull,
-  DailyCasesInformationData, DailyCasesInformationDataObject
+  DailyCasesInformationData
 } from "../../../../../shared/types/data/Cases/CasesTypes";
 import {CasesUtils} from "../../../helper/CasesUtils";
 import Typography from "@material-ui/core/Typography";
@@ -27,7 +27,7 @@ export interface MapPageInformationDataProps {
   monthlyCasesInformationDataObject: CasesInformationDataObject;
   yearlyCasesInformationDataObject: CasesInformationDataObject;
   casesDataType: CasesDataTypes;
-  subPage: MapSubPages;
+  caseType: CasesTypes;
   countryCode: string;
   regionName: string;
 }
@@ -179,14 +179,14 @@ const MapPageInformation: React.FC<MapPageInformationProps> = (props) => {
     weeklyCasesInformationDataObject,
     monthlyCasesInformationDataObject,
     yearlyCasesInformationDataObject,
-    subPage,
+    caseType,
     countryCode,
     regionName,
   } = props;
 
-  const getDisplayedText = (subPage: MapSubPages, casesDataType: CasesDataTypes): string => {
-    switch (subPage) {
-      case MapSubPages.CASES: {
+  const getDisplayedText = (caseType: CasesTypes, casesDataType: CasesDataTypes): string => {
+    switch (caseType) {
+      case CasesTypes.CASES: {
         switch (casesDataType) {
           case CasesDataTypes.Total: {
             return "Total Cases:";
@@ -206,7 +206,7 @@ const MapPageInformation: React.FC<MapPageInformationProps> = (props) => {
         }
         break;
       }
-      case MapSubPages.DEATHS: {
+      case CasesTypes.DEATHS: {
         switch (casesDataType) {
           case CasesDataTypes.Total: {
             return "Total Deaths:";
@@ -226,7 +226,7 @@ const MapPageInformation: React.FC<MapPageInformationProps> = (props) => {
         }
         break;
       }
-      case MapSubPages.RECOVERIES: {
+      case CasesTypes.RECOVERIES: {
         switch (casesDataType) {
           case CasesDataTypes.Total: {
             return "Total Recoveries:";
@@ -249,20 +249,20 @@ const MapPageInformation: React.FC<MapPageInformationProps> = (props) => {
     }
   };
 
-  const getDataNumber = (subPage: MapSubPages, casesData: CasesData, date: string, casesDataType: CasesDataTypes, dailyCasesInformationDataObject: CasesInformationDataObject, weeklyCasesInformationDataObject: CasesInformationDataObject, monthlyCasesInformationDataObject: CasesInformationDataObject, yearlyCasesInformationDataObject: CasesInformationDataObject): string => {
+  const getDataNumber = (caseType: CasesTypes, casesData: CasesData, date: string, casesDataType: CasesDataTypes, dailyCasesInformationDataObject: CasesInformationDataObject, weeklyCasesInformationDataObject: CasesInformationDataObject, monthlyCasesInformationDataObject: CasesInformationDataObject, yearlyCasesInformationDataObject: CasesInformationDataObject): string => {
     if (casesDataType === CasesDataTypes.Total) {
       const dailyCasesData: DailyCasesData | DailyCasesDataNull = getDailyCasesData(casesData.data, date);
       let dataNumber: number = 0;
-      switch (subPage) {
-        case MapSubPages.CASES: {
+      switch (caseType) {
+        case CasesTypes.CASES: {
           dataNumber = dailyCasesData.totalCases || 0;
           break;
         }
-        case MapSubPages.DEATHS: {
+        case CasesTypes.DEATHS: {
           dataNumber = dailyCasesData.totalDeaths || 0;
           break;
         }
-        case MapSubPages.RECOVERIES: {
+        case CasesTypes.RECOVERIES: {
           dataNumber = dailyCasesData.totalRecoveries || 0;
           break;
         }
@@ -275,16 +275,16 @@ const MapPageInformation: React.FC<MapPageInformationProps> = (props) => {
         return dataNumber.toLocaleString();
       }
       const dailyCasesInformationData: DailyCasesInformationData = getDailyCasesInformationData(matchingCasesInformationDataObject[regionName], date);
-      switch (subPage) {
-        case MapSubPages.CASES: {
+      switch (caseType) {
+        case CasesTypes.CASES: {
           dataNumber = dailyCasesInformationData.cases || 0;
           break;
         }
-        case MapSubPages.DEATHS: {
+        case CasesTypes.DEATHS: {
           dataNumber = dailyCasesInformationData.deaths || 0;
           break;
         }
-        case MapSubPages.RECOVERIES: {
+        case CasesTypes.RECOVERIES: {
           dataNumber = dailyCasesInformationData.recoveries || 0;
           break;
         }
@@ -311,12 +311,12 @@ const MapPageInformation: React.FC<MapPageInformationProps> = (props) => {
       </Typography>
       <Typography className={classes.text} variant={"h5"}>
         {
-          getDisplayedText(subPage, casesDataType)
+          getDisplayedText(caseType, casesDataType)
         }
       </Typography>
       <Typography className={classes.text} variant={"h5"}>
         {
-          getDataNumber(subPage, casesData, date, casesDataType, dailyCasesInformationDataObject, weeklyCasesInformationDataObject, monthlyCasesInformationDataObject, yearlyCasesInformationDataObject)
+          getDataNumber(caseType, casesData, date, casesDataType, dailyCasesInformationDataObject, weeklyCasesInformationDataObject, monthlyCasesInformationDataObject, yearlyCasesInformationDataObject)
         }
       </Typography>
       <Typography className={classes.text} variant={"h5"}>Date:</Typography>
