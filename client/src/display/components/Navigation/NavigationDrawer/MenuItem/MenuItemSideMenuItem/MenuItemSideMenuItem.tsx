@@ -9,7 +9,7 @@ import {ListItemIcon} from "@material-ui/core";
 export type MenuItemSideMenuItemProps = MenuItemSideMenuItemDataProps & MenuItemSideMenuItemStyleProps & MenuItemSideMenuItemEventProps;
 
 export interface MenuItemSideMenuItemDataProps {
-  key: string;
+  keyString: string;
   iconName: MaterialIconNames;
   parentText: SLPages;
   text: SLSubPages;
@@ -55,7 +55,7 @@ const MenuItemSideMenuItem: React.FC<MenuItemSideMenuItemProps> = (props) => {
   const theme: Theme = useTheme();
 
   const {
-    key,
+    keyString,
     parentText,
     text,
     iconName,
@@ -70,7 +70,7 @@ const MenuItemSideMenuItem: React.FC<MenuItemSideMenuItemProps> = (props) => {
   };
 
   return (
-    <MenuItem onClick={onClick} key={key} className={classes.root} disabled={disabled}>
+    <MenuItem onClick={onClick} key={keyString} className={classes.root} disabled={disabled}>
       <ListItemIcon className={classes.iconWrapper}>
         <MaterialIcon className={classes.icon} iconName={iconName}/>
       </ListItemIcon>

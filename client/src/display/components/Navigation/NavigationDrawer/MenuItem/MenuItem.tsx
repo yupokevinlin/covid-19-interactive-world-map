@@ -151,7 +151,7 @@ const MenuItem: React.FC<MenuItemProps> = (props) => {
                   const sideMenuItemKey: string = `side-menu-item-${index}-child-${childIndex}`;
                   const childDisabled: boolean = disabled || !!child.disabled;
                   return (
-                    <MenuItemSideMenuItem key={sideMenuItemKey} iconName={child.iconName} parentText={menuItem.text} text={child.text} disabled={childDisabled} handleSideMenuItemClick={handleSideMenuItemClick}/>
+                    <MenuItemSideMenuItem key={sideMenuItemKey} keyString={sideMenuItemKey} iconName={child.iconName} parentText={menuItem.text} text={child.text} disabled={childDisabled} handleSideMenuItemClick={handleSideMenuItemClick}/>
                   );
                 })
               }
