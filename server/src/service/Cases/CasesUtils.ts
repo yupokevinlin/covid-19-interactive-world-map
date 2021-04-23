@@ -988,6 +988,33 @@ export namespace CasesUtils {
         });
       };
 
+      const fixUSData = (): void => {
+        const hierarchicalName: string = "World_United States of America";
+        const casesData: CasesData = data[hierarchicalName];
+        const dailyCasesDataObject: DailyCasesDataObject = casesData.data;
+        const newDailyCasesDataObject: DailyCasesDataObject = {};
+        let previousRecoveries: number = 0;
+        Object.entries(dailyCasesDataObject).forEach(([date, data], index) => {
+          let newRecoveries: number = data.totalRecoveries;
+          if (index > 0) {
+            if (newRecoveries < previousRecoveries) {
+              newRecoveries = previousRecoveries;
+            }
+            previousRecoveries = newRecoveries;
+          }
+          newDailyCasesDataObject[date] = {
+            totalCases: data.totalCases,
+            totalDeaths: data.totalDeaths,
+            totalRecoveries: newRecoveries,
+          }
+        });
+
+        data[hierarchicalName] = {
+          ...casesData,
+          data: newDailyCasesDataObject,
+        }
+      };
+
       const generateWorldData = (): void => {
         console.log("Generating world data...");
         //Generate World Data
@@ -1301,9 +1328,10 @@ export namespace CasesUtils {
 
       generateUSStatesData();
       checkData();
-      generateWorldData();
       addEarlyCasesData();
       sortData();
+      fixUSData();
+      generateWorldData();
       generateCasesInformationData();
 
       return true;
