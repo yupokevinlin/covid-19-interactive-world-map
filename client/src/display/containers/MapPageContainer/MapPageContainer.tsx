@@ -66,11 +66,7 @@ const MapPageContainer: React.FC<MapPageContainerProps> = (props) => {
   };
 
   const handleMapUpdateStart = (): void => {
-    appDispatch({
-      type: AppActionTypes.SET_IS_LOADING,
-      displayLoadingBar: true,
-      displayLoadingPage: false,
-    });
+
   };
 
   const handleMapUpdateComplete = (): void => {

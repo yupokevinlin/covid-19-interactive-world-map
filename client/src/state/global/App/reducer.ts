@@ -5,6 +5,7 @@ export const initialState: AppState = {
   isInitComplete: false,
   displayLoadingBar: false,
   displayLoadingPage: false,
+  isDoingNetworkCall: false,
   version: "0.0.1",
   title: `${Pages.HOME}`,
   theme: null,
@@ -32,6 +33,12 @@ export const reducer = (state: AppState = initialState, action: AppAction): AppS
         ...state,
         displayLoadingBar: action.displayLoadingBar,
         displayLoadingPage: action.displayLoadingPage,
+      }
+    }
+    case AppActionTypes.SET_IS_DOING_NETWORK_CALL: {
+      return {
+        ...state,
+        isDoingNetworkCall: action.isDoingNetworkCall,
       }
     }
     case AppActionTypes.SET_THEME: {

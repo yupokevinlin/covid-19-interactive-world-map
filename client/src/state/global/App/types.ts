@@ -8,6 +8,7 @@ export interface AppState {
   isInitComplete: boolean;
   displayLoadingBar: boolean;
   displayLoadingPage: boolean;
+  isDoingNetworkCall: boolean;
   version: string;
   title: string;
   theme: Theme;
@@ -26,6 +27,8 @@ export enum AppActionTypes {
   INIT = "app.INIT",
   SET_IS_INIT_COMPLETE = "app.SET_IS_INIT_COMPLETE",
   SET_IS_LOADING = "app.SET_IS_LOADING",
+  SET_IS_LOADING_DELAYED = "app.SET_IS_LOADING_DELAYED",
+  SET_IS_DOING_NETWORK_CALL = "app.IS_DOING_NETWORK_CALL",
   SET_THEME = "app.SET_THEME",
   SET_VERSION = "app.SET_VERSION",
   SET_TITLE = "app.SET_TITLE",

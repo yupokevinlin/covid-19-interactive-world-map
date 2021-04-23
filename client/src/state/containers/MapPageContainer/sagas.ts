@@ -13,6 +13,7 @@ import {getSequentialHierarchicalNames, getTreeItem} from "../../../../../shared
 import {Store} from "../../store";
 import {AppActionTypes, AppState} from "../../global/App/types";
 import {TreeItem} from "../../../../../shared/types/data/Tree/TreeTypes";
+import {AppStore} from "../../../app/App";
 
 export const mapPageSagas = {
   initSaga: takeEvery(MapPageActionTypes.INIT, initSaga),
@@ -49,10 +50,16 @@ function * initSaga(action: MapPageInitAction): any {
 
 function * handleMapRegionChange(action: MapPageHandleMapRegionChangeAction): any {
   yield put({
-    type: AppActionTypes.SET_IS_LOADING,
+    type: AppActionTypes.SET_IS_DOING_NETWORK_CALL,
+    isDoingNetworkCall: true,
+  });
+  yield put({
+    type: AppActionTypes.SET_IS_LOADING_DELAYED,
+    delay: 300,
     displayLoadingBar: true,
     displayLoadingPage: false,
   });
+
   const appState: AppState = yield select(getAppStateSelector);
   const dataTree: TreeItem = appState.dataTree;
   const casesDataObject: CasesDataObject = appState.casesDataObject;
@@ -199,14 +206,25 @@ function * handleMapRegionChange(action: MapPageHandleMapRegionChangeAction): an
       }
     }
   }
+
+  yield put({
+    type: AppActionTypes.SET_IS_DOING_NETWORK_CALL,
+    isDoingNetworkCall: false,
+  });
 }
 
 function * handleBreadcrumbsRegionChange(action: MapPageHandleBreadcrumbsRegionChangeAction): any {
   yield put({
-    type: AppActionTypes.SET_IS_LOADING,
+    type: AppActionTypes.SET_IS_DOING_NETWORK_CALL,
+    isDoingNetworkCall: true,
+  });
+  yield put({
+    type: AppActionTypes.SET_IS_LOADING_DELAYED,
+    delay: 300,
     displayLoadingBar: true,
     displayLoadingPage: false,
   });
+
   const appState: AppState = yield select(getAppStateSelector);
   const dataTree: TreeItem = appState.dataTree;
   const casesDataObject: CasesDataObject = appState.casesDataObject;
@@ -353,6 +371,11 @@ function * handleBreadcrumbsRegionChange(action: MapPageHandleBreadcrumbsRegionC
       }
     }
   }
+
+  yield put({
+    type: AppActionTypes.SET_IS_DOING_NETWORK_CALL,
+    isDoingNetworkCall: false,
+  });
 }
 
 const getESRIMapPolygons = (mapPolygons: Array<MapPolygon>, casesData: Array<CasesData>): Array<ESRIMapPolygon> => {

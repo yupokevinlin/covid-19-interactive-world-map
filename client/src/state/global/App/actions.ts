@@ -8,6 +8,8 @@ import {CasesDataObject, CasesInformationDataObject} from "../../../../../shared
 export type AppAction = AppInitAction
 | AppSetIsInitCompleteAction
 | AppSetIsLoadingAction
+| AppSetIsLoadingDelayedAction
+| AppSetIsDoingNetworkCallAction
 | AppSetThemeAction
 | AppSetTitleAction
 | AppSetVersionAction
@@ -52,6 +54,32 @@ export const setIsLoading = (displayLoadingBar: boolean, displayLoadingPage: boo
     type: AppActionTypes.SET_IS_LOADING,
     displayLoadingBar: displayLoadingBar,
     displayLoadingPage: displayLoadingPage,
+  };
+};
+
+export interface AppSetIsLoadingDelayedAction {
+  type: typeof AppActionTypes.SET_IS_LOADING_DELAYED;
+  delay: number;
+  displayLoadingBar: boolean;
+  displayLoadingPage: boolean;
+}
+export const setIsLoadingDelayed = (delay: number, displayLoadingBar: boolean, displayLoadingPage: boolean): AppSetIsLoadingDelayedAction => {
+  return {
+    type: AppActionTypes.SET_IS_LOADING_DELAYED,
+    delay: delay,
+    displayLoadingBar: displayLoadingBar,
+    displayLoadingPage: displayLoadingPage,
+  };
+};
+
+export interface AppSetIsDoingNetworkCallAction {
+  type: typeof AppActionTypes.SET_IS_DOING_NETWORK_CALL;
+  isDoingNetworkCall: boolean;
+}
+export const setIsDoingNetworkCall = (isDoingNetworkCall: boolean): AppSetIsDoingNetworkCallAction => {
+  return {
+    type: AppActionTypes.SET_IS_DOING_NETWORK_CALL,
+    isDoingNetworkCall: isDoingNetworkCall,
   };
 };
 

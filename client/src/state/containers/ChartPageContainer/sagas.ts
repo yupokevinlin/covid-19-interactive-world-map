@@ -28,10 +28,16 @@ function * initSaga(action: ChartPageInitAction): any {
 
 function * handleBreadcrumbsRegionChange(action: ChartPageHandleBreadcrumbsRegionChangeAction): any {
   yield put({
-    type: AppActionTypes.SET_IS_LOADING,
+    type: AppActionTypes.SET_IS_DOING_NETWORK_CALL,
+    isDoingNetworkCall: true,
+  });
+  yield put({
+    type: AppActionTypes.SET_IS_LOADING_DELAYED,
+    delay: 300,
     displayLoadingBar: true,
     displayLoadingPage: false,
   });
+
   const layer0MapPolygons: Array<MapPolygon> = yield call(MapApi.getMapLayer0Data);
   if (action.hierarchicalName === "World") {
     yield put({
@@ -47,10 +53,16 @@ function * handleBreadcrumbsRegionChange(action: ChartPageHandleBreadcrumbsRegio
       countryCode: layer0MatchingPolygon.countryCode,
     });
   }
+
   yield put({
     type: AppActionTypes.SET_IS_LOADING,
     displayLoadingBar: false,
     displayLoadingPage: false,
+  });
+
+  yield put({
+    type: AppActionTypes.SET_IS_DOING_NETWORK_CALL,
+    isDoingNetworkCall: false,
   });
 }
 

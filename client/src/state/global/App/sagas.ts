@@ -1,7 +1,7 @@
-import {call, put, select, takeEvery} from "redux-saga/effects";
+import {call, put, select, takeEvery, delay} from "redux-saga/effects";
 import {
   AppGoToPageAction, AppHandleStartCasesInformationDataObjectLoadAction,
-  AppInitAction,
+  AppInitAction, AppSetIsLoadingDelayedAction,
 } from "./actions";
 import {
   AppActionTypes,
@@ -42,6 +42,7 @@ import {ChartPageActionTypes} from "../../containers/ChartPageContainer/types";
 
 export const appSagas = {
   initSaga: takeEvery(AppActionTypes.INIT, initSaga),
+  setIsLoadingDelayedSaga: takeEvery(AppActionTypes.SET_IS_LOADING_DELAYED, setIsLoadingDelayedSaga),
   handleStartCasesInformationDataObjectLoadSaga: takeEvery(AppActionTypes.HANDLE_START_CASES_INFORMATION_DATA_OBJECT_LOAD, handleStartCasesInformationDataObjectLoadSaga),
   goToPageSaga: takeEvery(AppActionTypes.GO_TO_PAGE, goToPageSaga),
 };
@@ -224,6 +225,18 @@ const getInitialMenuItems = (): Array<NavigationDrawerMenuItem> => {
     },
   ];
 };
+
+function * setIsLoadingDelayedSaga(action: AppSetIsLoadingDelayedAction): any {
+  yield delay(action.delay);
+  const appState: AppState = yield select(getAppStateSelector);
+  if (appState.isDoingNetworkCall) {
+    yield put({
+      type: AppActionTypes.SET_IS_LOADING,
+      displayLoadingBar: action.displayLoadingBar,
+      displayLoadingPage: action.displayLoadingPage,
+    });
+  }
+}
 
 function * handleStartCasesInformationDataObjectLoadSaga(action: AppHandleStartCasesInformationDataObjectLoadAction): any {
   switch (action.casesDataType) {
