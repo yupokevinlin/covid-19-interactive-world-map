@@ -39,6 +39,15 @@ export interface DailyCasesInformationData {
   cases: number;
   recoveries: number;
   deaths: number;
+  weeklyCasesAverage?: number;
+  monthlyCasesAverage?: number;
+  yearlyCasesAverage?: number;
+  weeklyRecoveriesAverage?: number;
+  monthlyRecoveriesAverage?: number;
+  yearlyRecoveriesAverage?: number;
+  weeklyDeathsAverage?: number;
+  monthlyDeathsAverage?: number;
+  yearlyDeathsAverage?: number;
 }
 
 export interface DailyCasesInformationDataNull {
