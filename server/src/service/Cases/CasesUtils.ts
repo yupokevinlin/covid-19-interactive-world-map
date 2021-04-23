@@ -3,7 +3,7 @@ import {Moment} from "moment";
 import {
   CasesData,
   CasesDataObject, CasesInformationDataObject, DailyCasesData,
-  DailyCasesDataObject, DailyCasesInformationDataObject
+  DailyCasesDataObject, DailyCasesInformationData, DailyCasesInformationDataObject
 } from "../../../../shared/types/data/Cases/CasesTypes";
 import {MapPolygon, MapPolygonsObject} from "../../../../shared/types/data/Map/MapTypes";
 import {getHierarchicalName, getNameArray} from "../../../../shared/helpers/General";
@@ -1089,6 +1089,11 @@ export namespace CasesUtils {
       };
 
       const generateCasesInformationData = (): void => {
+        const daily: number = 1;
+        const weekly: number = 7;
+        const monthly: number = 30;
+        const yearly: number = 365;
+
         console.log("Generating extra cases information...");
         Object.entries(data).forEach(([hierarchicalName, casesData]) => {
           if (!casesData.isMissingData) {
@@ -1098,10 +1103,6 @@ export namespace CasesUtils {
             const yearlyDailyCasesInformationDataObject: DailyCasesInformationDataObject = {};
 
             Object.entries(casesData.data).forEach(([date, dailyCasesData], index) => {
-              const daily: number = 1;
-              const weekly: number = 7;
-              const monthly: number = 30;
-              const yearly: number = 365;
 
               const dailyCases: number = getPastDataSum(daily, date, "totalCases", casesData.data);
               const weeklyCases: number = getPastDataSum(weekly, date, "totalCases", casesData.data);
@@ -1138,6 +1139,19 @@ export namespace CasesUtils {
                 cases: yearlyCases,
                 recoveries: yearlyRecoveries,
                 deaths: yearlyDeaths,
+              }
+            });
+
+            Object.entries(dailyDailyCasesInformationDataObject).forEach(([date, dailyDailyCasesInformationData], index) => {
+              const weeklyAverageCases: number = getPastDataAverage(weekly, date, "cases", dailyDailyCasesInformationDataObject);
+              const weeklyAverageRecoveries: number = getPastDataAverage(weekly, date, "recoveries", dailyDailyCasesInformationDataObject);
+              const weeklyAverageDeaths: number = getPastDataAverage(weekly, date, "deaths", dailyDailyCasesInformationDataObject);
+
+              dailyDailyCasesInformationDataObject[date] = {
+                ...dailyDailyCasesInformationDataObject[date],
+                weeklyCasesAverage: weeklyAverageCases,
+                weeklyRecoveriesAverage: weeklyAverageRecoveries,
+                weeklyDeathsAverage: weeklyAverageDeaths,
               }
             });
             dailyInfoData[hierarchicalName] = dailyDailyCasesInformationDataObject;
@@ -1348,5 +1362,17 @@ export namespace CasesUtils {
         return endNumber - startNumber;
       }
     }
+  };
+
+  const getPastDataAverage = (days: number, date: string, key: keyof DailyCasesInformationData, dailyCasesInformationDataObject: DailyCasesInformationDataObject): number => {
+    let sum: number = 0;
+    for (let i = 0; i < days; i++) {
+      const offsetDate: string = getOffsetDateString(date, -i);
+      const data: DailyCasesInformationData = dailyCasesInformationDataObject[offsetDate];
+      if (data) {
+        sum = sum + (data[key] || 0);
+      }
+    }
+    return Math.floor(sum / days);
   };
 }
