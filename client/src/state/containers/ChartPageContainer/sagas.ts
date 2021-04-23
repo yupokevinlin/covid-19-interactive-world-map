@@ -3,10 +3,7 @@ import {ChartPageActionTypes} from "./types";
 import {ChartPageHandleBreadcrumbsRegionChangeAction, ChartPageInitAction} from "./actions";
 import {AppActionTypes, AppState} from "../../global/App/types";
 import {TreeItem} from "../../../../../shared/types/data/Tree/TreeTypes";
-import {CasesDataObject} from "../../../../../shared/types/data/Cases/CasesTypes";
-import {MapPolygon} from "../../../../../shared/types/data/Map/MapTypes";
-import {MapApi} from "../../../api/MapApi/MapApi";
-import {getNameArray, getSequentialHierarchicalNames, getTreeItem} from "../../../../../shared/helpers/General";
+import {getSequentialHierarchicalNames, getTreeItem} from "../../../../../shared/helpers/General";
 import {Store} from "../../store";
 
 export const chartPageSagas = {
@@ -27,18 +24,6 @@ function * initSaga(action: ChartPageInitAction): any {
 }
 
 function * handleBreadcrumbsRegionChange(action: ChartPageHandleBreadcrumbsRegionChangeAction): any {
-  yield put({
-    type: AppActionTypes.SET_IS_DOING_NETWORK_CALL,
-    isDoingNetworkCall: true,
-  });
-  yield put({
-    type: AppActionTypes.SET_IS_LOADING_DELAYED,
-    delay: 300,
-    displayLoadingBar: true,
-    displayLoadingPage: false,
-  });
-
-  const layer0MapPolygons: Array<MapPolygon> = yield call(MapApi.getMapLayer0Data);
   if (action.hierarchicalName === "World") {
     yield put({
       type: ChartPageActionTypes.SET_COUNTRY_CODE,
@@ -47,23 +32,13 @@ function * handleBreadcrumbsRegionChange(action: ChartPageHandleBreadcrumbsRegio
   } else {
     const sequentialHierarchicalNames: Array<string> = getSequentialHierarchicalNames(action.hierarchicalName);
     const layer0HierarchicalName: string = sequentialHierarchicalNames[1];
-    const layer0MatchingPolygon: MapPolygon = layer0MapPolygons.find((mapPolygon) => mapPolygon.hierarchicalName === layer0HierarchicalName);
+    const appState: AppState = yield select(getAppStateSelector);
+    const treeItem: TreeItem = getTreeItem(appState.dataTree, layer0HierarchicalName);
     yield put({
       type: ChartPageActionTypes.SET_COUNTRY_CODE,
-      countryCode: layer0MatchingPolygon.countryCode,
+      countryCode: treeItem?.countryCode || "",
     });
   }
-
-  yield put({
-    type: AppActionTypes.SET_IS_LOADING,
-    displayLoadingBar: false,
-    displayLoadingPage: false,
-  });
-
-  yield put({
-    type: AppActionTypes.SET_IS_DOING_NETWORK_CALL,
-    isDoingNetworkCall: false,
-  });
 }
 
 function getAppStateSelector(store: Store): AppState {

@@ -13,7 +13,6 @@ import {getSequentialHierarchicalNames, getTreeItem} from "../../../../../shared
 import {Store} from "../../store";
 import {AppActionTypes, AppState} from "../../global/App/types";
 import {TreeItem} from "../../../../../shared/types/data/Tree/TreeTypes";
-import {AppStore} from "../../../app/App";
 
 export const mapPageSagas = {
   initSaga: takeEvery(MapPageActionTypes.INIT, initSaga),
@@ -61,6 +60,21 @@ function * handleMapRegionChange(action: MapPageHandleMapRegionChangeAction): an
   });
 
   const appState: AppState = yield select(getAppStateSelector);
+  if (action.hierarchicalName === "World") {
+    yield put({
+      type: MapPageActionTypes.SET_COUNTRY_CODE,
+      countryCode: "World",
+    });
+  } else {
+    const sequentialHierarchicalNames: Array<string> = getSequentialHierarchicalNames(action.hierarchicalName);
+    const layer0HierarchicalName: string = sequentialHierarchicalNames[1];
+    const treeItem: TreeItem = getTreeItem(appState.dataTree, layer0HierarchicalName);
+    yield put({
+      type: MapPageActionTypes.SET_COUNTRY_CODE,
+      countryCode: treeItem?.countryCode || "",
+    });
+  }
+
   const dataTree: TreeItem = appState.dataTree;
   const casesDataObject: CasesDataObject = appState.casesDataObject;
   const layer0MapPolygons: Array<MapPolygon> = yield call(MapApi.getMapLayer0Data);
@@ -74,10 +88,6 @@ function * handleMapRegionChange(action: MapPageHandleMapRegionChangeAction): an
     yield put({
       type: MapPageActionTypes.SET_MAP_REGION_UPDATE_GEOMETRY,
       regionUpdateGeometry: [],
-    });
-    yield put({
-      type: MapPageActionTypes.SET_COUNTRY_CODE,
-      countryCode: "World",
     });
   } else {
     let filteredMapPolygons: Array<MapPolygon> = layer0MapPolygons;
@@ -101,10 +111,6 @@ function * handleMapRegionChange(action: MapPageHandleMapRegionChangeAction): an
             type: MapPageActionTypes.SET_MAP_REGION_UPDATE_GEOMETRY,
             regionUpdateGeometry: layer0MatchingPolygon.geometry,
           });
-          yield put({
-            type: MapPageActionTypes.SET_COUNTRY_CODE,
-            countryCode: layer0MatchingPolygon.countryCode,
-          });
         }
       } else {
         const hierarchicalNames: Array<string> = layer0MapPolygons.map((mapPolygon) => mapPolygon.hierarchicalName);
@@ -118,10 +124,6 @@ function * handleMapRegionChange(action: MapPageHandleMapRegionChangeAction): an
           yield put({
             type: MapPageActionTypes.SET_MAP_REGION_UPDATE_GEOMETRY,
             regionUpdateGeometry: layer0MatchingPolygon.geometry,
-          });
-          yield put({
-            type: MapPageActionTypes.SET_COUNTRY_CODE,
-            countryCode: layer0MatchingPolygon.countryCode,
           });
         }
       }
@@ -149,10 +151,6 @@ function * handleMapRegionChange(action: MapPageHandleMapRegionChangeAction): an
             type: MapPageActionTypes.SET_MAP_REGION_UPDATE_GEOMETRY,
             regionUpdateGeometry: layer1MatchingPolygon.geometry,
           });
-          yield put({
-            type: MapPageActionTypes.SET_COUNTRY_CODE,
-            countryCode: layer1MatchingPolygon.countryCode,
-          });
         }
       } else {
         const layer1MapPolygons: Array<MapPolygon> = yield call(MapApi.getMapLayer1Data, layer0HierarchicalName);
@@ -169,10 +167,6 @@ function * handleMapRegionChange(action: MapPageHandleMapRegionChangeAction): an
           yield put({
             type: MapPageActionTypes.SET_MAP_REGION_UPDATE_GEOMETRY,
             regionUpdateGeometry: layer1MatchingPolygon.geometry,
-          });
-          yield put({
-            type: MapPageActionTypes.SET_COUNTRY_CODE,
-            countryCode: layer1MatchingPolygon.countryCode,
           });
         }
       }
@@ -199,10 +193,6 @@ function * handleMapRegionChange(action: MapPageHandleMapRegionChangeAction): an
           type: MapPageActionTypes.SET_MAP_REGION_UPDATE_GEOMETRY,
           regionUpdateGeometry: layer2MatchingPolygon.geometry,
         });
-        yield put({
-          type: MapPageActionTypes.SET_COUNTRY_CODE,
-          countryCode: layer2MatchingPolygon.countryCode,
-        });
       }
     }
   }
@@ -226,6 +216,21 @@ function * handleBreadcrumbsRegionChange(action: MapPageHandleBreadcrumbsRegionC
   });
 
   const appState: AppState = yield select(getAppStateSelector);
+  if (action.hierarchicalName === "World") {
+    yield put({
+      type: MapPageActionTypes.SET_COUNTRY_CODE,
+      countryCode: "World",
+    });
+  } else {
+    const sequentialHierarchicalNames: Array<string> = getSequentialHierarchicalNames(action.hierarchicalName);
+    const layer0HierarchicalName: string = sequentialHierarchicalNames[1];
+    const treeItem: TreeItem = getTreeItem(appState.dataTree, layer0HierarchicalName);
+    yield put({
+      type: MapPageActionTypes.SET_COUNTRY_CODE,
+      countryCode: treeItem?.countryCode || "",
+    });
+  }
+
   const dataTree: TreeItem = appState.dataTree;
   const casesDataObject: CasesDataObject = appState.casesDataObject;
   const layer0MapPolygons: Array<MapPolygon> = yield call(MapApi.getMapLayer0Data);
@@ -239,10 +244,6 @@ function * handleBreadcrumbsRegionChange(action: MapPageHandleBreadcrumbsRegionC
     yield put({
       type: MapPageActionTypes.SET_BREADCRUMBS_REGION_UPDATE_GEOMETRY,
       regionUpdateGeometry: [],
-    });
-    yield put({
-      type: MapPageActionTypes.SET_COUNTRY_CODE,
-      countryCode: "World",
     });
   } else {
     let filteredMapPolygons: Array<MapPolygon> = layer0MapPolygons;
@@ -266,10 +267,6 @@ function * handleBreadcrumbsRegionChange(action: MapPageHandleBreadcrumbsRegionC
             type: MapPageActionTypes.SET_BREADCRUMBS_REGION_UPDATE_GEOMETRY,
             regionUpdateGeometry: layer0MatchingPolygon.geometry,
           });
-          yield put({
-            type: MapPageActionTypes.SET_COUNTRY_CODE,
-            countryCode: layer0MatchingPolygon.countryCode,
-          });
         }
       } else {
         const hierarchicalNames: Array<string> = layer0MapPolygons.map((mapPolygon) => mapPolygon.hierarchicalName);
@@ -283,10 +280,6 @@ function * handleBreadcrumbsRegionChange(action: MapPageHandleBreadcrumbsRegionC
           yield put({
             type: MapPageActionTypes.SET_BREADCRUMBS_REGION_UPDATE_GEOMETRY,
             regionUpdateGeometry: layer0MatchingPolygon.geometry,
-          });
-          yield put({
-            type: MapPageActionTypes.SET_COUNTRY_CODE,
-            countryCode: layer0MatchingPolygon.countryCode,
           });
         }
       }
@@ -314,10 +307,6 @@ function * handleBreadcrumbsRegionChange(action: MapPageHandleBreadcrumbsRegionC
             type: MapPageActionTypes.SET_BREADCRUMBS_REGION_UPDATE_GEOMETRY,
             regionUpdateGeometry: layer1MatchingPolygon.geometry,
           });
-          yield put({
-            type: MapPageActionTypes.SET_COUNTRY_CODE,
-            countryCode: layer1MatchingPolygon.countryCode,
-          });
         }
       } else {
         const layer1MapPolygons: Array<MapPolygon> = yield call(MapApi.getMapLayer1Data, layer0HierarchicalName);
@@ -334,10 +323,6 @@ function * handleBreadcrumbsRegionChange(action: MapPageHandleBreadcrumbsRegionC
           yield put({
             type: MapPageActionTypes.SET_BREADCRUMBS_REGION_UPDATE_GEOMETRY,
             regionUpdateGeometry: layer1MatchingPolygon.geometry,
-          });
-          yield put({
-            type: MapPageActionTypes.SET_COUNTRY_CODE,
-            countryCode: layer1MatchingPolygon.countryCode,
           });
         }
       }
@@ -363,10 +348,6 @@ function * handleBreadcrumbsRegionChange(action: MapPageHandleBreadcrumbsRegionC
         yield put({
           type: MapPageActionTypes.SET_BREADCRUMBS_REGION_UPDATE_GEOMETRY,
           regionUpdateGeometry: layer2MatchingPolygon.geometry,
-        });
-        yield put({
-          type: MapPageActionTypes.SET_COUNTRY_CODE,
-          countryCode: layer2MatchingPolygon.countryCode,
         });
       }
     }
