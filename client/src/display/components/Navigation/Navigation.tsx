@@ -129,7 +129,7 @@ const Navigation: React.FC<PageNavigationControlProps> = (props) => {
           [classes.controlBarContentWrapperDrawerOpenExpanded]: drawerOpen && drawerExpanded && !isSmXs,
         })}>
           <ControlBar width={width} title={pageTitle} drawerOpen={drawerOpen} drawerExpanded={drawerExpanded} handleDrawerToggle={handleDrawerToggle}/>
-          <ContentWrapper width={width} displayLoadingPage={displayLoadingPage}>
+          <ContentWrapper width={width} displayLoadingPage={displayLoadingPage} displayLoadingBar={displayLoadingBar}>
             {
               props.children
             }

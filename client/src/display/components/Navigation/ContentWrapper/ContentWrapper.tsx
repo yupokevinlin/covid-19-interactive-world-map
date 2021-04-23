@@ -3,11 +3,13 @@ import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
 import {appBarHeightLg, appBarHeightMd, appBarHeightSm, appBarHeightXs} from "../Navigation";
 import LoadingPage from "../../../pages/statelessPages/LoadingPage";
 import {Breakpoint} from "@material-ui/core/styles/createBreakpoints";
+import LoadingPageTransparent from "../../../pages/statelessPages/LoadingPageTransparent";
 
 export type ContentWrapperProps = ContentWrapperDataProps & ContentWrapperStyleProps & ContentWrapperEventProps;
 
 export interface ContentWrapperDataProps {
   displayLoadingPage: boolean;
+  displayLoadingBar: boolean;
 }
 
 export interface ContentWrapperStyleProps {
@@ -47,22 +49,46 @@ const ContentWrapper: React.FC<ContentWrapperProps> = (props) => {
   const {
     width,
     displayLoadingPage,
+    displayLoadingBar,
   } = props;
 
-  return (
-    <React.Fragment>
-      <main className={classes.content}>
+  if (displayLoadingPage) {
+    return (
+      <React.Fragment>
+        <main className={classes.content}>
+          {
+            props.children
+          }
+        </main>
         {
-          props.children
-        }
-      </main>
-      {
-        displayLoadingPage ? (
           <LoadingPage width={width}/>
-        ) : null
-      }
-    </React.Fragment>
-  );
+        }
+      </React.Fragment>
+    );
+  } else {
+    if (displayLoadingBar) {
+      return (
+        <React.Fragment>
+          <main className={classes.content}>
+            {
+              props.children
+            }
+          </main>
+          {
+            <LoadingPageTransparent displayLoadingBar={displayLoadingBar}/>
+          }
+        </React.Fragment>
+      );
+    } else {
+      return (
+        <main className={classes.content}>
+          {
+            props.children
+          }
+        </main>
+      );
+    }
+  }
 };
 
 export default ContentWrapper;
