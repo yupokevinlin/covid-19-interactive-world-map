@@ -16,7 +16,7 @@ import {Pages, SubPages} from "../../../../../../state/global/App/types";
 export type MenuItemChildProps = MenuItemChildDataProps & MenuItemChildStyleProps & MenuItemChildEventProps;
 
 export interface MenuItemChildDataProps {
-  key: string;
+  keyString: string;
   index: number;
   iconName: MaterialIconNames;
   parentText: Pages;
@@ -98,7 +98,7 @@ const MenuItemChild: React.FC<MenuItemChildProps> = (props) => {
   const theme: Theme = useTheme();
   const classes = useStyles();
   const {
-    key,
+    keyString,
     index,
     iconName,
     text,
@@ -113,7 +113,7 @@ const MenuItemChild: React.FC<MenuItemChildProps> = (props) => {
     handleMenuItemChildClick,
   } = props;
 
-  const childKey: string = `${key}-child-${index}`;
+  const childKey: string = `${keyString}-child-${index}`;
 
   const onClick = (): void => {
     if (!disabled) {

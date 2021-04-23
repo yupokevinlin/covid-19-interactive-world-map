@@ -169,7 +169,7 @@ const MenuItem: React.FC<MenuItemProps> = (props) => {
                   const childHeaderColor: string = child.active ? menuItem.color : theme.palette.grey["500"];
                   const childDisabled: boolean = disabled || !!child.disabled;
                   return (
-                    <MenuItemChild key={childKey} index={childIndex} iconName={child.iconName} parentText={menuItem.text} text={child.text} toolTip={child.toolTip} active={child.active} disabled={childDisabled} renderToolTip={renderToolTip} childHeaderColor={childHeaderColor} backgroundColor={backgroundColor} iconFontSize={iconFontSize} handleMenuItemChildClick={handleMenuItemChildClick}/>
+                    <MenuItemChild key={childKey} keyString={childKey} index={childIndex} iconName={child.iconName} parentText={menuItem.text} text={child.text} toolTip={child.toolTip} active={child.active} disabled={childDisabled} renderToolTip={renderToolTip} childHeaderColor={childHeaderColor} backgroundColor={backgroundColor} iconFontSize={iconFontSize} handleMenuItemChildClick={handleMenuItemChildClick}/>
                   );
                 })
               }
