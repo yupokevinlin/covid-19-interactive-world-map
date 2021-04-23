@@ -11,7 +11,7 @@ import {getName} from "../../../shared/helpers/General";
 
 export namespace ChartUtils {
   import getDateFromDateString = DateUtils.getDateFromDateString;
-  export const getChartPageLineChartDataPropsFromCasesDataObject = (casesDataObject: CasesDataObject, hierarchicalName: string, caseType: CasesTypes): ChartPageLineChartDataProps => {
+  export const getChartPageLineChartDataPropsFromCasesDataObject = (casesDataObject: CasesDataObject, hierarchicalName: string, caseType: CasesTypes, countryCode: string): ChartPageLineChartDataProps => {
     const matchingCasesData: CasesData | null = casesDataObject[hierarchicalName];
     const data: ChartPageLineChartDataProps = {
       maxValue: 0,
@@ -24,6 +24,7 @@ export namespace ChartUtils {
       xAxisLabel: "",
       yAxisTooltip: "",
       xAxisTooltip: "",
+      countryCode: "",
     };
     if (!matchingCasesData) {
       return data;
@@ -99,6 +100,7 @@ export namespace ChartUtils {
         xAxisLabel: "Date",
         yAxisTooltip: yTooltip,
         xAxisTooltip: "Date",
+        countryCode: countryCode,
       }
     }
   };

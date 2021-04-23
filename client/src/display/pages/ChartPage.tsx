@@ -15,6 +15,7 @@ export interface ChartPageDataProps {
   dataTree: TreeItem;
   region: string;
   caseType: CasesTypes;
+  countryCode: string;
   casesDataObject: CasesDataObject;
   dailyCasesInformationDataObject: CasesInformationDataObject;
   weeklyCasesInformationDataObject: CasesInformationDataObject;
@@ -64,10 +65,8 @@ const ChartPage: React.FC<ChartPageProps> = (props) => {
     region,
     caseType,
     casesDataObject,
+    countryCode,
     dailyCasesInformationDataObject,
-    weeklyCasesInformationDataObject,
-    monthlyCasesInformationDataObject,
-    yearlyCasesInformationDataObject,
     handleBreadCrumbsRegionChange,
   } = props;
 
@@ -77,7 +76,7 @@ const ChartPage: React.FC<ChartPageProps> = (props) => {
     <div className={classes.root}>
       <BreadcrumbsControl dataTree={dataTree} handleChange={handleBreadCrumbsRegionChange} value={region}/>
       <div className={classes.lineChartWrapper}>
-        <ChartPageLineChart {...getChartPageLineChartDataPropsFromCasesDataObject(casesDataObject, region, caseType)}/>
+        <ChartPageLineChart {...getChartPageLineChartDataPropsFromCasesDataObject(casesDataObject, region, caseType, countryCode)}/>
       </div>
     </div>
   );

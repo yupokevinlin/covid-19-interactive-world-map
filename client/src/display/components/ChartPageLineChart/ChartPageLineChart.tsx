@@ -8,6 +8,9 @@ import abbreviateNumber = MathUtils.abbreviateNumber;
 import {ChartPageLineChartData} from "./types";
 import {DateUtils} from "../../../helper/DateUtils";
 import getDateStringFromDate = DateUtils.getDateStringFromDate;
+import MaterialIcon, {MaterialIconNames} from "../MaterialIcon/MaterialIcon";
+import Typography from "@material-ui/core/Typography";
+import {findFlagUrlByIso3Code} from "country-flags-svg";
 
 export type ChartPageLineChartProps = ChartPageLineChartDataProps & ChartPageLineChartStyleProps & ChartPageLineChartEventProps;
 
@@ -22,6 +25,7 @@ export interface ChartPageLineChartDataProps {
   xAxisLabel: string;
   yAxisTooltip: string;
   xAxisTooltip: string;
+  countryCode: string;
 }
 
 export interface ChartPageLineChartStyleProps {
@@ -38,12 +42,97 @@ const useStyles = makeStyles((theme: Theme) =>
       width: "100%",
       display: "flex",
       flexDirection: "column",
-      overflow: "hidden",
     },
-    svg: {
+    title: {
+      display: "flex",
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      [theme.breakpoints.up("xs")]: {
+        marginLeft: "70px",
+        marginRight: "70px",
+        height: "40px",
+        width: "calc(100% - 140px)",
+      },
+      [theme.breakpoints.up("md")]: {
+        marginLeft: "100px",
+        marginRight: "100px",
+        height: "60px",
+        width: "calc(100% - 200px)",
+      },
+    },
+    flag: {
+      boxShadow: "0px 0px 5px #aaa",
+      [theme.breakpoints.up("xs")]: {
+        height: "20px",
+        marginRight: "5px",
+      },
+      [theme.breakpoints.up("md")]: {
+        height: "33px",
+        marginRight: "15px",
+      },
+    },
+    worldFlagWrapper: {
+      display: "flex",
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: "#0000cd",
+      boxShadow: "0px 0px 5px #aaa",
+      [theme.breakpoints.up("xs")]: {
+        height: "20px",
+        width: "38px",
+        marginRight: "5px",
+      },
+      [theme.breakpoints.up("md")]: {
+        height: "33px",
+        width: "63px",
+        marginRight: "15px",
+      },
+    },
+    worldFlagIcon: {
+      color: "#FFFFFF",
+      [theme.breakpoints.up("xs")]: {
+        height: "15px",
+        width: "15px",
+      },
+      [theme.breakpoints.up("md")]: {
+        height: "25px",
+        width: "25px",
+      },
+    },
+    chartWrapper: {
+      width: "100%",
+      [theme.breakpoints.up("xs")]: {
+        height: "calc(100% - 40px)",
+      },
+      [theme.breakpoints.up("md")]: {
+        height: "calc(100% - 60px)",
+      },
+    },
+    chart: {
       height: "100%",
       width: "100%",
-    }
+      display: "flex",
+      flexDirection: "column",
+      overflow: "hidden",
+    },
+    text: {
+      [theme.breakpoints.up("xs")]: {
+        fontWeight: 600,
+        fontSize: "12px",
+        lineHeight: "12px",
+        marginLeft: "5px",
+        marginRight: "5px",
+      },
+      [theme.breakpoints.up("md")]: {
+        fontWeight: 400,
+        fontSize: "20px",
+        lineHeight: "23px",
+        marginLeft: "15px",
+        marginRight: "15px",
+      },
+    },
   }),
 );
 
@@ -66,6 +155,7 @@ const ChartPageLineChart: React.FC<ChartPageLineChartProps> = (props) => {
     xAxisLabel,
     yAxisTooltip,
     xAxisTooltip,
+    countryCode,
   } = props;
 
   const { width, height, ref } = useResizeDetector();
@@ -77,7 +167,7 @@ const ChartPageLineChart: React.FC<ChartPageLineChartProps> = (props) => {
     try {
       const breakpoint: number = 960;
       const isMd: boolean = detectedWidth >= breakpoint;
-      const marginTop: number = isMd ? 100 : 80;
+      const marginTop: number = 10;
       const marginBottom: number = isMd ? 70 : 50;
       const marginRight: number = isMd ? 100 : 70;
       const marginLeft: number = isMd ? 100 : 70;
@@ -214,7 +304,7 @@ const ChartPageLineChart: React.FC<ChartPageLineChartProps> = (props) => {
 
           tooltip
             .style("position", "absolute")
-            .style("top", `${-toolTipHeight / 2}px`)
+            .style("top", `${isMd ? 30 : 20}px`)
             .style("left", `${-toolTipWidth / 2}px`)
             .style("transform", `translate(${xScale(date)}px, ${yScale(value)}px)`)
             .style("display", "flex")
@@ -272,7 +362,28 @@ const ChartPageLineChart: React.FC<ChartPageLineChartProps> = (props) => {
   });
 
   return (
-    <div className={classes.root} id={divId} ref={ref}/>
+    <div className={classes.root}>
+      <div className={classes.title}>
+        {
+          countryCode === "World" ? (
+            <div className={classes.worldFlagWrapper}>
+              <MaterialIcon className={classes.worldFlagIcon} iconName={MaterialIconNames.Language}/>
+            </div>
+          ) : (
+            <img className={classes.flag} src={findFlagUrlByIso3Code(countryCode)}/>
+          )
+        }
+        <Typography className={classes.text} variant={"h5"}>
+          {
+            title
+          }
+        </Typography>
+      </div>
+      <div className={classes.chartWrapper}>
+        <div className={classes.chart} id={divId} ref={ref}/>
+      </div>
+    </div>
+
   );
 };
 

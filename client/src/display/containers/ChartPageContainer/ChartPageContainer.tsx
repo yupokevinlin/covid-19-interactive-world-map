@@ -40,10 +40,10 @@ const ChartPageContainer: React.FC<ChartPageContainerProps> = (props) => {
 
   const handleBreadcrumbsRegionChange = (hierarchicalName: string): void => {
     setRegion(hierarchicalName);
-    // chartPageDispatch({
-    //   type: ChartPageActionTypes.HANDLE_BREADCRUMBS_REGION_CHANGE,
-    //   hierarchicalName: hierarchicalName,
-    // });
+    chartPageDispatch({
+      type: ChartPageActionTypes.HANDLE_BREADCRUMBS_REGION_CHANGE,
+      hierarchicalName: hierarchicalName,
+    });
   };
 
   const chartSubPage: ChartSubPages = appState.subPage as ChartSubPages;
@@ -64,7 +64,7 @@ const ChartPageContainer: React.FC<ChartPageContainerProps> = (props) => {
 
   if (!!appState.casesDataObject) {
     return (
-      <ChartPage dataTree={appState.dataTree} region={region} casesDataObject={appState.casesDataObject} dailyCasesInformationDataObject={appState.dailyCasesInformationDataObject} weeklyCasesInformationDataObject={appState.weeklyCasesInformationDataObject} monthlyCasesInformationDataObject={appState.monthlyCasesInformationDataObject} yearlyCasesInformationDataObject={appState.yearlyCasesInformationDataObject} caseType={getCaseType(chartSubPage)} handleBreadCrumbsRegionChange={handleBreadcrumbsRegionChange}/>
+      <ChartPage dataTree={appState.dataTree} region={region} countryCode={chartPageState.countryCode} casesDataObject={appState.casesDataObject} dailyCasesInformationDataObject={appState.dailyCasesInformationDataObject} weeklyCasesInformationDataObject={appState.weeklyCasesInformationDataObject} monthlyCasesInformationDataObject={appState.monthlyCasesInformationDataObject} yearlyCasesInformationDataObject={appState.yearlyCasesInformationDataObject} caseType={getCaseType(chartSubPage)} handleBreadCrumbsRegionChange={handleBreadcrumbsRegionChange}/>
     );
   } else {
     return null;
