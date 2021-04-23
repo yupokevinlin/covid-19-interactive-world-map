@@ -145,7 +145,7 @@ const MenuItem: React.FC<MenuItemProps> = (props) => {
               anchorOrigin={{ vertical: "top", horizontal: "right" }}
               transformOrigin={{ vertical: "top", horizontal: "left" }}
             >
-              <MenuItemSideMenuHeader key={sideMenuHeaderKey} menuItem={menuItem} handleSideMenuHeaderClick={handleSideMenuHeaderClick}/>
+              <MenuItemSideMenuHeader key={sideMenuHeaderKey} keyString={sideMenuHeaderKey} menuItem={menuItem} handleSideMenuHeaderClick={handleSideMenuHeaderClick}/>
               {
                 menuItem.children.map((child, childIndex) => {
                   const sideMenuItemKey: string = `side-menu-item-${index}-child-${childIndex}`;

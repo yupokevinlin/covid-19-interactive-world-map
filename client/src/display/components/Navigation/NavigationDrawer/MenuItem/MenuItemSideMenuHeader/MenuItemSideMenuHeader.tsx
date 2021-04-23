@@ -9,7 +9,7 @@ import {Pages} from "../../../../../../state/global/App/types";
 export type MenuItemSideMenuHeaderProps = MenuItemSideMenuHeaderDataProps & MenuItemSideMenuHeaderStyleProps & MenuItemSideMenuHeaderEventProps;
 
 export interface MenuItemSideMenuHeaderDataProps {
-  key: string;
+  keyString: string;
   menuItem: NavigationDrawerMenuItem;
 }
 
@@ -27,7 +27,11 @@ const useStyles = makeStyles((theme: Theme) =>
       height: 26,
       minHeight: 26,
       padding: "3px 10px",
-    }
+    },
+    text: {
+      fontWeight: theme.typography.fontWeightBold,
+      color: theme.palette.text.primary
+    },
   }),
 );
 
@@ -35,7 +39,7 @@ const MenuItemSideMenuHeader: React.FC<MenuItemSideMenuHeaderProps> = (props) =>
   const classes = useStyles();
   const theme: Theme = useTheme();
   const {
-    key,
+    keyString,
     menuItem,
     handleSideMenuHeaderClick,
   } = props;
@@ -47,14 +51,14 @@ const MenuItemSideMenuHeader: React.FC<MenuItemSideMenuHeaderProps> = (props) =>
   };
 
   return (
-    <MenuItem onClick={onClick} key={key} className={classes.root} disabled={menuItem.disabled}>
-      <Typography variant={"h6"} style={{fontWeight: theme.typography.fontWeightBold, color: theme.palette.text.primary}}>
+    <MenuItem onClick={onClick} key={keyString} className={classes.root} disabled={menuItem.disabled}>
+      <Typography className={classes.text} variant={"h6"}>
         {
           menuItem.text
         }
       </Typography>
     </MenuItem>
-  )
+  );
 };
 
 export default MenuItemSideMenuHeader;
