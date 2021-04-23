@@ -703,6 +703,9 @@ export namespace CasesUtils {
                 population = populationData.PopTotal;
               }
             }
+            if (population === undefined) {
+              population = 0;
+            }
             if (population === 0) {
               console.log(`Unable to get population for country: ${country}, province: ${province}.`);
             }
