@@ -137,13 +137,15 @@ const DropDownButton: React.FC<DropDownButtonProps> = (props) => {
           horizontal: "left",
           vertical: "bottom",
         }}
+        getContentAnchorEl={null}
       >
         <DropDownButtonMenuItem name={name} getDisplayedName={getDisplayedName} handleSelect={handleMenuItemSelect}/>
         <Divider/>
         {
-          children.map((child) => (
-            <DropDownButtonMenuItem name={child} getDisplayedName={getDisplayedName} handleSelect={handleMenuItemSelect}/>
-          ))
+          children.map((child, index) => {
+            const dropDownButtonMenuItemKey: string = `dropDownButtonMenuItem${index}`;
+            return <DropDownButtonMenuItem key={dropDownButtonMenuItemKey} name={child} getDisplayedName={getDisplayedName} handleSelect={handleMenuItemSelect}/>
+          })
         }
       </Menu>
     </React.Fragment>

@@ -139,9 +139,12 @@ const BreadcrumbsControl: React.FC<BreadcrumbsControlProps> = (props) => {
     <div className={classes.root}>
       {
         treeItems.map((treeItem, index) => {
+          const typographyKey: string = `typography${index}`;
+          const dropDownButtonKey: string = `dropDownButton${index}`;
+          const navigateKey: string = `navigate${index}`;
           if (treeItem.children.length === 0) {
             return (
-              <Typography className={classes.text} variant={"button"}>
+              <Typography key={typographyKey} className={classes.text} variant={"button"}>
                 {
                   getDisplayedName(treeItem.hierarchicalName)
                 }
@@ -149,12 +152,12 @@ const BreadcrumbsControl: React.FC<BreadcrumbsControlProps> = (props) => {
             );
           } else {
             if (index === treeItems.length - 1) {
-              return <DropDownButton name={treeItem.hierarchicalName} children={treeItem.children.map((child) => child.hierarchicalName)} getDisplayedName={getDisplayedName} handleSelect={handleSelect}/>
+              return <DropDownButton key={dropDownButtonKey} name={treeItem.hierarchicalName} children={treeItem.children.map((child) => child.hierarchicalName)} getDisplayedName={getDisplayedName} handleSelect={handleSelect}/>
             } else {
               return (
-                <React.Fragment>
-                  <DropDownButton name={treeItem.hierarchicalName} children={treeItem.children.map((child) => child.hierarchicalName)} getDisplayedName={getDisplayedName} handleSelect={handleSelect}/>
-                  <MaterialIcon className={classes.icon} iconName={MaterialIconNames.NavigateNext}/>
+                <React.Fragment key={index}>
+                  <DropDownButton key={dropDownButtonKey} name={treeItem.hierarchicalName} children={treeItem.children.map((child) => child.hierarchicalName)} getDisplayedName={getDisplayedName} handleSelect={handleSelect}/>
+                  <MaterialIcon key={navigateKey} className={classes.icon} iconName={MaterialIconNames.NavigateNext}/>
                 </React.Fragment>
               );
             }
