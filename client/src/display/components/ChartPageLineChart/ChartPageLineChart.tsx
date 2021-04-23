@@ -182,9 +182,30 @@ const ChartPageLineChart: React.FC<ChartPageLineChartProps> = (props) => {
       svg.style("height", "100%")
         .style("width", "100%");
 
-      //Generate X Axis
+      //Generate X Scale
       const xScale = d3.scaleTime().domain([startDate, endDate]).range([marginLeft, detectedWidth - marginRight]);
       const xAxisSteps: number = isMd ? 1 : 3;
+
+      //Generate Y Scale
+      const yScale = d3.scaleLinear().domain([maxValue, minValue]).range([marginTop, detectedHeight - marginBottom]);
+      const yAxis = d3.axisLeft(yScale).tickFormat(d => abbreviateNumber(d as number, true));
+
+      //Generate X Axis Grid
+      const xGridAxis = d3.axisBottom(xScale).ticks(d3.timeMonth.every(xAxisSteps)).tickFormat(() => "").tickSize(-(detectedHeight - marginTop - marginBottom));
+      svg.append("g")
+        .attr("transform", `translate(0, ${detectedHeight - marginBottom})`)
+        .style("color", theme.palette.grey.A100)
+        .call(xGridAxis);
+
+      //Generate Y Axis Grid
+      const yGridAxis = d3.axisLeft(yScale).tickFormat(() => "").tickSize(-(detectedWidth - marginLeft - marginRight));
+      svg.append("g")
+        .attr("transform", `translate(${marginLeft}, 0)`)
+        .style("color", theme.palette.grey.A100)
+        .call(yGridAxis);
+
+      //Generate X Axis
+
       const xAxis = d3.axisBottom(xScale).ticks(d3.timeMonth.every(xAxisSteps));
       const xAxisElement = svg.append("g")
         .attr("transform", `translate(0, ${detectedHeight - marginBottom})`)
@@ -216,8 +237,6 @@ const ChartPageLineChart: React.FC<ChartPageLineChartProps> = (props) => {
           .attr("y", -(detectedHeight - marginBottom - marginTop) - (isMd ? 50 : 35));
 
       //Generate Y Axis
-      const yScale = d3.scaleLinear().domain([maxValue, minValue]).range([marginTop, detectedHeight - marginBottom]);
-      const yAxis = d3.axisLeft(yScale).tickFormat(d => abbreviateNumber(d as number, true));
       svg.append("g")
         .attr("transform", `translate(${marginLeft}, 0)`)
         .style("font-size", isMd ? "12px" : "10px")
