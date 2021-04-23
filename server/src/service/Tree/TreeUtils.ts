@@ -10,6 +10,7 @@ const mapLayer2: MapPolygonsObject = require("../../../../data/map/gadm/gadm36_2
 export namespace TreeUtils {
   export const data: TreeItem = {
     hierarchicalName: "World",
+    countryCode: "World",
     children: [],
   };
   export const getTreeData = (): void => {
@@ -19,6 +20,7 @@ export namespace TreeUtils {
       if (hasCasesData(casesData, layer.hierarchicalName)) {
         data.children.push({
           hierarchicalName: layer.hierarchicalName,
+          countryCode: layer.countryCode,
           children: [],
         });
       }
