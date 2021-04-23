@@ -10,9 +10,10 @@ import Typography from "@material-ui/core/Typography";
 export type MapDataTypeSelectProps = MapDataTypeSelectDataProps & MapDataTypeSelectStyleProps & MapDataTypeSelectEventProps;
 
 export interface MapDataTypeSelectDataProps {
-  label: string;
+  label?: string;
   data: Array<MapDataTypeSelectData>;
   initialValue: string;
+  menuDirection?: "up" | "down";
 }
 
 export interface MapDataTypeSelectStyleProps {
@@ -32,12 +33,7 @@ const useStyles = makeStyles((theme: Theme) =>
       alignItems: "center",
       justifyContent: "center",
       height: "100%",
-      [theme.breakpoints.up("xs")]: {
-        width: "130px",
-      },
-      [theme.breakpoints.up("md")]: {
-        width: "165px",
-      },
+      width: "100%",
     },
     labelWrapper: {
       display: "flex",
@@ -93,6 +89,7 @@ const MapDataTypeSelect: React.FC<MapDataTypeSelectProps> = (props) => {
     label,
     data,
     initialValue,
+    menuDirection = "up",
     handlePreloadClick,
     handleSelectionChange,
   } = props;
@@ -116,9 +113,13 @@ const MapDataTypeSelect: React.FC<MapDataTypeSelectProps> = (props) => {
 
   return (
     <div className={classes.root}>
-      <div className={classes.labelWrapper}>
-        <Typography className={classes.label} variant={"h5"}>{label}</Typography>
-      </div>
+      {
+        label ? (
+          <div className={classes.labelWrapper}>
+            <Typography className={classes.label} variant={"h5"}>{label}</Typography>
+          </div>
+        ) : null
+      }
       <Button className={classes.button} color={"primary"} variant={"contained"} onClick={handleClick}>
         {
           value
@@ -128,13 +129,19 @@ const MapDataTypeSelect: React.FC<MapDataTypeSelectProps> = (props) => {
         anchorEl={anchorElement}
         open={!!anchorElement}
         onClose={handleClose}
-        anchorOrigin={{
+        anchorOrigin={menuDirection === "up" ? {
           horizontal: "center",
           vertical: "top",
-        }}
-        transformOrigin={{
+        } : {
           horizontal: "center",
           vertical: "bottom",
+        }}
+        transformOrigin={menuDirection === "up" ? {
+          horizontal: "center",
+          vertical: "bottom",
+        } : {
+          horizontal: "center",
+          vertical: "top",
         }}
         keepMounted
       >
