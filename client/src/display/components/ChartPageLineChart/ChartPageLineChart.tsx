@@ -11,18 +11,26 @@ import getDateStringFromDate = DateUtils.getDateStringFromDate;
 import MaterialIcon, {MaterialIconNames} from "../MaterialIcon/MaterialIcon";
 import Typography from "@material-ui/core/Typography";
 import {findFlagUrlByIso3Code} from "country-flags-svg";
+import {CasesDataTypes} from "../../../state/global/App/types";
+import MapDataTypeSelect from "../MapDataTypeSelect/MapDataTypeSelect";
+import {MapDataTypeSelectData} from "../MapDataTypeSelect/types";
+import {CasesDataObject, CasesInformationDataObject} from "../../../../../shared/types/data/Cases/CasesTypes";
 
 export type ChartPageLineChartProps = ChartPageLineChartDataProps & ChartPageLineChartStyleProps & ChartPageLineChartEventProps;
 
 export interface ChartPageLineChartDataProps {
   chartData: ChartLineChartData;
+  casesDataType: CasesDataTypes;
+  casesDataObject: CasesDataObject;
+  dailyCasesInformationDataObject: CasesInformationDataObject;
 }
 
 export interface ChartPageLineChartStyleProps {
 }
 
 export interface ChartPageLineChartEventProps {
-
+  handleSelectionChange(value: string): void;
+  handlePreloadClick(value: string): void;
 }
 
 export interface ChartLineChartData {
@@ -47,14 +55,60 @@ const useStyles = makeStyles((theme: Theme) =>
       display: "flex",
       flexDirection: "column",
     },
+    buttonTitleWrapper: {
+      display: "flex",
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      width: "100%",
+      [theme.breakpoints.up("xs")]: {
+        height: "40px",
+      },
+      [theme.breakpoints.up("md")]: {
+        height: "60px",
+      },
+    },
+    typeSelectButtonLabelWrapper: {
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      width: "150px",
+      height: "100%",
+    },
+    typeSelectButtonWrapper: {
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      width: "100%",
+      [theme.breakpoints.up("xs")]: {
+        height: "20px",
+      },
+      [theme.breakpoints.up("md")]: {
+        height: "30px",
+      },
+    },
+    typeSelectButtonLabel: {
+      marginBottom: "5px",
+      [theme.breakpoints.up("xs")]: {
+        height: "10px",
+        fontSize: "10px",
+        lineHeight: "10px",
+      },
+      [theme.breakpoints.up("md")]: {
+        height: "12px",
+        fontSize: "12px",
+        lineHeight: "12px",
+      },
+    },
     title: {
       display: "flex",
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "center",
-      marginLeft: "200px",
-      marginRight: "200px",
-      width: "calc(100% - 400px)",
+      marginRight: "150px",
+      width: "calc(100% - 300px)",
       [theme.breakpoints.up("xs")]: {
         height: "40px",
       },
@@ -147,6 +201,11 @@ const ChartPageLineChart: React.FC<ChartPageLineChartProps> = (props) => {
 
   const {
     chartData,
+    casesDataObject,
+    casesDataType,
+    dailyCasesInformationDataObject,
+    handlePreloadClick,
+    handleSelectionChange,
   } = props;
 
   const {
@@ -385,23 +444,44 @@ const ChartPageLineChart: React.FC<ChartPageLineChartProps> = (props) => {
     renderChart();
   });
 
+  const casesDataTypeSelectControls: Array<MapDataTypeSelectData> = [
+    {
+      value: CasesDataTypes.Total,
+      text: CasesDataTypes.Total,
+      isLoaded: !!casesDataObject,
+    },
+    {
+      value: CasesDataTypes.Daily,
+      text: CasesDataTypes.Daily,
+      isLoaded: !!dailyCasesInformationDataObject,
+    },
+  ];
+
   return (
     <div className={classes.root}>
-      <div className={classes.title}>
-        {
-          countryCode === "World" ? (
-            <div className={classes.worldFlagWrapper}>
-              <MaterialIcon className={classes.worldFlagIcon} iconName={MaterialIconNames.Language}/>
-            </div>
-          ) : (
-            <img className={classes.flag} src={findFlagUrlByIso3Code(countryCode)}/>
-          )
-        }
-        <Typography className={classes.text} variant={"h5"}>
+      <div className={classes.buttonTitleWrapper}>
+        <div className={classes.typeSelectButtonLabelWrapper}>
+          <Typography className={classes.typeSelectButtonLabel} variant={"h5"}>Time Range</Typography>
+          <div className={classes.typeSelectButtonWrapper}>
+            <MapDataTypeSelect initialValue={CasesDataTypes.Total} data={casesDataTypeSelectControls} menuDirection={"down"} handleSelectionChange={handleSelectionChange} handlePreloadClick={handlePreloadClick}/>
+          </div>
+        </div>
+        <div className={classes.title}>
           {
-            title
+            countryCode === "World" ? (
+              <div className={classes.worldFlagWrapper}>
+                <MaterialIcon className={classes.worldFlagIcon} iconName={MaterialIconNames.Language}/>
+              </div>
+            ) : (
+              <img className={classes.flag} src={findFlagUrlByIso3Code(countryCode)}/>
+            )
           }
-        </Typography>
+          <Typography className={classes.text} variant={"h5"}>
+            {
+              title
+            }
+          </Typography>
+        </div>
       </div>
       <div className={classes.chartWrapper}>
         <div className={classes.chart} id={divId} ref={ref}/>

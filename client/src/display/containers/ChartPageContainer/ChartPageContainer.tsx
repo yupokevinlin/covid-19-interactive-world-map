@@ -1,12 +1,13 @@
 import React, {useEffect, useState} from "react";
 import ChartPage from "../../pages/ChartPage";
-import {AppState, CasesTypes, ChartSubPages} from "../../../state/global/App/types";
+import {AppActionTypes, AppState, CasesDataTypes, CasesTypes, ChartSubPages} from "../../../state/global/App/types";
 import {Store} from "../../../state/store";
 import {Dispatch} from "redux";
 import {AppAction} from "../../../state/global/App/actions";
 import {shallowEqual, useDispatch, useSelector} from "react-redux";
 import {ChartPageActionTypes, ChartPageState} from "../../../state/containers/ChartPageContainer/types";
 import {ChartPageAction} from "../../../state/containers/ChartPageContainer/actions";
+import ChartPageLineChart from "../../components/ChartPageLineChart/ChartPageLineChart";
 
 export type ChartPageContainerProps = ChartPageContainerDataProps & ChartPageContainerStyleProps & ChartPageContainerEventProps;
 
@@ -46,6 +47,14 @@ const ChartPageContainer: React.FC<ChartPageContainerProps> = (props) => {
     });
   };
 
+  const handlePreloadClick = (value: string): void => {
+    console.log(value);
+    appDispatch({
+      type: AppActionTypes.HANDLE_START_CASES_INFORMATION_DATA_OBJECT_LOAD,
+      casesDataType: value as CasesDataTypes,
+    })
+  };
+
   const chartSubPage: ChartSubPages = appState.subPage as ChartSubPages;
 
   const getCaseType = (chartSubPage: ChartSubPages): CasesTypes => {
@@ -64,7 +73,7 @@ const ChartPageContainer: React.FC<ChartPageContainerProps> = (props) => {
 
   if (!!appState.casesDataObject) {
     return (
-      <ChartPage dataTree={appState.dataTree} region={region} countryCode={chartPageState.countryCode} casesDataObject={appState.casesDataObject} dailyCasesInformationDataObject={appState.dailyCasesInformationDataObject} weeklyCasesInformationDataObject={appState.weeklyCasesInformationDataObject} monthlyCasesInformationDataObject={appState.monthlyCasesInformationDataObject} yearlyCasesInformationDataObject={appState.yearlyCasesInformationDataObject} caseType={getCaseType(chartSubPage)} handleBreadCrumbsRegionChange={handleBreadcrumbsRegionChange}/>
+      <ChartPage dataTree={appState.dataTree} region={region} countryCode={chartPageState.countryCode} casesDataObject={appState.casesDataObject} dailyCasesInformationDataObject={appState.dailyCasesInformationDataObject} weeklyCasesInformationDataObject={appState.weeklyCasesInformationDataObject} monthlyCasesInformationDataObject={appState.monthlyCasesInformationDataObject} yearlyCasesInformationDataObject={appState.yearlyCasesInformationDataObject} caseType={getCaseType(chartSubPage)} handleBreadCrumbsRegionChange={handleBreadcrumbsRegionChange} handlePreloadClick={handlePreloadClick}/>
     );
   } else {
     return null;

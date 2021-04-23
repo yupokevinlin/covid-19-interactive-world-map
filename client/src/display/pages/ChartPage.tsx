@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import {createStyles, Theme, useTheme} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
 import BreadcrumbsControl from "../components/BreadcrumbsControl/BreadcrumbsControl";
@@ -6,7 +6,7 @@ import {TreeItem} from "../../../../shared/types/data/Tree/TreeTypes";
 import ChartPageLineChart from "../components/ChartPageLineChart/ChartPageLineChart";
 import {CasesDataObject, CasesInformationDataObject} from "../../../../shared/types/data/Cases/CasesTypes";
 import {ChartUtils} from "../../helper/ChartUtils";
-import {CasesTypes} from "../../state/global/App/types";
+import {CasesDataTypes, CasesTypes} from "../../state/global/App/types";
 import getChartPageLineChartDataPropsFromCasesDataObject = ChartUtils.getChartPageLineChartDataPropsFromCasesDataObject;
 
 export type ChartPageProps = ChartPageDataProps & ChartPageStyleProps & ChartPageEventProps;
@@ -29,6 +29,7 @@ export interface ChartPageStyleProps {
 
 export interface ChartPageEventProps {
   handleBreadCrumbsRegionChange(hierarchicalName: string): void;
+  handlePreloadClick(value: string): void;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -68,15 +69,20 @@ const ChartPage: React.FC<ChartPageProps> = (props) => {
     countryCode,
     dailyCasesInformationDataObject,
     handleBreadCrumbsRegionChange,
+    handlePreloadClick,
   } = props;
 
+  const [casesDataType, setCasesDataType] = useState<CasesDataTypes>(CasesDataTypes.Total);
 
+  const handleCasesDataTypeChange = (value: string): void => {
+    setCasesDataType(value as CasesDataTypes);
+  };
 
   return (
     <div className={classes.root}>
       <BreadcrumbsControl dataTree={dataTree} handleChange={handleBreadCrumbsRegionChange} value={region}/>
       <div className={classes.lineChartWrapper}>
-        <ChartPageLineChart chartData={getChartPageLineChartDataPropsFromCasesDataObject(casesDataObject, region, caseType, countryCode)}/>
+        <ChartPageLineChart chartData={getChartPageLineChartDataPropsFromCasesDataObject(casesDataObject, region, caseType, countryCode)} casesDataType={casesDataType} casesDataObject={casesDataObject} dailyCasesInformationDataObject={dailyCasesInformationDataObject} handleSelectionChange={handleCasesDataTypeChange} handlePreloadClick={handlePreloadClick}/>
       </div>
     </div>
   );
