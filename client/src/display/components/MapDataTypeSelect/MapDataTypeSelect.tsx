@@ -143,6 +143,7 @@ const MapDataTypeSelect: React.FC<MapDataTypeSelectProps> = (props) => {
           horizontal: "center",
           vertical: "top",
         }}
+        getContentAnchorEl={null}
         keepMounted
       >
         {
