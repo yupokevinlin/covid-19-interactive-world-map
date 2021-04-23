@@ -8,6 +8,7 @@ import {CasesDataObject, CasesInformationDataObject} from "../../../../shared/ty
 import {ChartUtils} from "../../helper/ChartUtils";
 import {CasesDataTypes, CasesTypes} from "../../state/global/App/types";
 import getChartPageLineChartDataPropsFromCasesDataObject = ChartUtils.getChartPageLineChartDataPropsFromCasesDataObject;
+import getChartPageLineChartDataPropsFromDailyCasesInformationDataObject = ChartUtils.getChartPageLineChartDataPropsFromDailyCasesInformationDataObject;
 
 export type ChartPageProps = ChartPageDataProps & ChartPageStyleProps & ChartPageEventProps;
 
@@ -82,7 +83,7 @@ const ChartPage: React.FC<ChartPageProps> = (props) => {
     <div className={classes.root}>
       <BreadcrumbsControl dataTree={dataTree} handleChange={handleBreadCrumbsRegionChange} value={region}/>
       <div className={classes.lineChartWrapper}>
-        <ChartPageLineChart chartData={getChartPageLineChartDataPropsFromCasesDataObject(casesDataObject, region, caseType, countryCode)} casesDataType={casesDataType} casesDataObject={casesDataObject} dailyCasesInformationDataObject={dailyCasesInformationDataObject} handleSelectionChange={handleCasesDataTypeChange} handlePreloadClick={handlePreloadClick}/>
+        <ChartPageLineChart chartData={casesDataType === CasesDataTypes.Total ? getChartPageLineChartDataPropsFromCasesDataObject(casesDataObject, region, caseType, countryCode) : getChartPageLineChartDataPropsFromDailyCasesInformationDataObject(dailyCasesInformationDataObject, region, caseType, countryCode)} casesDataType={casesDataType} casesDataObject={casesDataObject} dailyCasesInformationDataObject={dailyCasesInformationDataObject} handleSelectionChange={handleCasesDataTypeChange} handlePreloadClick={handlePreloadClick}/>
       </div>
     </div>
   );
