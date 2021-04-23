@@ -76,7 +76,7 @@ const ChartPage: React.FC<ChartPageProps> = (props) => {
     <div className={classes.root}>
       <BreadcrumbsControl dataTree={dataTree} handleChange={handleBreadCrumbsRegionChange} value={region}/>
       <div className={classes.lineChartWrapper}>
-        <ChartPageLineChart {...getChartPageLineChartDataPropsFromCasesDataObject(casesDataObject, region, caseType, countryCode)}/>
+        <ChartPageLineChart chartData={getChartPageLineChartDataPropsFromCasesDataObject(casesDataObject, region, caseType, countryCode)}/>
       </div>
     </div>
   );

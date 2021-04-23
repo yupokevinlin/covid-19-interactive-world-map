@@ -15,6 +15,17 @@ import {findFlagUrlByIso3Code} from "country-flags-svg";
 export type ChartPageLineChartProps = ChartPageLineChartDataProps & ChartPageLineChartStyleProps & ChartPageLineChartEventProps;
 
 export interface ChartPageLineChartDataProps {
+  chartData: ChartLineChartData;
+}
+
+export interface ChartPageLineChartStyleProps {
+}
+
+export interface ChartPageLineChartEventProps {
+
+}
+
+export interface ChartLineChartData {
   minValue: number;
   maxValue: number;
   startDate: Date,
@@ -26,13 +37,6 @@ export interface ChartPageLineChartDataProps {
   yAxisTooltip: string;
   xAxisTooltip: string;
   countryCode: string;
-}
-
-export interface ChartPageLineChartStyleProps {
-}
-
-export interface ChartPageLineChartEventProps {
-
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -48,17 +52,14 @@ const useStyles = makeStyles((theme: Theme) =>
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "center",
+      marginLeft: "200px",
+      marginRight: "200px",
+      width: "calc(100% - 400px)",
       [theme.breakpoints.up("xs")]: {
-        marginLeft: "70px",
-        marginRight: "70px",
         height: "40px",
-        width: "calc(100% - 140px)",
       },
       [theme.breakpoints.up("md")]: {
-        marginLeft: "100px",
-        marginRight: "100px",
         height: "60px",
-        width: "calc(100% - 200px)",
       },
     },
     flag: {
@@ -145,6 +146,10 @@ const ChartPageLineChart: React.FC<ChartPageLineChartProps> = (props) => {
   const divId: string = "line-chart-div"
 
   const {
+    chartData,
+  } = props;
+
+  const {
     minValue,
     maxValue,
     startDate,
@@ -156,7 +161,7 @@ const ChartPageLineChart: React.FC<ChartPageLineChartProps> = (props) => {
     yAxisTooltip,
     xAxisTooltip,
     countryCode,
-  } = props;
+  } = chartData;
 
   const { width, height, ref } = useResizeDetector();
 
@@ -402,7 +407,6 @@ const ChartPageLineChart: React.FC<ChartPageLineChartProps> = (props) => {
         <div className={classes.chart} id={divId} ref={ref}/>
       </div>
     </div>
-
   );
 };
 

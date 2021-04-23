@@ -3,7 +3,9 @@ import {
   CasesDataObject,
   DailyCasesDataObject
 } from "../../../shared/types/data/Cases/CasesTypes";
-import {ChartPageLineChartDataProps} from "../display/components/ChartPageLineChart/ChartPageLineChart";
+import {
+  ChartLineChartData,
+} from "../display/components/ChartPageLineChart/ChartPageLineChart";
 import {ChartPageLineChartData} from "../display/components/ChartPageLineChart/types";
 import {CasesTypes} from "../state/global/App/types";
 import {DateUtils} from "./DateUtils";
@@ -11,9 +13,9 @@ import {getName} from "../../../shared/helpers/General";
 
 export namespace ChartUtils {
   import getDateFromDateString = DateUtils.getDateFromDateString;
-  export const getChartPageLineChartDataPropsFromCasesDataObject = (casesDataObject: CasesDataObject, hierarchicalName: string, caseType: CasesTypes, countryCode: string): ChartPageLineChartDataProps => {
+  export const getChartPageLineChartDataPropsFromCasesDataObject = (casesDataObject: CasesDataObject, hierarchicalName: string, caseType: CasesTypes, countryCode: string): ChartLineChartData => {
     const matchingCasesData: CasesData | null = casesDataObject[hierarchicalName];
-    const data: ChartPageLineChartDataProps = {
+    const data: ChartLineChartData = {
       maxValue: 0,
       minValue: 0,
       startDate: new Date(),
