@@ -1,18 +1,18 @@
 import React from "react";
 import MaterialIcon, {MaterialIconNames} from "../../../../MaterialIcon/MaterialIcon";
-import {SLPages, SLSubPages} from "../../../../../../../state/services/App/types";
 import MenuItem from "@material-ui/core/MenuItem";
 import Typography from "@material-ui/core/Typography";
 import {createStyles, makeStyles, Theme, useTheme} from "@material-ui/core/styles";
 import {ListItemIcon} from "@material-ui/core";
+import {Pages, SubPages} from "../../../../../../state/global/App/types";
 
 export type MenuItemSideMenuItemProps = MenuItemSideMenuItemDataProps & MenuItemSideMenuItemStyleProps & MenuItemSideMenuItemEventProps;
 
 export interface MenuItemSideMenuItemDataProps {
   keyString: string;
   iconName: MaterialIconNames;
-  parentText: SLPages;
-  text: SLSubPages;
+  parentText: Pages;
+  text: SubPages;
   disabled: boolean;
 }
 
@@ -21,7 +21,7 @@ export interface MenuItemSideMenuItemStyleProps {
 }
 
 export interface MenuItemSideMenuItemEventProps {
-  handleSideMenuItemClick(parentKey: SLPages, key: SLSubPages): void;
+  handleSideMenuItemClick(parentKey: Pages, key: SubPages): void;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
