@@ -1,13 +1,16 @@
 import {
   CasesData,
   CasesDataObject,
-  DailyCasesDataObject
+  CasesInformationDataObject, DailyCasesData,
+  DailyCasesDataObject,
+  DailyCasesInformationDataObject
 } from "../../../shared/types/data/Cases/CasesTypes";
 import {
+  ChartLineChartAverageData,
   ChartLineChartData,
 } from "../display/components/ChartPageLineChart/ChartPageLineChart";
-import {ChartPageLineChartData} from "../display/components/ChartPageLineChart/types";
-import {CasesTypes} from "../state/global/App/types";
+import {ChartPageLineChartAverageData, ChartPageLineChartData} from "../display/components/ChartPageLineChart/types";
+import {CasesDataTypes, CasesTypes} from "../state/global/App/types";
 import {DateUtils} from "./DateUtils";
 import {getName} from "../../../shared/helpers/General";
 
@@ -102,6 +105,112 @@ export namespace ChartUtils {
         xAxisLabel: "Date",
         yAxisTooltip: yTooltip,
         xAxisTooltip: "Date",
+        countryCode: countryCode,
+      }
+    }
+  };
+  export const getChartPageLineChartDataPropsFromDailyCasesInformationDataObject = (casesInformationDataObject: CasesInformationDataObject, hierarchicalName: string, caseType: CasesTypes, countryCode: string): ChartLineChartAverageData => {
+    const matchingCasesInformationData: DailyCasesInformationDataObject | null = casesInformationDataObject[hierarchicalName];
+    const data: ChartLineChartAverageData = {
+      maxValue: 0,
+      minValue: 0,
+      startDate: new Date(),
+      endDate: new Date(),
+      data: [],
+      title: "",
+      yAxisLabel: "",
+      xAxisLabel: "",
+      yAxisTooltip: "",
+      xAxisTooltip: "",
+      yAxisAverageTooltip: "",
+      countryCode: "",
+    };
+    if (!matchingCasesInformationData) {
+      return data;
+    } else {
+      const matchingDailyCasesInformationData: DailyCasesInformationDataObject = matchingCasesInformationData;
+
+      let maxValue: number = 0;
+      let minValue: number = 0;
+      let startDateString: string = "";
+      let endDateString: string = "";
+      const chartData: Array<ChartPageLineChartAverageData> = Object.entries(matchingDailyCasesInformationData).map(([dateString, dailyCasesInformationData], index) => {
+        let number: number = 0;
+        let average: number = 0;
+        switch (caseType) {
+          case CasesTypes.CASES: {
+            number = dailyCasesInformationData.cases;
+            average = dailyCasesInformationData.weeklyCasesAverage;
+            break;
+          }
+          case CasesTypes.DEATHS: {
+            number = dailyCasesInformationData.deaths;
+            average = dailyCasesInformationData.weeklyDeathsAverage;
+            break;
+          }
+          case CasesTypes.RECOVERIES: {
+            number = dailyCasesInformationData.recoveries;
+            average = dailyCasesInformationData.weeklyRecoveriesAverage;
+            break;
+          }
+        }
+        if (index === 0) {
+          startDateString = dateString;
+        } else if (index === Object.keys(matchingDailyCasesInformationData).length - 1) {
+          endDateString = dateString;
+        }
+        maxValue = Math.max(maxValue, number);
+        minValue = Math.min(minValue, number);
+        return {
+          value: number,
+          average: average,
+          date: getDateFromDateString(dateString),
+        }
+      });
+
+      const startDate: Date = getDateFromDateString(startDateString);
+      const endDate: Date = getDateFromDateString(endDateString);
+
+      let yLabel: string = "";
+      let yTooltip: string = "";
+      let yAxisAverageTooltip: string = "";
+
+      switch (caseType) {
+        case CasesTypes.CASES: {
+          yLabel = "Daily Cases";
+          yTooltip = "Cases";
+          yAxisAverageTooltip = "Week Avg."
+          break;
+        }
+        case CasesTypes.DEATHS: {
+          yLabel = "Daily Deaths";
+          yTooltip = "Deaths";
+          yAxisAverageTooltip = "Week Avg."
+          break;
+        }
+        case CasesTypes.RECOVERIES: {
+          yLabel = "Daily Recoveries";
+          yTooltip = "Recoveries";
+          yAxisAverageTooltip = "Week Avg."
+          break;
+        }
+      }
+
+      const name: string = getName(hierarchicalName);
+      const title: string = `${name} - ${yLabel}`;
+
+      return {
+        startDate: startDate,
+        endDate: endDate,
+        maxValue: maxValue,
+        minValue: minValue,
+        data: chartData,
+        title: title,
+        yAxisLabel: yLabel,
+        xAxisLabel: "Date",
+        yAxisTooltip: yTooltip,
+        xAxisTooltip: "Date",
+        yAxisAverageTooltip: yAxisAverageTooltip,
         countryCode: countryCode,
       }
     }
