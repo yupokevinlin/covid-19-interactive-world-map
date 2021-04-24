@@ -179,19 +179,19 @@ export namespace ChartUtils {
         case CasesTypes.CASES: {
           yLabel = "Daily Cases";
           yTooltip = "Cases";
-          yAxisAverageTooltip = "Week Avg."
+          yAxisAverageTooltip = "7 Day Avg."
           break;
         }
         case CasesTypes.DEATHS: {
           yLabel = "Daily Deaths";
           yTooltip = "Deaths";
-          yAxisAverageTooltip = "Week Avg."
+          yAxisAverageTooltip = "7 Day Avg."
           break;
         }
         case CasesTypes.RECOVERIES: {
           yLabel = "Daily Recoveries";
           yTooltip = "Recoveries";
-          yAxisAverageTooltip = "Week Avg."
+          yAxisAverageTooltip = "7 Day Avg."
           break;
         }
       }
