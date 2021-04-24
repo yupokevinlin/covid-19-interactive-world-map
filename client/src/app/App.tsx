@@ -1,31 +1,56 @@
 import React from "react";
-import { Provider } from "react-redux";
-import { configureStore } from "../state/store";
-import styled from "styled-components";
+import {createStyles, Theme, useTheme} from "@material-ui/core";
+import {Provider} from "react-redux";
+import {configureStore} from "../state/store";
+import {makeStyles} from "@material-ui/core/styles";
 import NavigationContainer from "../display/containers/NavigationContainer/NavigationContainer";
 
-export interface AppProps {}
+export type AppProps = AppDataProps & AppStyleProps & AppEventProps;
 
-const StyledApp = styled.div`
-  height: 100%;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  flex-wrap: nowrap;
-`;
+export interface AppDataProps {
+
+}
+
+export interface AppStyleProps {
+
+}
+
+export interface AppEventProps {
+
+}
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    app: {
+      height: "100%",
+      width: "100%",
+      display: "flex",
+      flexDirection: "column",
+      flexWrap: "nowrap",
+    },
+  }),
+);
 
 export namespace AppStore {
   export const store = configureStore();
 }
 
-const App: React.FC<AppProps> = props => {
+const App: React.FC<AppProps> = (props) => {
+  const theme: Theme = useTheme();
+  const classes = useStyles();
+
+  const {
+
+  } = props;
+
   return (
     <Provider store={AppStore.store}>
-      <StyledApp className={"app"}>
+      <div className={classes.app}>
         <NavigationContainer/>
-      </StyledApp>
+      </div>
     </Provider>
   );
 };
 
 export default App;
+
