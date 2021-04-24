@@ -72,7 +72,7 @@ module.exports = {
   devServer: {
     contentBase: path.join(__dirname, buildDirectory),
     compress: true,
-    port: 80
+    port: 9000
   },
   resolve: {
     extensions: [".js", ".jsx", ".ts", ".tsx"]
