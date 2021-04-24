@@ -17,6 +17,10 @@ function * initSaga(action: ChartPageInitAction): any {
     initComplete: true,
   });
   yield put({
+    type: ChartPageActionTypes.SET_COUNTRY_CODE,
+    countryCode: "World",
+  });
+  yield put({
     type: AppActionTypes.SET_IS_LOADING,
     displayLoadingBar: false,
     displayLoadingPage: false,
