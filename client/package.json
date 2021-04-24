@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest",
     "coverage": "jest --coverage",
-    "build": "webpack --config webpack.prod.config.js",
+    "prod": "webpack --config webpack.prod.config.js",
     "start": "webpack-dev-server --config webpack.dev.config.js"
   },
   "author": "Kevin Lin",
