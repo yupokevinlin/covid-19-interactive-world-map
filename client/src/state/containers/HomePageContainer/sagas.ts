@@ -33,6 +33,12 @@ function * initSaga(action: HomePageInitAction): any {
     type: HomePageActionTypes.SET_INIT_COMPLETE,
     initComplete: true,
   });
+
+  yield put({
+    type: AppActionTypes.SET_IS_LOADING,
+    displayLoadingBar: false,
+    displayLoadingPage: false,
+  });
 }
 
 function getAppStateSelector(store: Store): AppState {
