@@ -302,9 +302,6 @@ function * goToPageSaga(action: AppGoToPageAction): any {
       displayLoadingBar: true,
       displayLoadingPage: true,
     });
-    if (action.page === Pages.MAP) {
-      destroyESRIMap();
-    }
     redirect(redirectURL, action.history);
     if (isRootPage) {
       yield put({
@@ -354,7 +351,7 @@ const redirect = (url: PageURLs, history: History): void => {
   history.push(url);
 };
 
-const getDefaultSubPage = (page: Pages): SubPages => {
+export const getDefaultSubPage = (page: Pages): SubPages => {
   let newSubPage: SubPages = null;
   switch (page) {
     case Pages.HOME: {
@@ -373,7 +370,7 @@ const getDefaultSubPage = (page: Pages): SubPages => {
   return newSubPage;
 };
 
-const getPageColorTheme = (page: Pages, theme: Theme): Theme => {
+export const getPageColorTheme = (page: Pages, theme: Theme): Theme => {
   switch (page) {
     case Pages.HOME: {
       return {
@@ -434,7 +431,7 @@ const getPageColorTheme = (page: Pages, theme: Theme): Theme => {
   }
 };
 
-const getUpdatedMenuItems = (page: Pages, subPage: SubPages, menuItems: Array<NavigationDrawerMenuItem>): Array<NavigationDrawerMenuItem> => {
+export const getUpdatedMenuItems = (page: Pages, subPage: SubPages, menuItems: Array<NavigationDrawerMenuItem>): Array<NavigationDrawerMenuItem> => {
   return menuItems.map((menuItem) => {
     if (menuItem.text === page) {
       if (subPage === null) {

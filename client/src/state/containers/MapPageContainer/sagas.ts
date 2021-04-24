@@ -11,8 +11,11 @@ import {CasesData, CasesDataObject, DailyCasesDataObject} from "../../../../../s
 import {ESRIMapPolygon} from "../../../display/components/ESRIMap/types";
 import {getSequentialHierarchicalNames, getTreeItem} from "../../../../../shared/helpers/General";
 import {Store} from "../../store";
-import {AppActionTypes, AppState} from "../../global/App/types";
+import {AppActionTypes, AppState, Pages, SubPages} from "../../global/App/types";
 import {TreeItem} from "../../../../../shared/types/data/Tree/TreeTypes";
+import {destroyESRIMap} from "../../../display/components/ESRIMap/ESRIMap";
+import {getDefaultSubPage, getPageColorTheme, getUpdatedMenuItems} from "../../global/App/sagas";
+import {NavigationDrawerMenuItem} from "../../../display/components/Navigation/NavigationDrawer/NavigationDrawer";
 
 export const mapPageSagas = {
   initSaga: takeEvery(MapPageActionTypes.INIT, initSaga),
@@ -21,11 +24,27 @@ export const mapPageSagas = {
 };
 
 function * initSaga(action: MapPageInitAction): any {
+  const appState: AppState = yield select(getAppStateSelector);
   yield put({
     type: MapPageActionTypes.SET_MAP_POLYGONS,
     mapPolygons: [],
   });
-  const appState: AppState = yield select(getAppStateSelector);
+  destroyESRIMap();
+  const defaultSubPage: SubPages = getDefaultSubPage(Pages.MAP);
+  yield put({
+    type: AppActionTypes.SET_PAGE,
+    page: Pages.MAP,
+    subPage: defaultSubPage,
+  });
+  yield put({
+    type: AppActionTypes.SET_THEME,
+    theme: getPageColorTheme(Pages.MAP, appState.theme),
+  });
+  const newMenuItems: Array<NavigationDrawerMenuItem> = getUpdatedMenuItems(Pages.MAP, defaultSubPage, appState.menuItems);
+  yield put({
+    type: AppActionTypes.SET_MENU_ITEMS,
+    menuItems: newMenuItems,
+  });
   const casesDataObject: CasesDataObject = appState.casesDataObject;
   const layer0MapPolygons: Array<MapPolygon> = yield call(MapApi.getMapLayer0Data);
   const hierarchicalNames: Array<string> = layer0MapPolygons.map((mapPolygon) => mapPolygon.hierarchicalName);
