@@ -166,16 +166,16 @@ const MapPage: React.FC<MapPageProps> = (props) => {
       text: CasesDataTypes.Weekly,
       isLoaded: !!weeklyCasesInformationDataObject,
     },
-    {
-      value: CasesDataTypes.Monthly,
-      text: CasesDataTypes.Monthly,
-      isLoaded: !!monthlyCasesInformationDataObject,
-    },
-    {
-      value: CasesDataTypes.Yearly,
-      text: CasesDataTypes.Yearly,
-      isLoaded: !!yearlyCasesInformationDataObject,
-    },
+    // {
+    //   value: CasesDataTypes.Monthly,
+    //   text: CasesDataTypes.Monthly,
+    //   isLoaded: !!monthlyCasesInformationDataObject,
+    // },
+    // {
+    //   value: CasesDataTypes.Yearly,
+    //   text: CasesDataTypes.Yearly,
+    //   isLoaded: !!yearlyCasesInformationDataObject,
+    // },
     {
       value: CasesDataTypes.Total,
       text: CasesDataTypes.Total,

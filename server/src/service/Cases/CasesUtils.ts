@@ -1134,18 +1134,18 @@ export namespace CasesUtils {
 
               const dailyCases: number = getPastDataSum(daily, date, "totalCases", casesData.data);
               const weeklyCases: number = getPastDataSum(weekly, date, "totalCases", casesData.data);
-              const monthlyCases: number = getPastDataSum(monthly, date, "totalCases", casesData.data);
-              const yearlyCases: number = getPastDataSum(yearly, date, "totalCases", casesData.data);
+              // const monthlyCases: number = getPastDataSum(monthly, date, "totalCases", casesData.data);
+              // const yearlyCases: number = getPastDataSum(yearly, date, "totalCases", casesData.data);
 
               const dailyRecoveries: number = getPastDataSum(daily, date, "totalRecoveries", casesData.data);
               const weeklyRecoveries: number = getPastDataSum(weekly, date, "totalRecoveries", casesData.data);
-              const monthlyRecoveries: number = getPastDataSum(monthly, date, "totalRecoveries", casesData.data);
-              const yearlyRecoveries: number = getPastDataSum(yearly, date, "totalRecoveries", casesData.data);
+              // const monthlyRecoveries: number = getPastDataSum(monthly, date, "totalRecoveries", casesData.data);
+              // const yearlyRecoveries: number = getPastDataSum(yearly, date, "totalRecoveries", casesData.data);
 
               const dailyDeaths: number = getPastDataSum(daily, date, "totalDeaths", casesData.data);
               const weeklyDeaths: number = getPastDataSum(weekly, date, "totalDeaths", casesData.data);
-              const monthlyDeaths: number = getPastDataSum(monthly, date, "totalDeaths", casesData.data);
-              const yearlyDeaths: number = getPastDataSum(yearly, date, "totalDeaths", casesData.data);
+              // const monthlyDeaths: number = getPastDataSum(monthly, date, "totalDeaths", casesData.data);
+              // const yearlyDeaths: number = getPastDataSum(yearly, date, "totalDeaths", casesData.data);
 
 
               dailyDailyCasesInformationDataObject[date] = {
@@ -1158,16 +1158,16 @@ export namespace CasesUtils {
                 recoveries: weeklyRecoveries,
                 deaths: weeklyDeaths,
               }
-              monthlyDailyCasesInformationDataObject[date] = {
-                cases: monthlyCases,
-                recoveries: monthlyRecoveries,
-                deaths: monthlyDeaths,
-              }
-              yearlyDailyCasesInformationDataObject[date] = {
-                cases: yearlyCases,
-                recoveries: yearlyRecoveries,
-                deaths: yearlyDeaths,
-              }
+              // monthlyDailyCasesInformationDataObject[date] = {
+              //   cases: monthlyCases,
+              //   recoveries: monthlyRecoveries,
+              //   deaths: monthlyDeaths,
+              // }
+              // yearlyDailyCasesInformationDataObject[date] = {
+              //   cases: yearlyCases,
+              //   recoveries: yearlyRecoveries,
+              //   deaths: yearlyDeaths,
+              // }
             });
 
             Object.entries(dailyDailyCasesInformationDataObject).forEach(([date, dailyDailyCasesInformationData], index) => {
@@ -1184,8 +1184,8 @@ export namespace CasesUtils {
             });
             dailyInfoData[hierarchicalName] = dailyDailyCasesInformationDataObject;
             weeklyInfoData[hierarchicalName] = weeklyDailyCasesInformationDataObject;
-            monthlyInfoData[hierarchicalName] = monthlyDailyCasesInformationDataObject;
-            yearlyInfoData[hierarchicalName] = yearlyDailyCasesInformationDataObject;
+            // monthlyInfoData[hierarchicalName] = monthlyDailyCasesInformationDataObject;
+            // yearlyInfoData[hierarchicalName] = yearlyDailyCasesInformationDataObject;
           }
         });
       };
@@ -1333,7 +1333,7 @@ export namespace CasesUtils {
       sortData();
       fixUSData();
       generateWorldData();
-      // generateCasesInformationData();
+      generateCasesInformationData();
 
       return true;
     } catch (e) {
