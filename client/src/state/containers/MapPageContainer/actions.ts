@@ -1,5 +1,5 @@
 import {MapPageActionTypes} from "./types";
-import { ESRIMapPolygon } from "src/display/components/ESRIMap/types";
+import {ESRIMapPolygon} from "../../../display/components/ESRIMap/types";
 
 export type MapPageAction = MapPageInitAction
 | MapPageSetMapPolygonsAction
