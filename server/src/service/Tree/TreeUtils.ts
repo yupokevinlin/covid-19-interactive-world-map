@@ -8,7 +8,7 @@ const mapLayer1: MapPolygonsObject = require("../../../../data/map/gadm/gadm36_1
 const mapLayer2: MapPolygonsObject = require("../../../../data/map/gadm/gadm36_2_processed_object.json");
 
 export namespace TreeUtils {
-  export const data: TreeItem = {
+  export let data: TreeItem = {
     hierarchicalName: "World",
     countryCode: "World",
     children: [],
