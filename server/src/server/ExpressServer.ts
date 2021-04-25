@@ -11,6 +11,7 @@ import {CasesEndpoints} from "../service/Cases/CasesEndpoints";
 import {MapUtils} from "../service/Map/MapUtils";
 import {TreeUtils} from "../service/Tree/TreeUtils";
 import {TreeEndpoints} from "../service/Tree/TreeEndpoints";
+import {UpdateUtils} from "../service/Update/UpdateUtils";
 
 export class ExpressServer {
   private server?: Express;
@@ -27,6 +28,7 @@ export class ExpressServer {
     // MapUtils.convertMapData();
     await CasesUtils.fetchCasesData();
     TreeUtils.getTreeData();
+    UpdateUtils.setupUpdate();
     return this.server;
   }
 
