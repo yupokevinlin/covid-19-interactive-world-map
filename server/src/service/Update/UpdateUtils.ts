@@ -7,6 +7,7 @@ export namespace UpdateUtils {
   export let lastUpdate: string = moment().format("M/D/YY");
 
   export const setupUpdate = () => {
+    console.log("Setting up update timer...");
     setInterval(() => {
       const lastUpdateMomentDate = moment(lastUpdate, "M/D/YY").startOf("day");
       const currentMomentDate = moment();
