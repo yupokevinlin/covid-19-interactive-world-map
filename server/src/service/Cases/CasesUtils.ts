@@ -1124,6 +1124,7 @@ export namespace CasesUtils {
         console.log("Generating extra cases information...");
         Object.entries(data).forEach(([hierarchicalName, casesData]) => {
           if (!casesData.isMissingData) {
+            console.log(`Generating extra cases info for: ${hierarchicalName}`);
             const dailyDailyCasesInformationDataObject: DailyCasesInformationDataObject = {};
             const weeklyDailyCasesInformationDataObject: DailyCasesInformationDataObject = {};
             const monthlyDailyCasesInformationDataObject: DailyCasesInformationDataObject = {};
