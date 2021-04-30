@@ -52,43 +52,22 @@ const ContentWrapper: React.FC<ContentWrapperProps> = (props) => {
     displayLoadingBar,
   } = props;
 
-  if (displayLoadingPage) {
-    return (
-      <React.Fragment>
-        <main className={classes.content}>
-          {
-            props.children
-          }
-        </main>
+  return (
+    <React.Fragment>
+      <main className={classes.content}>
         {
-          <LoadingPage width={width}/>
+          props.children
         }
-      </React.Fragment>
-    );
-  } else {
-    if (displayLoadingBar) {
-      return (
-        <React.Fragment>
-          <main className={classes.content}>
-            {
-              props.children
-            }
-          </main>
-          {
-            <LoadingPageTransparent displayLoadingBar={displayLoadingBar}/>
-          }
-        </React.Fragment>
-      );
-    } else {
-      return (
-        <main className={classes.content}>
-          {
-            props.children
-          }
-        </main>
-      );
-    }
-  }
+      </main>
+      {
+        displayLoadingPage ? (
+          <LoadingPage width={width}/>
+        ) : (
+          <LoadingPageTransparent displayLoadingBar={displayLoadingBar}/>
+        )
+      }
+    </React.Fragment>
+  );
 };
 
 export default ContentWrapper;
