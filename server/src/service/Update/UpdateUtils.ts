@@ -36,6 +36,7 @@ export namespace UpdateUtils {
 
       await CasesUtils.fetchCasesData();
       TreeUtils.getTreeData();
+      CasesUtils.getSummaryData();
 
       lastUpdate = moment().format("M/D/YY");
       console.log(`Update Successful. Time: ${moment().format("MMMM Do YYYY, h:mm:ss a")}.`);
