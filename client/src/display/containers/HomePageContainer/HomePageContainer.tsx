@@ -36,8 +36,8 @@ const HomePageContainer: React.FC<HomePageContainerProps> = (props) => {
   }, []);
 
   return (
-    <HomePage/>
-  )
+    <HomePage summaryData={homePageState.summaryData}/>
+  );
 };
 
 export default HomePageContainer;
