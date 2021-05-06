@@ -1,7 +1,16 @@
-import {CasesData, CasesDataObject, CasesInformationDataObject} from "../../../../shared/types/data/Cases/CasesTypes";
+import {
+  CasesData,
+  CasesDataObject,
+  CasesInformationDataObject,
+  CurrentCasesSummary
+} from "../../../../shared/types/data/Cases/CasesTypes";
 import {CasesUtils} from "./CasesUtils";
 
 export namespace CasesService {
+  export const getSummary = (): CurrentCasesSummary | null => {
+    return CasesUtils.summaryData;
+  };
+
   export const getCasesDataByHierarchicalName = (hierarchicalName: string): CasesData | undefined => {
     return CasesUtils.data[hierarchicalName];
   };

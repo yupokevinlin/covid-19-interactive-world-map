@@ -27,6 +27,7 @@ export class ExpressServer {
     this.addEndPoints(server);
     // MapUtils.convertMapData();
     await CasesUtils.fetchCasesData();
+    CasesUtils.getSummaryData();
     TreeUtils.getTreeData();
     UpdateUtils.setupUpdate();
     return this.server;
@@ -60,6 +61,7 @@ export class ExpressServer {
     server.get("/api/map/layer0", MapEndPoints.getMayLayer0Polygons);
     server.get("/api/map/layer1/:hierarchicalName", MapEndPoints.getMayLayer1Polygons);
     server.get("/api/map/layer2/:hierarchicalName", MapEndPoints.getMayLayer2Polygons);
+    server.get("/api/cases/summary", CasesEndpoints.getSummary);
     server.get("/api/cases/single/:hierarchicalName", CasesEndpoints.getCasesDataByHierarchicalName);
     server.post("/api/cases/multiple", CasesEndpoints.getCasesDataByHierarchicalNames);
     server.get("/api/cases/all", CasesEndpoints.getAllCasesData);
