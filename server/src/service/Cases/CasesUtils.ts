@@ -2,11 +2,11 @@
 import {Moment} from "moment";
 import {
   CasesData,
-  CasesDataObject, CasesInformationDataObject, DailyCasesData,
-  DailyCasesDataObject, DailyCasesInformationData, DailyCasesInformationDataObject
+  CasesDataObject, CasesInformationDataObject, CasesSummary, CasesSummaryData, CurrentCasesSummary, DailyCasesData,
+  DailyCasesDataObject, DailyCasesInformationData, DailyCasesInformationDataObject, WorldSummary
 } from "../../../../shared/types/data/Cases/CasesTypes";
 import {MapPolygon, MapPolygonsObject} from "../../../../shared/types/data/Map/MapTypes";
-import {getHierarchicalName, getNameArray} from "../../../../shared/helpers/General";
+import {getHierarchicalName, getName, getNameArray} from "../../../../shared/helpers/General";
 import {PopulationData, PopulationObject} from "../../../../data/population/type";
 
 const csv = require("csv-string");
@@ -24,6 +24,7 @@ export namespace CasesUtils {
   export let weeklyInfoData: CasesInformationDataObject = {};
   export let monthlyInfoData: CasesInformationDataObject = {};
   export let yearlyInfoData: CasesInformationDataObject = {};
+  export let summaryData: CurrentCasesSummary | null = null;
   export const fetchCasesData = async (): Promise<boolean> => {
     try {
       data = {};
@@ -1403,5 +1404,178 @@ export namespace CasesUtils {
       }
     }
     return Math.floor(sum / days);
+  };
+
+  export const getSummaryData = (): void => {
+    const worldData: CasesData = data["World"];
+    const worldDailyData: DailyCasesDataObject = worldData.data;
+    const dateKeys: Array<string> = Object.keys(worldDailyData);
+    const currentDateString: string = dateKeys[dateKeys.length - 1];
+    const worldSummary: WorldSummary = getWorldSummary(currentDateString);
+    const countriesSummary: CasesSummary = getCountriesSummary(currentDateString);
+    summaryData = {
+      currentDate: currentDateString,
+      world: worldSummary,
+      countries: countriesSummary,
+    };
+  };
+
+  export const getWorldSummary = (currentDateString: string): WorldSummary => {
+    const worldDailyInfoData: DailyCasesInformationDataObject = dailyInfoData["World"];
+    const lastDayString: string = getOffsetDateString(currentDateString, -1);
+    const lastWeekString: string = getOffsetDateString(currentDateString, -7);
+    const lastMonthString: string = getOffsetDateString(currentDateString, -30);
+    const lastYearString: string = getOffsetDateString(currentDateString, -365);
+    const currentCases: number = worldDailyInfoData[currentDateString].cases;
+    const currentDeaths: number = worldDailyInfoData[currentDateString].deaths;
+    const lastDayCases: number = worldDailyInfoData[lastDayString].cases;
+    const lastDayDeaths: number = worldDailyInfoData[lastDayString].deaths;
+    const lastWeekCases: number = worldDailyInfoData[lastWeekString].cases;
+    const lastWeekDeaths: number = worldDailyInfoData[lastWeekString].deaths;
+    const lastMonthCases: number = worldDailyInfoData[lastMonthString].cases;
+    const lastMonthDeaths: number = worldDailyInfoData[lastMonthString].deaths;
+    const lastYearCases: number = worldDailyInfoData[lastYearString].cases;
+    const lastYearDeaths: number = worldDailyInfoData[lastYearString].deaths;
+    const lastDayCasesChange: number = getChangeAmount(lastDayCases, currentCases);
+    const lastDayDeathsChange: number = getChangeAmount(lastDayDeaths, currentDeaths);
+    const lastWeekCasesChange: number = getChangeAmount(lastWeekCases, currentCases);
+    const lastWeekDeathsChange: number = getChangeAmount(lastWeekDeaths, currentDeaths);
+    const lastMonthCasesChange: number = getChangeAmount(lastMonthCases, currentCases);
+    const lastMonthDeathsChange: number = getChangeAmount(lastMonthDeaths, currentDeaths);
+    const lastYearCasesChange: number = getChangeAmount(lastYearCases, currentCases);
+    const lastYearDeathsChange: number = getChangeAmount(lastYearDeaths, currentDeaths);
+    const lastDayCasesChangePercent: number = getChangePercent(lastDayCases, currentCases);
+    const lastDayDeathsChangePercent: number = getChangePercent(lastDayDeaths, currentDeaths);
+    const lastWeekCasesChangePercent: number = getChangePercent(lastWeekCases, currentCases);
+    const lastWeekDeathsChangePercent: number = getChangePercent(lastWeekDeaths, currentDeaths);
+    const lastMonthCasesChangePercent: number = getChangePercent(lastMonthCases, currentCases);
+    const lastMonthDeathsChangePercent: number = getChangePercent(lastMonthDeaths, currentDeaths);
+    const lastYearCasesChangePercent: number = getChangePercent(lastYearCases, currentCases);
+    const lastYearDeathsChangePercent: number = getChangePercent(lastYearDeaths, currentDeaths);
+    return {
+      daily: {
+        cases: lastDayCases,
+        deaths: lastDayDeaths,
+        casesChange: lastDayCasesChange,
+        deathsChange: lastDayDeathsChange,
+        casesChangePercentage: lastDayCasesChangePercent,
+        deathsChangePercentage: lastDayDeathsChangePercent,
+      },
+      weekly: {
+        cases: lastWeekCases,
+        deaths: lastWeekDeaths,
+        casesChange: lastWeekCasesChange,
+        deathsChange: lastWeekDeathsChange,
+        casesChangePercentage: lastWeekCasesChangePercent,
+        deathsChangePercentage: lastWeekDeathsChangePercent,
+      },
+      monthly: {
+        cases: lastMonthCases,
+        deaths: lastMonthDeaths,
+        casesChange: lastMonthCasesChange,
+        deathsChange: lastMonthDeathsChange,
+        casesChangePercentage: lastMonthCasesChangePercent,
+        deathsChangePercentage: lastMonthDeathsChangePercent,
+      },
+      yearly: {
+        cases: lastYearCases,
+        deaths: lastYearDeaths,
+        casesChange: lastYearCasesChange,
+        deathsChange: lastYearDeathsChange,
+        casesChangePercentage: lastYearCasesChangePercent,
+        deathsChangePercentage: lastYearDeathsChangePercent,
+      },
+    };
+  };
+
+  export const getCountriesSummary = (currentDateString: string): CasesSummary => {
+    const countriesData: Array<CasesData> = Object.entries(data)
+    .filter(([hierarchicalName, casesData]) => {
+      const name: Array<string> = getNameArray(hierarchicalName);
+      return name.length === 2;
+    }).map(([hierarchicalName, casesData]) => casesData);
+
+    const casesChange: Array<CasesSummaryData> = [];
+    const deathsChange: Array<CasesSummaryData> = [];
+    const lastDayString: string = getOffsetDateString(currentDateString, -1);
+
+    countriesData.forEach((countryData) => {
+      const infoData: DailyCasesInformationDataObject = dailyInfoData[countryData.hierarchicalName];
+      if (!!infoData) {
+        const currentCases: number = infoData[currentDateString].cases;
+        const currentDeaths: number = infoData[currentDateString].deaths;
+        const lastDayCases: number = infoData[lastDayString].cases;
+        const lastDayDeaths: number = infoData[lastDayString].deaths;
+        const lastDayCasesChange: number = getChangeAmount(lastDayCases, currentCases);
+        const lastDayDeathsChange: number = getChangeAmount(lastDayDeaths, currentDeaths);
+        const lastDayCasesChangePercent: number = getChangePercent(lastDayCases, currentCases);
+        const lastDayDeathsChangePercent: number = getChangePercent(lastDayDeaths, currentDeaths);
+        casesChange.push({
+          name: getName(countryData.hierarchicalName),
+          countryCode: countryData.countryCode,
+          count: currentCases,
+          change: lastDayCasesChange,
+          changePercentage: lastDayCasesChangePercent,
+        });
+        deathsChange.push({
+          name: getName(countryData.hierarchicalName),
+          countryCode: countryData.countryCode,
+          count: currentDeaths,
+          change: lastDayDeathsChange,
+          changePercentage: lastDayDeathsChangePercent,
+        });
+      }
+    });
+
+    const addTopCount: number = 10;
+    const dailyCases: Array<CasesSummaryData> = [];
+    casesChange.sort((a, b) => b.count - a.count);
+    casesChange.forEach((casesChangeData, index) => {
+      if (index < addTopCount) {
+        dailyCases.push(casesChangeData);
+      }
+    });
+
+    const dailyCasesChange: Array<CasesSummaryData> = [];
+    casesChange.sort((a, b) => b.change - a.change);
+    casesChange.forEach((casesChangeData, index) => {
+      if (index < addTopCount) {
+        dailyCasesChange.push(casesChangeData);
+      }
+    });
+
+    const dailyDeaths: Array<CasesSummaryData> = [];
+    deathsChange.sort((a, b) => b.count - a.count);
+    deathsChange.forEach((deathsChangeData, index) => {
+      if (index < addTopCount) {
+        dailyDeaths.push(deathsChangeData);
+      }
+    });
+
+    const dailyDeathsChange: Array<CasesSummaryData> = [];
+    deathsChange.sort((a, b) => b.change - a.change);
+    deathsChange.forEach((deathsChangeData, index) => {
+      if (index < addTopCount) {
+        dailyDeathsChange.push(deathsChangeData);
+      }
+    });
+
+    return {
+      dailyCases: dailyCases,
+      dailyCasesChange: dailyCasesChange,
+      dailyDeaths: dailyDeaths,
+      dailyDeathsChange: dailyDeathsChange,
+    };
+  };
+
+  export const getChangePercent = (start: number, end: number): number => {
+    if (start === 0) {
+      return 100;
+    } else {
+      return (end - start) * 100 / start;
+    }
+  };
+  export const getChangeAmount = (start: number, end: number): number => {
+    return end - start;
   };
 }
