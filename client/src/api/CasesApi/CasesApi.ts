@@ -1,8 +1,22 @@
 import {Api} from "../Api";
 import axios from "axios";
-import {CasesData, CasesDataObject, CasesInformationDataObject} from "../../../../shared/types/data/Cases/CasesTypes";
+import {
+  CasesData,
+  CasesDataObject,
+  CasesInformationDataObject, CurrentCasesSummary
+} from "../../../../shared/types/data/Cases/CasesTypes";
 
 export namespace CasesApi {
+  export const getSummaryData = (): Promise<CurrentCasesSummary> => {
+    const url: string = `${Api.serverLocation}/api/cases/summary/`;
+    return axios({
+      method: "GET",
+      url: url,
+    }).then((rsp) => {
+      return rsp.data;
+    });
+  };
+
   export const getCasesData = (hierarchicalName: string): Promise<CasesData> => {
     const url: string = `${Api.serverLocation}/api/cases/single/${hierarchicalName}`;
     return axios({
