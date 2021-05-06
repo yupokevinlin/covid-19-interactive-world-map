@@ -55,3 +55,40 @@ export interface DailyCasesInformationDataNull {
   recoveries: null;
   deaths: null;
 }
+
+export interface CurrentCasesSummary {
+  currentDate: string;
+  world: WorldSummary;
+  countries: CasesSummary;
+}
+
+export interface WorldSummary {
+  daily: WorldSummaryData;
+  weekly: WorldSummaryData;
+  monthly: WorldSummaryData;
+  yearly: WorldSummaryData;
+}
+
+export interface WorldSummaryData {
+  cases: number;
+  deaths: number;
+  casesChange: number;
+  deathsChange: number;
+  casesChangePercentage: number;
+  deathsChangePercentage: number;
+}
+
+export interface CasesSummary {
+  dailyCases: Array<CasesSummaryData>;
+  dailyCasesChange: Array<CasesSummaryData>;
+  dailyDeaths: Array<CasesSummaryData>;
+  dailyDeathsChange: Array<CasesSummaryData>;
+}
+
+export interface CasesSummaryData {
+  name: string;
+  countryCode: string;
+  count: number;
+  change: number;
+  changePercentage: number;
+}
