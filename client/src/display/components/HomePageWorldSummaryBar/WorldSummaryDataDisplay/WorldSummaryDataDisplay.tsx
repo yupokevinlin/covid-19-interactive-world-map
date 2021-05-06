@@ -1,7 +1,7 @@
 import React from "react";
 import {createStyles, Theme, useTheme, withWidth} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
-import {SummaryDataSelectBarValue} from "../HomePageSummary/types";
+import {WorldSummaryDataSelectBarValue} from "../WorldSummaryDataSelectBar/types";
 import {WorldSummary, WorldSummaryData} from "../../../../../../shared/types/data/Cases/CasesTypes";
 import {Breakpoint} from "@material-ui/core/styles/createBreakpoints";
 import Paper from "@material-ui/core/Paper";
@@ -12,7 +12,7 @@ export type WorldSummaryDataDisplayProps = WorldSummaryDataDisplayDataProps & Wo
 
 export interface WorldSummaryDataDisplayDataProps {
   worldData: WorldSummary;
-  worldDataType: SummaryDataSelectBarValue;
+  worldDataType: WorldSummaryDataSelectBarValue;
 }
 
 export interface WorldSummaryDataDisplayStyleProps {
@@ -142,35 +142,35 @@ const WorldSummaryDataDisplay: React.FC<WorldSummaryDataDisplayProps> = (props) 
 
   const isLg: boolean = width !== "xs" && width !== "sm" && width !== "md";
 
-  const getWorldSummaryData = (type: SummaryDataSelectBarValue, worldData: WorldSummary): WorldSummaryData => {
+  const getWorldSummaryData = (type: WorldSummaryDataSelectBarValue, worldData: WorldSummary): WorldSummaryData => {
     switch (type) {
-      case SummaryDataSelectBarValue.DAILY: {
+      case WorldSummaryDataSelectBarValue.DAILY: {
         return worldData.daily;
       }
-      case SummaryDataSelectBarValue.WEEKLY: {
+      case WorldSummaryDataSelectBarValue.WEEKLY: {
         return worldData.weekly;
       }
-      case SummaryDataSelectBarValue.MONTHLY: {
+      case WorldSummaryDataSelectBarValue.MONTHLY: {
         return worldData.monthly;
       }
-      case SummaryDataSelectBarValue.YEARLY: {
+      case WorldSummaryDataSelectBarValue.YEARLY: {
         return worldData.yearly;
       }
-      case SummaryDataSelectBarValue.ALL: {
+      case WorldSummaryDataSelectBarValue.ALL: {
         return worldData.all;
       }
     }
   };
 
-  const getDataLabel = (type: SummaryDataSelectBarValue): string => {
+  const getDataLabel = (type: WorldSummaryDataSelectBarValue): string => {
     switch (type) {
-      case SummaryDataSelectBarValue.DAILY:
-      case SummaryDataSelectBarValue.WEEKLY:
-      case SummaryDataSelectBarValue.MONTHLY:
-      case SummaryDataSelectBarValue.YEARLY: {
+      case WorldSummaryDataSelectBarValue.DAILY:
+      case WorldSummaryDataSelectBarValue.WEEKLY:
+      case WorldSummaryDataSelectBarValue.MONTHLY:
+      case WorldSummaryDataSelectBarValue.YEARLY: {
         return type.toLowerCase().replace("past", "Previous");
       }
-      case SummaryDataSelectBarValue.ALL: {
+      case WorldSummaryDataSelectBarValue.ALL: {
         return "";
       }
     }
@@ -197,17 +197,17 @@ const WorldSummaryDataDisplay: React.FC<WorldSummaryDataDisplayProps> = (props) 
   return (
     <div className={classes.root}>
       <Paper key={0} className={clsx(classes.displayItem, {
-        [classes.displayItemAll]: worldDataType === SummaryDataSelectBarValue.ALL
+        [classes.displayItemAll]: worldDataType === WorldSummaryDataSelectBarValue.ALL
       })} style={{backgroundColor: theme.palette.warning.main}}>
         <Typography className={clsx(classes.displayItemTitleText, {
-          [classes.displayItemTitleTextAll]: worldDataType === SummaryDataSelectBarValue.ALL
+          [classes.displayItemTitleTextAll]: worldDataType === WorldSummaryDataSelectBarValue.ALL
         })} variant={"h5"}>
           {
             `Cases ${getSignText(data.casesChange)}`
           }
         </Typography>
         {
-          worldDataType !== SummaryDataSelectBarValue.ALL ? (
+          worldDataType !== WorldSummaryDataSelectBarValue.ALL ? (
             <React.Fragment>
               <Typography className={classes.displayItemText} variant={"h5"}>
                 {
@@ -224,17 +224,17 @@ const WorldSummaryDataDisplay: React.FC<WorldSummaryDataDisplayProps> = (props) 
         }
       </Paper>
       <Paper key={1} className={clsx(classes.displayItem, {
-        [classes.displayItemAll]: worldDataType === SummaryDataSelectBarValue.ALL
+        [classes.displayItemAll]: worldDataType === WorldSummaryDataSelectBarValue.ALL
       })} style={{backgroundColor: theme.palette.error.main}}>
         <Typography className={clsx(classes.displayItemTitleText, {
-          [classes.displayItemTitleTextAll]: worldDataType === SummaryDataSelectBarValue.ALL
+          [classes.displayItemTitleTextAll]: worldDataType === WorldSummaryDataSelectBarValue.ALL
         })} variant={"h5"}>
           {
             `Deaths ${getSignText(data.deathsChange)}`
           }
         </Typography>
         {
-          worldDataType !== SummaryDataSelectBarValue.ALL ? (
+          worldDataType !== WorldSummaryDataSelectBarValue.ALL ? (
             <React.Fragment>
               <Typography className={classes.displayItemText} variant={"h5"}>
                 {
@@ -251,17 +251,17 @@ const WorldSummaryDataDisplay: React.FC<WorldSummaryDataDisplayProps> = (props) 
         }
       </Paper>
       <Paper key={2} className={clsx(classes.displayItem, {
-        [classes.displayItemAll]: worldDataType === SummaryDataSelectBarValue.ALL
+        [classes.displayItemAll]: worldDataType === WorldSummaryDataSelectBarValue.ALL
       })} style={{backgroundColor: theme.palette.success.main}}>
         <Typography className={clsx(classes.displayItemTitleText, {
-          [classes.displayItemTitleTextAll]: worldDataType === SummaryDataSelectBarValue.ALL
+          [classes.displayItemTitleTextAll]: worldDataType === WorldSummaryDataSelectBarValue.ALL
         })} variant={"h5"}>
           {
             `Recoveries ${getSignText(data.recoveriesChange)}`
           }
         </Typography>
         {
-          worldDataType !== SummaryDataSelectBarValue.ALL ? (
+          worldDataType !== WorldSummaryDataSelectBarValue.ALL ? (
             <React.Fragment>
               <Typography className={classes.displayItemText} variant={"h5"}>
                 {
