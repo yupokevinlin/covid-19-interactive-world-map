@@ -4,8 +4,7 @@ import {makeStyles} from "@material-ui/core/styles";
 import {
   CurrentCasesSummary,
 } from "../../../../shared/types/data/Cases/CasesTypes";
-import HomePageWorldSummaryBar from "../components/HomePageWorldSummaryBar/HomePageWorldSummaryBar";
-
+import HomePageSummary from "../components/HomePageWorldSummaryBar/HomePageSummary";
 export type HomePageProps = HomePageDataProps & HomePageStyleProps & HomePageEventProps;
 
 export interface HomePageDataProps {
@@ -65,7 +64,7 @@ const HomePage: React.FC<HomePageProps> = (props) => {
   return (
     <div className={classes.homePageWrapper}>
       <div className={classes.homePage}>
-        <HomePageWorldSummaryBar currentDate={summaryData.currentDate} worldData={summaryData.world}/>
+        <HomePageSummary currentDate={summaryData.currentDate} worldData={summaryData.world}/>
       </div>
     </div>
   );

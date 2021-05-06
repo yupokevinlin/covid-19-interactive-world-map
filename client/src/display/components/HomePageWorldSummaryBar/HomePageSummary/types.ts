@@ -1,4 +1,4 @@
-export enum WorldSummaryDataSelectBarValue {
+export enum SummaryDataSelectBarValue {
   DAILY = "Past Day",
   WEEKLY = "Past Week",
   MONTHLY = "Past Month",

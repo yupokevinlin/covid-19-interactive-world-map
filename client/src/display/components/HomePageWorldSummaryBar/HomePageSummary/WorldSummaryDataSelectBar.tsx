@@ -4,7 +4,7 @@ import {makeStyles} from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
-import {WorldSummaryDataSelectBarValue} from "./types";
+import {SummaryDataSelectBarValue} from "./types";
 import clsx from "clsx";
 
 export type WorldSummaryDataSelectBarProps = WorldSummaryDataSelectBarDataProps & WorldSummaryDataSelectBarStyleProps & WorldSummaryDataSelectBarEventProps;
@@ -18,7 +18,7 @@ export interface WorldSummaryDataSelectBarStyleProps {
 }
 
 export interface WorldSummaryDataSelectBarEventProps {
-  handleWorldDataTypeChange(value: WorldSummaryDataSelectBarValue): void;
+  handleWorldDataTypeChange(value: SummaryDataSelectBarValue): void;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -178,9 +178,9 @@ const WorldSummaryDataSelectBar: React.FC<WorldSummaryDataSelectBarProps> = (pro
     handleWorldDataTypeChange,
   } = props;
 
-  const [value, setValue] = React.useState<WorldSummaryDataSelectBarValue>(WorldSummaryDataSelectBarValue.DAILY);
+  const [value, setValue] = React.useState<SummaryDataSelectBarValue>(SummaryDataSelectBarValue.DAILY);
 
-  const handleChange = (event: React.MouseEvent<HTMLDivElement>, newValue: WorldSummaryDataSelectBarValue) => {
+  const handleChange = (event: React.MouseEvent<HTMLDivElement>, newValue: SummaryDataSelectBarValue) => {
     setValue(newValue);
     handleWorldDataTypeChange(newValue);
   };
@@ -190,10 +190,10 @@ const WorldSummaryDataSelectBar: React.FC<WorldSummaryDataSelectBarProps> = (pro
       <AppBar className={classes.appBar} position={"static"} color={"default"} elevation={0}>
         <Tabs
           className={clsx(classes.tabs, {
-            [classes.tabs1]: value === WorldSummaryDataSelectBarValue.WEEKLY,
-            [classes.tabs2]: value === WorldSummaryDataSelectBarValue.MONTHLY,
-            [classes.tabs3]: value === WorldSummaryDataSelectBarValue.YEARLY,
-            [classes.tabs4]: value === WorldSummaryDataSelectBarValue.ALL,
+            [classes.tabs1]: value === SummaryDataSelectBarValue.WEEKLY,
+            [classes.tabs2]: value === SummaryDataSelectBarValue.MONTHLY,
+            [classes.tabs3]: value === SummaryDataSelectBarValue.YEARLY,
+            [classes.tabs4]: value === SummaryDataSelectBarValue.ALL,
           })}
           value={value}
           onChange={handleChange}
@@ -201,11 +201,11 @@ const WorldSummaryDataSelectBar: React.FC<WorldSummaryDataSelectBarProps> = (pro
           textColor={"primary"}
           variant={"fullWidth"}
         >
-          <Tab className={classes.tab} key={0} label={WorldSummaryDataSelectBarValue.DAILY} value={WorldSummaryDataSelectBarValue.DAILY}/>
-          <Tab className={classes.tab} key={1} label={WorldSummaryDataSelectBarValue.WEEKLY} value={WorldSummaryDataSelectBarValue.WEEKLY}/>
-          <Tab className={classes.tab} key={2} label={WorldSummaryDataSelectBarValue.MONTHLY} value={WorldSummaryDataSelectBarValue.MONTHLY}/>
-          <Tab className={classes.tab} key={3} label={WorldSummaryDataSelectBarValue.YEARLY} value={WorldSummaryDataSelectBarValue.YEARLY}/>
-          <Tab className={classes.tab} key={4} label={WorldSummaryDataSelectBarValue.ALL} value={WorldSummaryDataSelectBarValue.ALL}/>
+          <Tab className={classes.tab} key={0} label={SummaryDataSelectBarValue.DAILY} value={SummaryDataSelectBarValue.DAILY}/>
+          <Tab className={classes.tab} key={1} label={SummaryDataSelectBarValue.WEEKLY} value={SummaryDataSelectBarValue.WEEKLY}/>
+          <Tab className={classes.tab} key={2} label={SummaryDataSelectBarValue.MONTHLY} value={SummaryDataSelectBarValue.MONTHLY}/>
+          <Tab className={classes.tab} key={3} label={SummaryDataSelectBarValue.YEARLY} value={SummaryDataSelectBarValue.YEARLY}/>
+          <Tab className={classes.tab} key={4} label={SummaryDataSelectBarValue.ALL} value={SummaryDataSelectBarValue.ALL}/>
         </Tabs>
       </AppBar>
     </div>

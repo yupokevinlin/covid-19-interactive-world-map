@@ -7,8 +7,8 @@ import Paper from "@material-ui/core/Paper";
 import {Moment} from "moment";
 import {DateUtils} from "../../../helper/DateUtils";
 import getMomentDateFromDateString = DateUtils.getMomentDateFromDateString;
-import WorldSummaryDataSelectBar from "./WorldSummaryDataSelectBar/WorldSummaryDataSelectBar";
-import {WorldSummaryDataSelectBarValue} from "./WorldSummaryDataSelectBar/types";
+import WorldSummaryDataSelectBar from "./HomePageSummary/WorldSummaryDataSelectBar";
+import {SummaryDataSelectBarValue} from "./HomePageSummary/types";
 import WorldSummaryDataDisplay from "./WorldSummaryDataDisplay/WorldSummaryDataDisplay";
 
 export type HomePageWorldSummaryBarProps = HomePageWorldSummaryBarDataProps & HomePageWorldSummaryBarStyleProps & HomePageWorldSummaryBarEventProps;
@@ -99,7 +99,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const HomePageWorldSummaryBar: React.FC<HomePageWorldSummaryBarProps> = (props) => {
+const HomePageSummary: React.FC<HomePageWorldSummaryBarProps> = (props) => {
   const theme: Theme = useTheme();
   const classes = useStyles();
 
@@ -108,14 +108,14 @@ const HomePageWorldSummaryBar: React.FC<HomePageWorldSummaryBarProps> = (props) 
     worldData,
   } = props;
 
-  const [worldDataType, setWorldDataType] = React.useState<WorldSummaryDataSelectBarValue>(WorldSummaryDataSelectBarValue.DAILY);
+  const [worldDataType, setWorldDataType] = React.useState<SummaryDataSelectBarValue>(SummaryDataSelectBarValue.DAILY);
 
   const currentDateMoment: Moment = getMomentDateFromDateString(currentDate);
   currentDateMoment.add(23, "hours");
 
   const currentDateText: string = `Last Updated: ${currentDateMoment.format("LLLL")}`;
 
-  const handleWorldDataTypeChange = (value: WorldSummaryDataSelectBarValue): void => {
+  const handleWorldDataTypeChange = (value: SummaryDataSelectBarValue): void => {
     console.log(value);
     setWorldDataType(value);
   };
@@ -138,5 +138,5 @@ const HomePageWorldSummaryBar: React.FC<HomePageWorldSummaryBarProps> = (props) 
   );
 };
 
-export default HomePageWorldSummaryBar;
+export default HomePageSummary;
 
