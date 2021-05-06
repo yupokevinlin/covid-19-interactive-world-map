@@ -67,28 +67,35 @@ export interface WorldSummary {
   weekly: WorldSummaryData;
   monthly: WorldSummaryData;
   yearly: WorldSummaryData;
+  all: WorldSummaryData;
 }
 
 export interface WorldSummaryData {
-  cases: number;
-  deaths: number;
   casesChange: number;
   deathsChange: number;
-  casesChangePercentage: number;
-  deathsChangePercentage: number;
+  recoveriesChange: number;
+  previousCasesChange: number;
+  previousDeathsChange: number;
+  previousRecoveriesChange: number;
 }
 
 export interface CasesSummary {
-  dailyCases: Array<CasesSummaryData>;
-  dailyCasesChange: Array<CasesSummaryData>;
-  dailyDeaths: Array<CasesSummaryData>;
-  dailyDeathsChange: Array<CasesSummaryData>;
+  daily: CasesSummaryData;
+  weekly: CasesSummaryData;
+  monthly: CasesSummaryData;
+  yearly: CasesSummaryData;
+  all: CasesSummaryData;
 }
 
 export interface CasesSummaryData {
-  name: string;
+  casesChange: Array<CasesSummaryTypeData>;
+  deathsChange: Array<CasesSummaryTypeData>;
+  recoveriesChange: Array<CasesSummaryTypeData>;
+}
+
+export interface CasesSummaryTypeData {
+  nameString: string;
   countryCode: string;
-  count: number;
   change: number;
-  changePercentage: number;
+  previousChange: number;
 }

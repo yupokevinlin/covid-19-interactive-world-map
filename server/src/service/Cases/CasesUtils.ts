@@ -2,8 +2,17 @@
 import {Moment} from "moment";
 import {
   CasesData,
-  CasesDataObject, CasesInformationDataObject, CasesSummary, CasesSummaryData, CurrentCasesSummary, DailyCasesData,
-  DailyCasesDataObject, DailyCasesInformationData, DailyCasesInformationDataObject, WorldSummary
+  CasesDataObject,
+  CasesInformationDataObject,
+  CasesSummary,
+  CasesSummaryData,
+  CasesSummaryTypeData,
+  CurrentCasesSummary,
+  DailyCasesData,
+  DailyCasesDataObject,
+  DailyCasesInformationData,
+  DailyCasesInformationDataObject,
+  WorldSummary
 } from "../../../../shared/types/data/Cases/CasesTypes";
 import {MapPolygon, MapPolygonsObject} from "../../../../shared/types/data/Map/MapTypes";
 import {getHierarchicalName, getName, getNameArray} from "../../../../shared/helpers/General";
@@ -1421,70 +1430,94 @@ export namespace CasesUtils {
   };
 
   export const getWorldSummary = (currentDateString: string): WorldSummary => {
-    const worldDailyInfoData: DailyCasesInformationDataObject = dailyInfoData["World"];
+    const worldData: CasesData = data["World"];
+    const worldDailyData: DailyCasesDataObject = worldData.data;
     const lastDayString: string = getOffsetDateString(currentDateString, -1);
     const lastWeekString: string = getOffsetDateString(currentDateString, -7);
     const lastMonthString: string = getOffsetDateString(currentDateString, -30);
     const lastYearString: string = getOffsetDateString(currentDateString, -365);
-    const currentCases: number = worldDailyInfoData[currentDateString].cases;
-    const currentDeaths: number = worldDailyInfoData[currentDateString].deaths;
-    const lastDayCases: number = worldDailyInfoData[lastDayString].cases;
-    const lastDayDeaths: number = worldDailyInfoData[lastDayString].deaths;
-    const lastWeekCases: number = worldDailyInfoData[lastWeekString].cases;
-    const lastWeekDeaths: number = worldDailyInfoData[lastWeekString].deaths;
-    const lastMonthCases: number = worldDailyInfoData[lastMonthString].cases;
-    const lastMonthDeaths: number = worldDailyInfoData[lastMonthString].deaths;
-    const lastYearCases: number = worldDailyInfoData[lastYearString].cases;
-    const lastYearDeaths: number = worldDailyInfoData[lastYearString].deaths;
-    const lastDayCasesChange: number = getChangeAmount(lastDayCases, currentCases);
-    const lastDayDeathsChange: number = getChangeAmount(lastDayDeaths, currentDeaths);
-    const lastWeekCasesChange: number = getChangeAmount(lastWeekCases, currentCases);
-    const lastWeekDeathsChange: number = getChangeAmount(lastWeekDeaths, currentDeaths);
-    const lastMonthCasesChange: number = getChangeAmount(lastMonthCases, currentCases);
-    const lastMonthDeathsChange: number = getChangeAmount(lastMonthDeaths, currentDeaths);
-    const lastYearCasesChange: number = getChangeAmount(lastYearCases, currentCases);
-    const lastYearDeathsChange: number = getChangeAmount(lastYearDeaths, currentDeaths);
-    const lastDayCasesChangePercent: number = getChangePercent(lastDayCases, currentCases);
-    const lastDayDeathsChangePercent: number = getChangePercent(lastDayDeaths, currentDeaths);
-    const lastWeekCasesChangePercent: number = getChangePercent(lastWeekCases, currentCases);
-    const lastWeekDeathsChangePercent: number = getChangePercent(lastWeekDeaths, currentDeaths);
-    const lastMonthCasesChangePercent: number = getChangePercent(lastMonthCases, currentCases);
-    const lastMonthDeathsChangePercent: number = getChangePercent(lastMonthDeaths, currentDeaths);
-    const lastYearCasesChangePercent: number = getChangePercent(lastYearCases, currentCases);
-    const lastYearDeathsChangePercent: number = getChangePercent(lastYearDeaths, currentDeaths);
+    const beforeLastDayString: string = getOffsetDateString(currentDateString, -2);
+    const beforeLastWeekString: string = getOffsetDateString(currentDateString, -14);
+    const beforeLastMonthString: string = getOffsetDateString(currentDateString, -60);
+    const beforeLastYearString: string = getOffsetDateString(currentDateString, -730);
+
+    const currentCases: number = worldDailyData[currentDateString].totalCases;
+    const currentDeaths: number = worldDailyData[currentDateString].totalDeaths;
+    const currentRecoveries: number = worldDailyData[currentDateString].totalRecoveries;
+
+    const lastDayCases: number = worldDailyData[lastDayString].totalCases;
+    const lastDayDeaths: number = worldDailyData[lastDayString].totalDeaths;
+    const lastDayRecoveries: number = worldDailyData[lastDayString].totalRecoveries;
+
+    const lastWeekCases: number = worldDailyData[lastWeekString].totalCases;
+    const lastWeekDeaths: number = worldDailyData[lastWeekString].totalDeaths;
+    const lastWeekRecoveries: number = worldDailyData[lastWeekString].totalRecoveries;
+
+    const lastMonthCases: number = worldDailyData[lastMonthString].totalCases;
+    const lastMonthDeaths: number = worldDailyData[lastMonthString].totalDeaths;
+    const lastMonthRecoveries: number = worldDailyData[lastMonthString].totalRecoveries;
+
+    const lastYearCases: number = worldDailyData[lastYearString].totalCases;
+    const lastYearDeaths: number = worldDailyData[lastYearString].totalDeaths;
+    const lastYearRecoveries: number = worldDailyData[lastYearString].totalRecoveries;
+
+    const beforeLastDayCases: number = worldDailyData[beforeLastDayString].totalCases;
+    const beforeLastDayDeaths: number = worldDailyData[beforeLastDayString].totalDeaths;
+    const beforeLastDayRecoveries: number = worldDailyData[beforeLastDayString].totalRecoveries;
+
+    const beforeLastWeekCases: number = worldDailyData[beforeLastWeekString].totalCases;
+    const beforeLastWeekDeaths: number = worldDailyData[beforeLastWeekString].totalDeaths;
+    const beforeLastWeekRecoveries: number = worldDailyData[beforeLastWeekString].totalRecoveries;
+
+    const beforeLastMonthCases: number = worldDailyData[beforeLastMonthString].totalCases;
+    const beforeLastMonthDeaths: number = worldDailyData[beforeLastMonthString].totalDeaths;
+    const beforeLastMonthRecoveries: number = worldDailyData[beforeLastMonthString].totalRecoveries;
+
+    const beforeLastYearCases: number = worldDailyData[beforeLastYearString]?.totalCases || 0;
+    const beforeLastYearDeaths: number = worldDailyData[beforeLastYearString]?.totalDeaths || 0;
+    const beforeLastYearRecoveries: number = worldDailyData[beforeLastYearString]?.totalRecoveries || 0;
+
     return {
       daily: {
-        cases: lastDayCases,
-        deaths: lastDayDeaths,
-        casesChange: lastDayCasesChange,
-        deathsChange: lastDayDeathsChange,
-        casesChangePercentage: lastDayCasesChangePercent,
-        deathsChangePercentage: lastDayDeathsChangePercent,
+        previousCasesChange: lastDayCases - beforeLastDayCases,
+        previousDeathsChange: lastDayDeaths - beforeLastDayDeaths,
+        previousRecoveriesChange: lastDayRecoveries - beforeLastDayRecoveries,
+        casesChange: currentCases - lastDayCases,
+        deathsChange: currentDeaths - lastDayDeaths,
+        recoveriesChange: currentRecoveries - lastDayRecoveries,
       },
       weekly: {
-        cases: lastWeekCases,
-        deaths: lastWeekDeaths,
-        casesChange: lastWeekCasesChange,
-        deathsChange: lastWeekDeathsChange,
-        casesChangePercentage: lastWeekCasesChangePercent,
-        deathsChangePercentage: lastWeekDeathsChangePercent,
+        previousCasesChange: lastWeekCases - beforeLastWeekCases,
+        previousDeathsChange: lastWeekDeaths - beforeLastWeekDeaths,
+        previousRecoveriesChange: lastWeekRecoveries - beforeLastWeekRecoveries,
+        casesChange: currentCases - lastWeekCases,
+        deathsChange: currentDeaths - lastWeekDeaths,
+        recoveriesChange: currentRecoveries - lastWeekRecoveries,
       },
       monthly: {
-        cases: lastMonthCases,
-        deaths: lastMonthDeaths,
-        casesChange: lastMonthCasesChange,
-        deathsChange: lastMonthDeathsChange,
-        casesChangePercentage: lastMonthCasesChangePercent,
-        deathsChangePercentage: lastMonthDeathsChangePercent,
+        previousCasesChange: lastMonthCases - beforeLastMonthCases,
+        previousDeathsChange: lastMonthDeaths - beforeLastMonthDeaths,
+        previousRecoveriesChange: lastMonthRecoveries - beforeLastMonthRecoveries,
+        casesChange: currentCases - lastMonthCases,
+        deathsChange: currentDeaths - lastMonthDeaths,
+        recoveriesChange: currentRecoveries - lastMonthRecoveries,
       },
       yearly: {
-        cases: lastYearCases,
-        deaths: lastYearDeaths,
-        casesChange: lastYearCasesChange,
-        deathsChange: lastYearDeathsChange,
-        casesChangePercentage: lastYearCasesChangePercent,
-        deathsChangePercentage: lastYearDeathsChangePercent,
+        previousCasesChange: lastYearCases - beforeLastYearCases,
+        previousDeathsChange: lastYearDeaths - beforeLastYearDeaths,
+        previousRecoveriesChange: lastYearRecoveries - beforeLastYearRecoveries,
+        casesChange: currentCases - lastYearCases,
+        deathsChange: currentDeaths - lastYearDeaths,
+        recoveriesChange: currentRecoveries - lastYearRecoveries,
       },
+      all: {
+        previousCasesChange: 0,
+        previousDeathsChange: 0,
+        previousRecoveriesChange: 0,
+        casesChange: currentCases,
+        deathsChange: currentDeaths,
+        recoveriesChange: currentRecoveries,
+      }
     };
   };
 
@@ -1495,76 +1528,347 @@ export namespace CasesUtils {
       return name.length === 2;
     }).map(([hierarchicalName, casesData]) => casesData);
 
-    const casesChange: Array<CasesSummaryData> = [];
-    const deathsChange: Array<CasesSummaryData> = [];
-    const lastDayString: string = getOffsetDateString(currentDateString, -1);
+    const dailyCasesChange: Array<CasesSummaryTypeData> = [];
+    const dailyDeathsChange: Array<CasesSummaryTypeData> = [];
+    const dailyRecoveriesChange: Array<CasesSummaryTypeData> = [];
+
+    const weeklyCasesChange: Array<CasesSummaryTypeData> = [];
+    const weeklyDeathsChange: Array<CasesSummaryTypeData> = [];
+    const weeklyRecoveriesChange: Array<CasesSummaryTypeData> = [];
+
+    const monthlyCasesChange: Array<CasesSummaryTypeData> = [];
+    const monthlyDeathsChange: Array<CasesSummaryTypeData> = [];
+    const monthlyRecoveriesChange: Array<CasesSummaryTypeData> = [];
+
+    const yearlyCasesChange: Array<CasesSummaryTypeData> = [];
+    const yearlyDeathsChange: Array<CasesSummaryTypeData> = [];
+    const yearlyRecoveriesChange: Array<CasesSummaryTypeData> = [];
+
+    const allCasesChange: Array<CasesSummaryTypeData> = [];
+    const allDeathsChange: Array<CasesSummaryTypeData> = [];
+    const allRecoveriesChange: Array<CasesSummaryTypeData> = [];
 
     countriesData.forEach((countryData) => {
-      const infoData: DailyCasesInformationDataObject = dailyInfoData[countryData.hierarchicalName];
-      if (!!infoData) {
-        const currentCases: number = infoData[currentDateString].cases;
-        const currentDeaths: number = infoData[currentDateString].deaths;
-        const lastDayCases: number = infoData[lastDayString].cases;
-        const lastDayDeaths: number = infoData[lastDayString].deaths;
-        const lastDayCasesChange: number = getChangeAmount(lastDayCases, currentCases);
-        const lastDayDeathsChange: number = getChangeAmount(lastDayDeaths, currentDeaths);
-        const lastDayCasesChangePercent: number = getChangePercent(lastDayCases, currentCases);
-        const lastDayDeathsChangePercent: number = getChangePercent(lastDayDeaths, currentDeaths);
-        casesChange.push({
-          name: getName(countryData.hierarchicalName),
-          countryCode: countryData.countryCode,
-          count: currentCases,
-          change: lastDayCasesChange,
-          changePercentage: lastDayCasesChangePercent,
-        });
-        deathsChange.push({
-          name: getName(countryData.hierarchicalName),
-          countryCode: countryData.countryCode,
-          count: currentDeaths,
-          change: lastDayDeathsChange,
-          changePercentage: lastDayDeathsChangePercent,
-        });
-      }
+      const nameString: string = getName(countryData.hierarchicalName);
+      const countryDailyData: DailyCasesDataObject = countryData.data;
+      const lastDayString: string = getOffsetDateString(currentDateString, -1);
+      const lastWeekString: string = getOffsetDateString(currentDateString, -7);
+      const lastMonthString: string = getOffsetDateString(currentDateString, -30);
+      const lastYearString: string = getOffsetDateString(currentDateString, -365);
+      const beforeLastDayString: string = getOffsetDateString(currentDateString, -2);
+      const beforeLastWeekString: string = getOffsetDateString(currentDateString, -14);
+      const beforeLastMonthString: string = getOffsetDateString(currentDateString, -60);
+      const beforeLastYearString: string = getOffsetDateString(currentDateString, -730);
+
+      const currentCases: number = countryDailyData[currentDateString].totalCases;
+      const currentDeaths: number = countryDailyData[currentDateString].totalDeaths;
+      const currentRecoveries: number = countryDailyData[currentDateString].totalRecoveries;
+
+      const lastDayCases: number = countryDailyData[lastDayString].totalCases;
+      const lastDayDeaths: number = countryDailyData[lastDayString].totalDeaths;
+      const lastDayRecoveries: number = countryDailyData[lastDayString].totalRecoveries;
+
+      const lastWeekCases: number = countryDailyData[lastWeekString].totalCases;
+      const lastWeekDeaths: number = countryDailyData[lastWeekString].totalDeaths;
+      const lastWeekRecoveries: number = countryDailyData[lastWeekString].totalRecoveries;
+
+      const lastMonthCases: number = countryDailyData[lastMonthString].totalCases;
+      const lastMonthDeaths: number = countryDailyData[lastMonthString].totalDeaths;
+      const lastMonthRecoveries: number = countryDailyData[lastMonthString].totalRecoveries;
+
+      const lastYearCases: number = countryDailyData[lastYearString].totalCases;
+      const lastYearDeaths: number = countryDailyData[lastYearString].totalDeaths;
+      const lastYearRecoveries: number = countryDailyData[lastYearString].totalRecoveries;
+
+      const beforeLastDayCases: number = countryDailyData[beforeLastDayString].totalCases;
+      const beforeLastDayDeaths: number = countryDailyData[beforeLastDayString].totalDeaths;
+      const beforeLastDayRecoveries: number = countryDailyData[beforeLastDayString].totalRecoveries;
+
+      const beforeLastWeekCases: number = countryDailyData[beforeLastWeekString].totalCases;
+      const beforeLastWeekDeaths: number = countryDailyData[beforeLastWeekString].totalDeaths;
+      const beforeLastWeekRecoveries: number = countryDailyData[beforeLastWeekString].totalRecoveries;
+
+      const beforeLastMonthCases: number = countryDailyData[beforeLastMonthString].totalCases;
+      const beforeLastMonthDeaths: number = countryDailyData[beforeLastMonthString].totalDeaths;
+      const beforeLastMonthRecoveries: number = countryDailyData[beforeLastMonthString].totalRecoveries;
+
+      const beforeLastYearCases: number = countryDailyData[beforeLastYearString]?.totalCases || 0;
+      const beforeLastYearDeaths: number = countryDailyData[beforeLastYearString]?.totalDeaths || 0;
+      const beforeLastYearRecoveries: number = countryDailyData[beforeLastYearString]?.totalRecoveries || 0;
+
+      dailyCasesChange.push({
+        nameString: nameString,
+        countryCode: countryData.countryCode,
+        change: currentCases - lastDayCases,
+        previousChange: lastDayCases - beforeLastDayCases,
+      });
+      dailyDeathsChange.push({
+        nameString: nameString,
+        countryCode: countryData.countryCode,
+        change: currentDeaths - lastDayDeaths,
+        previousChange: lastDayDeaths - beforeLastDayDeaths,
+      });
+      dailyRecoveriesChange.push({
+        nameString: nameString,
+        countryCode: countryData.countryCode,
+        change: currentRecoveries - lastDayRecoveries,
+        previousChange: lastDayRecoveries - beforeLastDayRecoveries,
+      });
+
+      weeklyCasesChange.push({
+        nameString: nameString,
+        countryCode: countryData.countryCode,
+        change: currentCases - lastWeekCases,
+        previousChange: lastWeekCases - beforeLastWeekCases,
+      });
+      weeklyDeathsChange.push({
+        nameString: nameString,
+        countryCode: countryData.countryCode,
+        change: currentDeaths - lastWeekDeaths,
+        previousChange: lastWeekDeaths - beforeLastWeekDeaths,
+      });
+      weeklyRecoveriesChange.push({
+        nameString: nameString,
+        countryCode: countryData.countryCode,
+        change: currentRecoveries - lastWeekRecoveries,
+        previousChange: lastWeekRecoveries - beforeLastWeekRecoveries,
+      });
+
+      monthlyCasesChange.push({
+        nameString: nameString,
+        countryCode: countryData.countryCode,
+        change: currentCases - lastMonthCases,
+        previousChange: lastMonthCases - beforeLastMonthCases,
+      });
+      monthlyDeathsChange.push({
+        nameString: nameString,
+        countryCode: countryData.countryCode,
+        change: currentDeaths - lastMonthDeaths,
+        previousChange: lastMonthDeaths - beforeLastMonthDeaths,
+      });
+      monthlyRecoveriesChange.push({
+        nameString: nameString,
+        countryCode: countryData.countryCode,
+        change: currentRecoveries - lastMonthRecoveries,
+        previousChange: lastMonthRecoveries - beforeLastMonthRecoveries,
+      });
+
+      yearlyCasesChange.push({
+        nameString: nameString,
+        countryCode: countryData.countryCode,
+        change: currentCases - lastYearCases,
+        previousChange: lastYearCases - beforeLastYearCases,
+      });
+      yearlyDeathsChange.push({
+        nameString: nameString,
+        countryCode: countryData.countryCode,
+        change: currentDeaths - lastYearDeaths,
+        previousChange: lastYearDeaths - beforeLastYearDeaths,
+      });
+      yearlyRecoveriesChange.push({
+        nameString: nameString,
+        countryCode: countryData.countryCode,
+        change: currentRecoveries - lastYearRecoveries,
+        previousChange: lastYearRecoveries - beforeLastYearRecoveries,
+      });
+
+      allCasesChange.push({
+        nameString: nameString,
+        countryCode: countryData.countryCode,
+        change: currentCases,
+        previousChange: 0,
+      });
+      allDeathsChange.push({
+        nameString: nameString,
+        countryCode: countryData.countryCode,
+        change: currentDeaths,
+        previousChange: 0,
+      });
+      allRecoveriesChange.push({
+        nameString: nameString,
+        countryCode: countryData.countryCode,
+        change: currentRecoveries,
+        previousChange: 0,
+      });
     });
 
     const addTopCount: number = 10;
-    const dailyCases: Array<CasesSummaryData> = [];
-    casesChange.sort((a, b) => b.count - a.count);
-    casesChange.forEach((casesChangeData, index) => {
+
+    const dailyCasesChangeLeaders: Array<CasesSummaryTypeData> = [];
+    const dailyDeathsChangeLeaders: Array<CasesSummaryTypeData> = [];
+    const dailyRecoveriesChangeLeaders: Array<CasesSummaryTypeData> = [];
+
+    const weeklyCasesChangeLeaders: Array<CasesSummaryTypeData> = [];
+    const weeklyDeathsChangeLeaders: Array<CasesSummaryTypeData> = [];
+    const weeklyRecoveriesChangeLeaders: Array<CasesSummaryTypeData> = [];
+
+    const monthlyCasesChangeLeaders: Array<CasesSummaryTypeData> = [];
+    const monthlyDeathsChangeLeaders: Array<CasesSummaryTypeData> = [];
+    const monthlyRecoveriesChangeLeaders: Array<CasesSummaryTypeData> = [];
+
+    const yearlyCasesChangeLeaders: Array<CasesSummaryTypeData> = [];
+    const yearlyDeathsChangeLeaders: Array<CasesSummaryTypeData> = [];
+    const yearlyRecoveriesChangeLeaders: Array<CasesSummaryTypeData> = [];
+
+    const allCasesChangeLeaders: Array<CasesSummaryTypeData> = [];
+    const allDeathsChangeLeaders: Array<CasesSummaryTypeData> = [];
+    const allRecoveriesChangeLeaders: Array<CasesSummaryTypeData> = [];
+
+    const changeSortFunction = (a: CasesSummaryTypeData, b: CasesSummaryTypeData): number => {
+      return b.change - a.change;
+    };
+
+    dailyCasesChange.sort(changeSortFunction);
+    dailyCasesChange.forEach((change, index) => {
       if (index < addTopCount) {
-        dailyCases.push(casesChangeData);
+        dailyCasesChangeLeaders.push({
+          ...change,
+        });
+      }
+    });
+    dailyDeathsChange.sort(changeSortFunction);
+    dailyDeathsChange.forEach((change, index) => {
+      if (index < addTopCount) {
+        dailyDeathsChangeLeaders.push({
+          ...change,
+        });
+      }
+    });
+    dailyRecoveriesChange.sort(changeSortFunction);
+    dailyRecoveriesChange.forEach((change, index) => {
+      if (index < addTopCount) {
+        dailyRecoveriesChangeLeaders.push({
+          ...change,
+        });
       }
     });
 
-    const dailyCasesChange: Array<CasesSummaryData> = [];
-    casesChange.sort((a, b) => b.change - a.change);
-    casesChange.forEach((casesChangeData, index) => {
+    weeklyCasesChange.sort(changeSortFunction);
+    weeklyCasesChange.forEach((change, index) => {
       if (index < addTopCount) {
-        dailyCasesChange.push(casesChangeData);
+        weeklyCasesChangeLeaders.push({
+          ...change,
+        });
+      }
+    });
+    weeklyDeathsChange.sort(changeSortFunction);
+    weeklyDeathsChange.forEach((change, index) => {
+      if (index < addTopCount) {
+        weeklyDeathsChangeLeaders.push({
+          ...change,
+        });
+      }
+    });
+    weeklyRecoveriesChange.sort(changeSortFunction);
+    weeklyRecoveriesChange.forEach((change, index) => {
+      if (index < addTopCount) {
+        weeklyRecoveriesChangeLeaders.push({
+          ...change,
+        });
       }
     });
 
-    const dailyDeaths: Array<CasesSummaryData> = [];
-    deathsChange.sort((a, b) => b.count - a.count);
-    deathsChange.forEach((deathsChangeData, index) => {
+    monthlyCasesChange.sort(changeSortFunction);
+    monthlyCasesChange.forEach((change, index) => {
       if (index < addTopCount) {
-        dailyDeaths.push(deathsChangeData);
+        monthlyCasesChangeLeaders.push({
+          ...change,
+        });
+      }
+    });
+    monthlyDeathsChange.sort(changeSortFunction);
+    monthlyDeathsChange.forEach((change, index) => {
+      if (index < addTopCount) {
+        monthlyDeathsChangeLeaders.push({
+          ...change,
+        });
+      }
+    });
+    monthlyRecoveriesChange.sort(changeSortFunction);
+    monthlyRecoveriesChange.forEach((change, index) => {
+      if (index < addTopCount) {
+        monthlyRecoveriesChangeLeaders.push({
+          ...change,
+        });
       }
     });
 
-    const dailyDeathsChange: Array<CasesSummaryData> = [];
-    deathsChange.sort((a, b) => b.change - a.change);
-    deathsChange.forEach((deathsChangeData, index) => {
+    yearlyCasesChange.sort(changeSortFunction);
+    yearlyCasesChange.forEach((change, index) => {
       if (index < addTopCount) {
-        dailyDeathsChange.push(deathsChangeData);
+        yearlyCasesChangeLeaders.push({
+          ...change,
+        });
+      }
+    });
+    yearlyDeathsChange.sort(changeSortFunction);
+    yearlyDeathsChange.forEach((change, index) => {
+      if (index < addTopCount) {
+        yearlyDeathsChangeLeaders.push({
+          ...change,
+        });
+      }
+    });
+    yearlyRecoveriesChange.sort(changeSortFunction);
+    yearlyRecoveriesChange.forEach((change, index) => {
+      if (index < addTopCount) {
+        yearlyRecoveriesChangeLeaders.push({
+          ...change,
+        });
+      }
+    });
+
+    allCasesChange.sort(changeSortFunction);
+    allCasesChange.forEach((change, index) => {
+      if (index < addTopCount) {
+        allCasesChangeLeaders.push({
+          ...change,
+        });
+      }
+    });
+    allDeathsChange.sort(changeSortFunction);
+    allDeathsChange.forEach((change, index) => {
+      if (index < addTopCount) {
+        allDeathsChangeLeaders.push({
+          ...change,
+        });
+      }
+    });
+    allRecoveriesChange.sort(changeSortFunction);
+    allRecoveriesChange.forEach((change, index) => {
+      if (index < addTopCount) {
+        allRecoveriesChangeLeaders.push({
+          ...change,
+        });
       }
     });
 
     return {
-      dailyCases: dailyCases,
-      dailyCasesChange: dailyCasesChange,
-      dailyDeaths: dailyDeaths,
-      dailyDeathsChange: dailyDeathsChange,
+      daily: {
+        casesChange: dailyCasesChangeLeaders,
+        deathsChange: dailyDeathsChangeLeaders,
+        recoveriesChange: dailyRecoveriesChangeLeaders,
+      },
+      weekly: {
+        casesChange: weeklyCasesChangeLeaders,
+        deathsChange: weeklyDeathsChangeLeaders,
+        recoveriesChange: weeklyRecoveriesChangeLeaders,
+      },
+      monthly: {
+        casesChange: monthlyCasesChangeLeaders,
+        deathsChange: monthlyDeathsChangeLeaders,
+        recoveriesChange: monthlyRecoveriesChangeLeaders,
+      },
+      yearly: {
+        casesChange: yearlyCasesChangeLeaders,
+        deathsChange: yearlyDeathsChangeLeaders,
+        recoveriesChange: yearlyRecoveriesChangeLeaders,
+      },
+      all: {
+        casesChange: allCasesChangeLeaders,
+        deathsChange: allDeathsChangeLeaders,
+        recoveriesChange: allRecoveriesChangeLeaders,
+      },
     };
   };
 
