@@ -37,8 +37,9 @@ import {destroyESRIMap} from "../../../display/components/ESRIMap/ESRIMap";
 import {CasesApi} from "../../../api/CasesApi/CasesApi";
 import {AppStore} from "../../../app/App";
 import {MapPageActionTypes} from "../../containers/MapPageContainer/types";
-import {CasesInformationDataObject} from "../../../../../shared/types/data/Cases/CasesTypes";
+import {CasesInformationDataObject, CurrentCasesSummary} from "../../../../../shared/types/data/Cases/CasesTypes";
 import {ChartPageActionTypes} from "../../containers/ChartPageContainer/types";
+import {HomePageActionTypes} from "../../containers/HomePageContainer/types";
 
 export const appSagas = {
   initSaga: takeEvery(AppActionTypes.INIT, initSaga),
@@ -76,6 +77,12 @@ function * initSaga(action: AppInitAction): any {
   yield put({
     type: AppActionTypes.SET_DATA_TREE,
     dataTree: dataTree,
+  });
+
+  const summaryData: CurrentCasesSummary = yield call(CasesApi.getSummaryData);
+  yield put({
+    type: HomePageActionTypes.SET_SUMMARY_DATA,
+    summaryData: summaryData,
   });
 
   yield put({

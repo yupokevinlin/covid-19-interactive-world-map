@@ -1,7 +1,9 @@
 import {HomePageActionTypes} from "./types";
+import {CurrentCasesSummary} from "../../../../../shared/types/data/Cases/CasesTypes";
 
 export type HomePageAction = HomePageInitAction
-| HomePageSetInitCompleteAction;
+| HomePageSetInitCompleteAction
+| HomePageSetSummaryDataAction;
 
 export interface HomePageInitAction {
   type: typeof HomePageActionTypes.INIT;
@@ -20,5 +22,16 @@ export const setInitComplete = (initComplete: boolean): HomePageSetInitCompleteA
   return {
     type: HomePageActionTypes.SET_INIT_COMPLETE,
     initComplete: initComplete,
+  };
+};
+
+export interface HomePageSetSummaryDataAction {
+  type: typeof HomePageActionTypes.SET_SUMMARY_DATA;
+  summaryData: CurrentCasesSummary;
+}
+export const setSummaryData = (summaryData: CurrentCasesSummary): HomePageSetSummaryDataAction => {
+  return {
+    type: HomePageActionTypes.SET_SUMMARY_DATA,
+    summaryData: summaryData,
   };
 };
