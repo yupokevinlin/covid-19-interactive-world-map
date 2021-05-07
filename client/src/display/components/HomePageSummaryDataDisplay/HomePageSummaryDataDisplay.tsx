@@ -116,7 +116,6 @@ const HomePageSummaryDataDisplay: React.FC<HomePageSummaryDataDisplayProps> = (p
   const currentDateText: string = `Last Updated: ${currentDateMoment.format("LLLL")}`;
 
   const handleWorldDataTypeChange = (value: SummaryDataSelectBarValue): void => {
-    console.log(value);
     setWorldDataType(value);
   };
 
