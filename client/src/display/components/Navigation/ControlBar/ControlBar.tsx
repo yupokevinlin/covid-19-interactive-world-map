@@ -45,19 +45,19 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     appBarShift: {
       marginLeft: drawerWidthMd,
-      width: `calc(100% - ${drawerWidthMd}px)`,
+      width: `calc(100% - ${drawerWidthMd}px) !important`,
       transition: theme.transitions.create(["width", "margin"], {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.enteringScreen,
       }),
       [theme.breakpoints.up("lg")]: {
         marginLeft: drawerWidthLg,
-        width: `calc(100% - ${drawerWidthLg}px)`,
+        width: `calc(100% - ${drawerWidthLg}px) !important`,
       },
     },
     appBarShiftExpanded: {
       marginLeft: drawerWidthExpanded,
-      width: `calc(100% - ${drawerWidthExpanded}px)`,
+      width: `calc(100% - ${drawerWidthExpanded}px) !important`,
       transition: theme.transitions.create(["width", "margin"], {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.enteringScreen,
