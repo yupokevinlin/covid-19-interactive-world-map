@@ -198,7 +198,7 @@ const WorldSummaryDataDisplay: React.FC<WorldSummaryDataDisplayProps> = (props) 
     <div className={classes.root}>
       <Paper key={0} className={clsx(classes.displayItem, {
         [classes.displayItemAll]: worldDataType === SummaryDataSelectBarValue.ALL
-      })} style={{backgroundColor: theme.palette.warning.main}}>
+      })} style={{backgroundColor: "#ff9800"}}>
         <Typography className={clsx(classes.displayItemTitleText, {
           [classes.displayItemTitleTextAll]: worldDataType === SummaryDataSelectBarValue.ALL
         })} variant={"h5"}>
@@ -225,7 +225,7 @@ const WorldSummaryDataDisplay: React.FC<WorldSummaryDataDisplayProps> = (props) 
       </Paper>
       <Paper key={1} className={clsx(classes.displayItem, {
         [classes.displayItemAll]: worldDataType === SummaryDataSelectBarValue.ALL
-      })} style={{backgroundColor: theme.palette.error.main}}>
+      })} style={{backgroundColor: "#f44336"}}>
         <Typography className={clsx(classes.displayItemTitleText, {
           [classes.displayItemTitleTextAll]: worldDataType === SummaryDataSelectBarValue.ALL
         })} variant={"h5"}>
@@ -252,7 +252,7 @@ const WorldSummaryDataDisplay: React.FC<WorldSummaryDataDisplayProps> = (props) 
       </Paper>
       <Paper key={2} className={clsx(classes.displayItem, {
         [classes.displayItemAll]: worldDataType === SummaryDataSelectBarValue.ALL
-      })} style={{backgroundColor: theme.palette.success.main}}>
+      })} style={{backgroundColor: "#4caf50"}}>
         <Typography className={clsx(classes.displayItemTitleText, {
           [classes.displayItemTitleTextAll]: worldDataType === SummaryDataSelectBarValue.ALL
         })} variant={"h5"}>
