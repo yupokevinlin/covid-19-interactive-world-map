@@ -154,8 +154,6 @@ const useStyles = makeStyles((theme: Theme) =>
         width: "calc(100% - 171px)",
         "& .MuiSlider-thumb": {
           "& .MuiSlider-valueLabel": {
-            position: "relative",
-            left: "0px",
             backgroundColor: theme.palette.primary.main,
             fontSize: "9px",
             lineHeight: "9px",
@@ -182,8 +180,6 @@ const useStyles = makeStyles((theme: Theme) =>
         width: "calc(100% - 171px)",
         "& .MuiSlider-thumb": {
           "& .MuiSlider-valueLabel": {
-            position: "relative",
-            left: "0px",
             backgroundColor: theme.palette.primary.main,
             fontSize: "10px",
             lineHeight: "10px",
@@ -210,8 +206,6 @@ const useStyles = makeStyles((theme: Theme) =>
         width: "calc(100% - 213px)",
         "& .MuiSlider-thumb": {
           "& .MuiSlider-valueLabel": {
-            position: "relative",
-            left: "0px",
             backgroundColor: theme.palette.primary.main,
             fontSize: "11px",
             lineHeight: "11px",
@@ -240,8 +234,6 @@ const useStyles = makeStyles((theme: Theme) =>
         width: "calc(100% - 130px)",
         "& .MuiSlider-thumb": {
           "& .MuiSlider-valueLabel": {
-            position: "relative",
-            left: "0px",
             backgroundColor: theme.palette.primary.main,
             fontSize: "9px",
             lineHeight: "9px",
@@ -268,8 +260,6 @@ const useStyles = makeStyles((theme: Theme) =>
         width: "calc(100% - 130px)",
         "& .MuiSlider-thumb": {
           "& .MuiSlider-valueLabel": {
-            position: "relative",
-            left: "0px",
             backgroundColor: theme.palette.primary.main,
             fontSize: "10px",
             lineHeight: "10px",
@@ -296,8 +286,6 @@ const useStyles = makeStyles((theme: Theme) =>
         width: "calc(100% - 165px)",
         "& .MuiSlider-thumb": {
           "& .MuiSlider-valueLabel": {
-            position: "relative",
-            left: "0px",
             backgroundColor: theme.palette.primary.main,
             fontSize: "11px",
             lineHeight: "11px",
