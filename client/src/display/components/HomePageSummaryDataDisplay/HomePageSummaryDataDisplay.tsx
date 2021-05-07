@@ -1,7 +1,7 @@
 import React from "react";
-import {createStyles, Theme, useTheme} from "@material-ui/core";
+import {createStyles, Theme, useTheme, withWidth} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
-import {CountriesSummary, WorldSummary} from "../../../../../shared/types/data/Cases/CasesTypes";
+import {CasesSummaryData, CountriesSummary, WorldSummary} from "../../../../../shared/types/data/Cases/CasesTypes";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 import {Moment} from "moment";
@@ -11,6 +11,10 @@ import SummaryDataSelectBar from "./SummaryDataSelectBar/SummaryDataSelectBar";
 import {SummaryDataSelectBarValue} from "./SummaryDataSelectBar/types";
 import WorldSummaryDataDisplay from "./WorldSummaryDataDisplay/WorldSummaryDataDisplay";
 import CountriesSummaryDataDisplay from "./CountriesSummaryDataDisplay/CountriesSummaryDataDisplay";
+import {Breakpoint} from "@material-ui/core/styles/createBreakpoints";
+import {CountriesSummaryDataTableType} from "./CountriesSummaryDataDisplay/CountriesSummaryDataTable/types";
+import CountriesSummaryDataTable
+  from "./CountriesSummaryDataDisplay/CountriesSummaryDataTable/CountriesSummaryDataTable";
 
 export type HomePageSummaryDataDisplayProps = HomePageSummaryDataDisplayDataProps & HomePageSummaryDataDisplayStyleProps & HomePageSummaryDataDisplayEventProps;
 
@@ -21,7 +25,7 @@ export interface HomePageSummaryDataDisplayDataProps {
 }
 
 export interface HomePageSummaryDataDisplayStyleProps {
-
+  width: Breakpoint;
 }
 
 export interface HomePageSummaryDataDisplayEventProps {
@@ -102,7 +106,20 @@ const useStyles = makeStyles((theme: Theme) =>
         marginTop: "18px",
         marginBottom: "18px",
       },
-    }
+    },
+    summaryDataWrapper: {
+      width: "100%",
+      height: "max-content",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "flex-start",
+      alignItems: "center",
+      [theme.breakpoints.up("lg")]: {
+        flexDirection: "row",
+        justifyContent: "space-evenly",
+        alignItems: "center",
+      },
+    },
   }),
 );
 
@@ -114,6 +131,7 @@ const HomePageSummaryDataDisplay: React.FC<HomePageSummaryDataDisplayProps> = (p
     currentDate,
     worldData,
     countriesData,
+    width,
   } = props;
 
   const [worldDataType, setWorldDataType] = React.useState<SummaryDataSelectBarValue>(SummaryDataSelectBarValue.DAILY);
@@ -133,6 +151,28 @@ const HomePageSummaryDataDisplay: React.FC<HomePageSummaryDataDisplayProps> = (p
     setCountriesDataType(value);
   };
 
+  const getCasesSummaryData = (countriesSummary: CountriesSummary, type: SummaryDataSelectBarValue): CasesSummaryData => {
+    switch (type) {
+      case SummaryDataSelectBarValue.DAILY: {
+        return countriesSummary.daily;
+      }
+      case SummaryDataSelectBarValue.WEEKLY: {
+        return countriesSummary.weekly;
+      }
+      case SummaryDataSelectBarValue.MONTHLY: {
+        return countriesSummary.monthly;
+      }
+      case SummaryDataSelectBarValue.YEARLY: {
+        return countriesSummary.yearly;
+      }
+      case SummaryDataSelectBarValue.ALL: {
+        return countriesSummary.all;
+      }
+    }
+  };
+
+  const isLg: boolean = width === "lg" || width === "xl";
+  const countriesSummaryData: CasesSummaryData = getCasesSummaryData(countriesData, countriesDataType);
 
   return (
     <div className={classes.wrapper}>
@@ -145,19 +185,40 @@ const HomePageSummaryDataDisplay: React.FC<HomePageSummaryDataDisplayProps> = (p
         World Summary
       </Typography>
       <Paper className={classes.dataWrapper} elevation={3}>
-        <SummaryDataSelectBar handleWorldDataTypeChange={handleWorldDataTypeChange}/>
+        <SummaryDataSelectBar value={worldDataType} handleWorldDataTypeChange={handleWorldDataTypeChange}/>
         <WorldSummaryDataDisplay worldDataType={worldDataType} worldData={worldData}/>
       </Paper>
       <Typography className={classes.summaryLabel} variant={"h5"}>
         Countries Summary
       </Typography>
       <Paper className={classes.dataWrapper} elevation={3}>
-        <SummaryDataSelectBar handleWorldDataTypeChange={handleCountriesDataTypeChange}/>
-        <CountriesSummaryDataDisplay countriesDataType={countriesDataType} countriesSummary={countriesData}/>
+        {
+          isLg ? (
+            <React.Fragment>
+              <SummaryDataSelectBar value={countriesDataType} handleWorldDataTypeChange={handleCountriesDataTypeChange}/>
+              <CountriesSummaryDataDisplay countriesDataType={countriesDataType} countriesSummary={countriesData}/>
+            </React.Fragment>
+          ) : (
+            <React.Fragment>
+              <SummaryDataSelectBar value={countriesDataType} handleWorldDataTypeChange={handleCountriesDataTypeChange}/>
+              <div className={classes.summaryDataWrapper}>
+                <CountriesSummaryDataTable type={CountriesSummaryDataTableType.Cases} data={countriesSummaryData.casesChange} countriesDataType={countriesDataType}/>
+              </div>
+              <SummaryDataSelectBar value={countriesDataType} handleWorldDataTypeChange={handleCountriesDataTypeChange}/>
+              <div className={classes.summaryDataWrapper}>
+                <CountriesSummaryDataTable type={CountriesSummaryDataTableType.Deaths} data={countriesSummaryData.casesChange} countriesDataType={countriesDataType}/>
+              </div>
+              <SummaryDataSelectBar value={countriesDataType} handleWorldDataTypeChange={handleCountriesDataTypeChange}/>
+              <div className={classes.summaryDataWrapper}>
+                <CountriesSummaryDataTable type={CountriesSummaryDataTableType.Recoveries} data={countriesSummaryData.casesChange} countriesDataType={countriesDataType}/>
+              </div>
+            </React.Fragment>
+          )
+        }
       </Paper>
     </div>
   );
 };
 
-export default HomePageSummaryDataDisplay;
+export default withWidth()(HomePageSummaryDataDisplay);
 
