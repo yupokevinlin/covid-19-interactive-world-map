@@ -154,7 +154,7 @@ const useStyles = makeStyles((theme: Theme) =>
       },
       "& .MuiTab-wrapper": {
         [theme.breakpoints.up("xs")]: {
-          fontSize: "10px",
+          fontSize: "9px",
         },
         [theme.breakpoints.up("sm")]: {
           fontSize: "12px",
