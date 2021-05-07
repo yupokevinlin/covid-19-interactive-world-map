@@ -1343,7 +1343,7 @@ export namespace CasesUtils {
       sortData();
       fixUSData();
       generateWorldData();
-      generateCasesInformationData();
+      // generateCasesInformationData();
 
       return true;
     } catch (e) {
