@@ -65,11 +65,11 @@ const HomePage: React.FC<HomePageProps> = (props) => {
 
   return (
     <div className={classes.homePageWrapper}>
-      {/*<Scrollbars>*/}
-      {/*  <div className={classes.homePage}>*/}
-      {/*    <HomePageSummaryDataDisplay currentDate={summaryData.currentDate} worldData={summaryData.world} countriesData={summaryData.countries}/>*/}
-      {/*  </div>*/}
-      {/*</Scrollbars>*/}
+      <Scrollbars>
+        <div className={classes.homePage}>
+          {/*<HomePageSummaryDataDisplay currentDate={summaryData.currentDate} worldData={summaryData.world} countriesData={summaryData.countries}/>*/}
+        </div>
+      </Scrollbars>
     </div>
   );
 };
