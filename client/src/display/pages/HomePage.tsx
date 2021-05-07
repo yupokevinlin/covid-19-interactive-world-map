@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme: Theme) =>
       overflowX: "hidden",
     },
     homePage: {
-      height: "max-content",
+      height: "1000px",
       [theme.breakpoints.up("xs")]: {
         margin: "20px",
         width: "calc(100% - 40px)",
