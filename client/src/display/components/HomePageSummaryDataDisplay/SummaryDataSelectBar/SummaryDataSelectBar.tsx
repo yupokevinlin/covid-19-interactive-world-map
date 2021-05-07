@@ -185,26 +185,26 @@ const SummaryDataSelectBar: React.FC<SummaryDataSelectBarProps> = (props) => {
 
   return (
     <div className={classes.root}>
-      <AppBar>
-        {/*<Tabs*/}
-        {/*  className={clsx(classes.tabs, {*/}
-        {/*    [classes.tabs1]: value === SummaryDataSelectBarValue.WEEKLY,*/}
-        {/*    [classes.tabs2]: value === SummaryDataSelectBarValue.MONTHLY,*/}
-        {/*    [classes.tabs3]: value === SummaryDataSelectBarValue.YEARLY,*/}
-        {/*    [classes.tabs4]: value === SummaryDataSelectBarValue.ALL,*/}
-        {/*  })}*/}
-        {/*  value={value}*/}
-        {/*  onChange={handleChange}*/}
-        {/*  indicatorColor={"primary"}*/}
-        {/*  textColor={"primary"}*/}
-        {/*  variant={"fullWidth"}*/}
-        {/*>*/}
-        {/*  <Tab className={classes.tab} key={0} label={SummaryDataSelectBarValue.DAILY} value={SummaryDataSelectBarValue.DAILY}/>*/}
-        {/*  <Tab className={classes.tab} key={1} label={SummaryDataSelectBarValue.WEEKLY} value={SummaryDataSelectBarValue.WEEKLY}/>*/}
-        {/*  <Tab className={classes.tab} key={2} label={SummaryDataSelectBarValue.MONTHLY} value={SummaryDataSelectBarValue.MONTHLY}/>*/}
-        {/*  <Tab className={classes.tab} key={3} label={SummaryDataSelectBarValue.YEARLY} value={SummaryDataSelectBarValue.YEARLY}/>*/}
-        {/*  <Tab className={classes.tab} key={4} label={SummaryDataSelectBarValue.ALL} value={SummaryDataSelectBarValue.ALL}/>*/}
-        {/*</Tabs>*/}
+      <AppBar className={classes.tabsBar} position={"static"} color={"default"} elevation={0}>
+        <Tabs
+          className={clsx(classes.tabs, {
+            [classes.tabs1]: value === SummaryDataSelectBarValue.WEEKLY,
+            [classes.tabs2]: value === SummaryDataSelectBarValue.MONTHLY,
+            [classes.tabs3]: value === SummaryDataSelectBarValue.YEARLY,
+            [classes.tabs4]: value === SummaryDataSelectBarValue.ALL,
+          })}
+          value={value}
+          onChange={handleChange}
+          indicatorColor={"primary"}
+          textColor={"primary"}
+          variant={"fullWidth"}
+        >
+          <Tab className={classes.tab} key={0} label={SummaryDataSelectBarValue.DAILY} value={SummaryDataSelectBarValue.DAILY}/>
+          <Tab className={classes.tab} key={1} label={SummaryDataSelectBarValue.WEEKLY} value={SummaryDataSelectBarValue.WEEKLY}/>
+          <Tab className={classes.tab} key={2} label={SummaryDataSelectBarValue.MONTHLY} value={SummaryDataSelectBarValue.MONTHLY}/>
+          <Tab className={classes.tab} key={3} label={SummaryDataSelectBarValue.YEARLY} value={SummaryDataSelectBarValue.YEARLY}/>
+          <Tab className={classes.tab} key={4} label={SummaryDataSelectBarValue.ALL} value={SummaryDataSelectBarValue.ALL}/>
+        </Tabs>
       </AppBar>
     </div>
   );
