@@ -7,22 +7,22 @@ import Paper from "@material-ui/core/Paper";
 import {Moment} from "moment";
 import {DateUtils} from "../../../helper/DateUtils";
 import getMomentDateFromDateString = DateUtils.getMomentDateFromDateString;
-import WorldSummaryDataSelectBar from "./WorldSummaryDataSelectBar/WorldSummaryDataSelectBar";
-import {WorldSummaryDataSelectBarValue} from "./WorldSummaryDataSelectBar/types";
+import SummaryDataSelectBar from "./SummaryDataSelectBar/SummaryDataSelectBar";
+import {SummaryDataSelectBarValue} from "./SummaryDataSelectBar/types";
 import WorldSummaryDataDisplay from "./WorldSummaryDataDisplay/WorldSummaryDataDisplay";
 
-export type HomePageWorldSummaryBarProps = HomePageWorldSummaryBarDataProps & HomePageWorldSummaryBarStyleProps & HomePageWorldSummaryBarEventProps;
+export type HomePageSummaryDataDisplayProps = HomePageSummaryDataDisplayDataProps & HomePageSummaryDataDisplayStyleProps & HomePageSummaryDataDisplayEventProps;
 
-export interface HomePageWorldSummaryBarDataProps {
+export interface HomePageSummaryDataDisplayDataProps {
   currentDate: string;
   worldData: WorldSummary;
 }
 
-export interface HomePageWorldSummaryBarStyleProps {
+export interface HomePageSummaryDataDisplayStyleProps {
 
 }
 
-export interface HomePageWorldSummaryBarEventProps {
+export interface HomePageSummaryDataDisplayEventProps {
 
 }
 
@@ -99,7 +99,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const HomePageWorldSummaryBar: React.FC<HomePageWorldSummaryBarProps> = (props) => {
+const HomePageSummaryDataDisplay: React.FC<HomePageSummaryDataDisplayProps> = (props) => {
   const theme: Theme = useTheme();
   const classes = useStyles();
 
@@ -108,14 +108,14 @@ const HomePageWorldSummaryBar: React.FC<HomePageWorldSummaryBarProps> = (props) 
     worldData,
   } = props;
 
-  const [worldDataType, setWorldDataType] = React.useState<WorldSummaryDataSelectBarValue>(WorldSummaryDataSelectBarValue.DAILY);
+  const [worldDataType, setWorldDataType] = React.useState<SummaryDataSelectBarValue>(SummaryDataSelectBarValue.DAILY);
 
   const currentDateMoment: Moment = getMomentDateFromDateString(currentDate);
   currentDateMoment.add(23, "hours");
 
   const currentDateText: string = `Last Updated: ${currentDateMoment.format("LLLL")}`;
 
-  const handleWorldDataTypeChange = (value: WorldSummaryDataSelectBarValue): void => {
+  const handleWorldDataTypeChange = (value: SummaryDataSelectBarValue): void => {
     console.log(value);
     setWorldDataType(value);
   };
@@ -131,12 +131,12 @@ const HomePageWorldSummaryBar: React.FC<HomePageWorldSummaryBarProps> = (props) 
         World Summary
       </Typography>
       <Paper className={classes.dataWrapper} elevation={3}>
-        <WorldSummaryDataSelectBar handleWorldDataTypeChange={handleWorldDataTypeChange}/>
+        <SummaryDataSelectBar handleWorldDataTypeChange={handleWorldDataTypeChange}/>
         <WorldSummaryDataDisplay worldDataType={worldDataType} worldData={worldData}/>
       </Paper>
     </div>
   );
 };
 
-export default HomePageWorldSummaryBar;
+export default HomePageSummaryDataDisplay;
 
