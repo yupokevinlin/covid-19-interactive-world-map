@@ -298,7 +298,7 @@ const CountriesSummaryDataTable: React.FC<CountriesSummaryDataTableProps> = (pro
       </div>
       {
         data.map((summary, index) => (
-          <div className={classes.rowWrapper} style={{backgroundColor: getRowBackgroundColor(type, index)}}>
+          <div key={index} className={classes.rowWrapper} style={{backgroundColor: getRowBackgroundColor(type, index)}}>
             <div className={classes.rowCellWrapper} style={{width: isAll ? "50%" : "40%"}}>
               <Typography className={classes.rowCell}>
                 {
