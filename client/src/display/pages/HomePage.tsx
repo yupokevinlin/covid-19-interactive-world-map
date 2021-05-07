@@ -5,6 +5,7 @@ import {
   CurrentCasesSummary,
 } from "../../../../shared/types/data/Cases/CasesTypes";
 import HomePageSummaryDataDisplay from "../components/HomePageSummaryDataDisplay/HomePageSummaryDataDisplay";
+import {Scrollbars} from "react-custom-scrollbars";
 
 export type HomePageProps = HomePageDataProps & HomePageStyleProps & HomePageEventProps;
 
@@ -64,9 +65,11 @@ const HomePage: React.FC<HomePageProps> = (props) => {
 
   return (
     <div className={classes.homePageWrapper}>
-      <div className={classes.homePage}>
-        <HomePageSummaryDataDisplay currentDate={summaryData.currentDate} worldData={summaryData.world}/>
-      </div>
+      <Scrollbars>
+        <div className={classes.homePage}>
+          <HomePageSummaryDataDisplay currentDate={summaryData.currentDate} worldData={summaryData.world} countriesData={summaryData.countries}/>
+        </div>
+      </Scrollbars>
     </div>
   );
 };
