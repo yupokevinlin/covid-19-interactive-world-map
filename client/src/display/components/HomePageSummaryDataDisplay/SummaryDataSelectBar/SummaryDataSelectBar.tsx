@@ -10,7 +10,7 @@ import clsx from "clsx";
 export type SummaryDataSelectBarProps = SummaryDataSelectBarDataProps & SummaryDataSelectBarStyleProps & SummaryDataSelectBarEventProps;
 
 export interface SummaryDataSelectBarDataProps {
-
+  value: SummaryDataSelectBarValue
 }
 
 export interface SummaryDataSelectBarStyleProps {
@@ -175,13 +175,11 @@ const SummaryDataSelectBar: React.FC<SummaryDataSelectBarProps> = (props) => {
   const classes = useStyles();
 
   const {
+    value,
     handleWorldDataTypeChange,
   } = props;
 
-  const [value, setValue] = React.useState<SummaryDataSelectBarValue>(SummaryDataSelectBarValue.DAILY);
-
   const handleChange = (event: React.MouseEvent<HTMLDivElement>, newValue: SummaryDataSelectBarValue) => {
-    setValue(newValue);
     handleWorldDataTypeChange(newValue);
   };
 
