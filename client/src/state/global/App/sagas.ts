@@ -167,8 +167,8 @@ const getInitialMenuItems = (): Array<NavigationDrawerMenuItem> => {
       backgroundColor: PageBackgroundColors.HOME,
       children: [
         {
-          text: HomeSubPages.HOME,
-          toolTip: HomeSubPages.HOME,
+          text: HomeSubPages.SUMMARY,
+          toolTip: HomeSubPages.SUMMARY,
           iconName: MaterialIconNames.Home,
           active: false,
         },
@@ -362,7 +362,7 @@ export const getDefaultSubPage = (page: Pages): SubPages => {
   let newSubPage: SubPages = null;
   switch (page) {
     case Pages.HOME: {
-      newSubPage = HomeSubPages.HOME;
+      newSubPage = HomeSubPages.SUMMARY;
       break;
     }
     case Pages.MAP: {

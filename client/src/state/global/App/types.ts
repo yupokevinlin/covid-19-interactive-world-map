@@ -53,7 +53,7 @@ export enum Pages {
 export type SubPages = HomeSubPages | MapSubPages | ChartSubPages;
 
 export enum HomeSubPages {
-  HOME = "Home"
+  SUMMARY = "Summary"
 }
 
 export enum MapSubPages {
