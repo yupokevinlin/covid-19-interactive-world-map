@@ -59,7 +59,7 @@ export interface DailyCasesInformationDataNull {
 export interface CurrentCasesSummary {
   currentDate: string;
   world: WorldSummary;
-  countries: CasesSummary;
+  countries: CountriesSummary;
 }
 
 export interface WorldSummary {
@@ -79,7 +79,7 @@ export interface WorldSummaryData {
   previousRecoveriesChange: number;
 }
 
-export interface CasesSummary {
+export interface CountriesSummary {
   daily: CasesSummaryData;
   weekly: CasesSummaryData;
   monthly: CasesSummaryData;

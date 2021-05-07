@@ -4,7 +4,7 @@ import {
   CasesData,
   CasesDataObject,
   CasesInformationDataObject,
-  CasesSummary,
+  CountriesSummary,
   CasesSummaryData,
   CasesSummaryTypeData,
   CurrentCasesSummary,
@@ -1421,7 +1421,7 @@ export namespace CasesUtils {
     const dateKeys: Array<string> = Object.keys(worldDailyData);
     const currentDateString: string = dateKeys[dateKeys.length - 1];
     const worldSummary: WorldSummary = getWorldSummary(currentDateString);
-    const countriesSummary: CasesSummary = getCountriesSummary(currentDateString);
+    const countriesSummary: CountriesSummary = getCountriesSummary(currentDateString);
     summaryData = {
       currentDate: currentDateString,
       world: worldSummary,
@@ -1521,7 +1521,7 @@ export namespace CasesUtils {
     };
   };
 
-  export const getCountriesSummary = (currentDateString: string): CasesSummary => {
+  export const getCountriesSummary = (currentDateString: string): CountriesSummary => {
     const countriesData: Array<CasesData> = Object.entries(data)
     .filter(([hierarchicalName, casesData]) => {
       const name: Array<string> = getNameArray(hierarchicalName);
