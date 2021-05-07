@@ -185,7 +185,7 @@ const SummaryDataSelectBar: React.FC<SummaryDataSelectBarProps> = (props) => {
 
   return (
     <div className={classes.root}>
-      <AppBar className={classes.tabsBar} position={"static"} color={"default"} elevation={0}>
+      <AppBar>
         {/*<Tabs*/}
         {/*  className={clsx(classes.tabs, {*/}
         {/*    [classes.tabs1]: value === SummaryDataSelectBarValue.WEEKLY,*/}
