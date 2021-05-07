@@ -27,7 +27,7 @@ export class ExpressServer {
     this.addEndPoints(server);
     // MapUtils.convertMapData();
     await CasesUtils.fetchCasesData();
-    // CasesUtils.getSummaryData();
+    CasesUtils.getSummaryData();
     TreeUtils.getTreeData();
     UpdateUtils.setupUpdate();
     return this.server;
