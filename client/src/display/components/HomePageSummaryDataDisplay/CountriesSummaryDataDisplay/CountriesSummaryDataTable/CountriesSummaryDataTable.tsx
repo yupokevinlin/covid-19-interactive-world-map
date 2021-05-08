@@ -109,7 +109,12 @@ const useStyles = makeStyles((theme: Theme) =>
       color: theme.palette.text.primary,
       marginLeft: "10px",
       fontWeight: "bold",
-      fontSize: "12px",
+      [theme.breakpoints.up("xs")]: {
+        fontSize: "10px",
+      },
+      [theme.breakpoints.up("md")]: {
+        fontSize: "12px",
+      },
     },
     rowWrapper: {
       display: "flex",
@@ -118,13 +123,13 @@ const useStyles = makeStyles((theme: Theme) =>
       alignItems: "center",
       width: "100%",
       [theme.breakpoints.up("xs")]: {
-        height: "42px",
+        height: "63px",
       },
       [theme.breakpoints.up("sm")]: {
-        height: "52px",
+        height: "78px",
       },
       [theme.breakpoints.up("md")]: {
-        height: "62px",
+        height: "93px",
       },
       [theme.breakpoints.up("lg")]: {
         height: "108px",
@@ -138,13 +143,13 @@ const useStyles = makeStyles((theme: Theme) =>
       justifyContent: "space-evenly",
       alignItems: "flex-start",
       [theme.breakpoints.up("xs")]: {
-        height: "42px",
+        height: "63px",
       },
       [theme.breakpoints.up("sm")]: {
-        height: "52px",
+        height: "78px",
       },
       [theme.breakpoints.up("md")]: {
-        height: "62px",
+        height: "93px",
       },
       [theme.breakpoints.up("lg")]: {
         height: "108px",
@@ -152,10 +157,14 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     rowCell: {
       [theme.breakpoints.up("xs")]: {
+        fontSize: "10px",
+        height: "10px",
+      },
+      [theme.breakpoints.up("sm")]: {
         fontSize: "12px",
         height: "12px",
       },
-      [theme.breakpoints.up("sm")]: {
+      [theme.breakpoints.up("md")]: {
         fontSize: "14px",
         height: "14px",
       },
