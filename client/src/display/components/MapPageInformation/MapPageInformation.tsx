@@ -45,24 +45,34 @@ const useStyles = makeStyles((theme: Theme) =>
     root: {
       display: "flex",
       flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "center",
       [theme.breakpoints.up("xs")]: {
-        height: "20px",
-        width: "calc(100% - 50px)",
-        margin: "21px 25px 0px 25px",
+        alignItems: "center",
+        alignContent: "space-around",
+        justifyContent: "center",
+        flexWrap: "wrap",
+        height: "41px",
+        width: "calc(100% - 10px)",
+        margin: "0px 5px 0px 5px",
       },
       [theme.breakpoints.up("sm")]: {
-        height: "27px",
-        width: "calc(100% - 54px)",
-        margin: "21px 27px 0px 27px",
+        alignItems: "center",
+        alignContent: "space-around",
+        justifyContent: "center",
+        flexWrap: "wrap",
+        height: "48px",
+        width: "calc(100% - 14px)",
+        margin: "0px 7px 0px 7px",
       },
       [theme.breakpoints.up("md")]: {
+        alignItems: "center",
+        justifyContent: "center",
         height: "33px",
         width: "calc(100% - 60px)",
         margin: "21px 30px 0px 30px",
       },
       [theme.breakpoints.up("lg")]: {
+        alignItems: "center",
+        justifyContent: "center",
         height: "40px",
         width: "calc(100% - 60px)",
         margin: "21px 30px 0px 30px",
@@ -71,15 +81,15 @@ const useStyles = makeStyles((theme: Theme) =>
     text: {
       [theme.breakpoints.up("xs")]: {
         fontWeight: 600,
-        fontSize: "12px",
-        lineHeight: "12px",
+        fontSize: "10px",
+        lineHeight: "10px",
         marginLeft: "5px",
         marginRight: "5px",
       },
       [theme.breakpoints.up("sm")]: {
         fontWeight: 600,
-        fontSize: "16px",
-        lineHeight: "17px",
+        fontSize: "12px",
+        lineHeight: "13px",
         marginLeft: "10px",
         marginRight: "10px",
       },
@@ -162,6 +172,28 @@ const useStyles = makeStyles((theme: Theme) =>
       [theme.breakpoints.up("lg")]: {
         height: "30px",
         width: "30px",
+      },
+    },
+    textWrapper: {
+      display: "flex",
+      flexDirection: "row",
+      flexWrap: "nowrap",
+      alignItems: "center",
+      height: "max-content",
+      width: "max-content",
+    },
+    textFlagWrapper: {
+      display: "flex",
+      flexDirection: "row",
+      flexWrap: "nowrap",
+      alignItems: "center",
+      height: "max-content",
+      [theme.breakpoints.up("xs")]: {
+        width: "100%",
+        justifyContent: "center",
+      },
+      [theme.breakpoints.up("md")]: {
+        width: "max-content",
       },
     },
   }),
@@ -295,36 +327,42 @@ const MapPageInformation: React.FC<MapPageInformationProps> = (props) => {
 
   return (
     <div className={classes.root}>
-      {
-        regionName === "World" ? (
-          <div className={classes.worldFlagWrapper}>
-            <MaterialIcon className={classes.worldFlagIcon} iconName={MaterialIconNames.Language}/>
-          </div>
-        ) : (
-          <img className={classes.flag} src={findFlagUrlByIso3Code(countryCode)}/>
-        )
-      }
-      <Typography className={classes.text} variant={"h5"}>
+      <div className={classes.textFlagWrapper}>
         {
-          getName(regionName)
+          regionName === "World" ? (
+            <div className={classes.worldFlagWrapper}>
+              <MaterialIcon className={classes.worldFlagIcon} iconName={MaterialIconNames.Language}/>
+            </div>
+          ) : (
+            <img className={classes.flag} src={findFlagUrlByIso3Code(countryCode)}/>
+          )
         }
-      </Typography>
-      <Typography className={classes.text} variant={"h5"}>
-        {
-          getDisplayedText(caseType, casesDataType)
-        }
-      </Typography>
-      <Typography className={classes.text} variant={"h5"}>
-        {
-          getDataNumber(caseType, casesData, date, casesDataType, dailyCasesInformationDataObject, weeklyCasesInformationDataObject, monthlyCasesInformationDataObject, yearlyCasesInformationDataObject)
-        }
-      </Typography>
-      <Typography className={classes.text} variant={"h5"}>Date:</Typography>
-      <Typography className={classes.text} variant={"h5"}>
-        {
-          date
-        }
-      </Typography>
+        <Typography className={classes.text} variant={"h5"}>
+          {
+            getName(regionName)
+          }
+        </Typography>
+      </div>
+      <div className={classes.textWrapper}>
+        <Typography className={classes.text} variant={"h5"}>
+          {
+            getDisplayedText(caseType, casesDataType)
+          }
+        </Typography>
+        <Typography className={classes.text} variant={"h5"}>
+          {
+            getDataNumber(caseType, casesData, date, casesDataType, dailyCasesInformationDataObject, weeklyCasesInformationDataObject, monthlyCasesInformationDataObject, yearlyCasesInformationDataObject)
+          }
+        </Typography>
+      </div>
+      <div className={classes.textWrapper}>
+        <Typography className={classes.text} variant={"h5"}>Date:</Typography>
+        <Typography className={classes.text} variant={"h5"}>
+          {
+            date
+          }
+        </Typography>
+      </div>
     </div>
   );
 };
