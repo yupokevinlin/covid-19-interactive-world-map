@@ -252,7 +252,7 @@ const ChartPageLineChart: React.FC<ChartPageLineChartProps> = (props) => {
       const isMd: boolean = detectedWidth >= breakpoint;
       const marginTop: number = 10;
       const marginBottom: number = isMd ? 70 : 50;
-      const marginRight: number = isMd ? 100 : 70;
+      const marginRight: number = isMd ? 100 : 50;
       const marginLeft: number = isMd ? 100 : 70;
 
       //Get svg element
@@ -465,7 +465,7 @@ const ChartPageLineChart: React.FC<ChartPageLineChartProps> = (props) => {
       const isMd: boolean = detectedWidth >= breakpoint;
       const marginTop: number = 10;
       const marginBottom: number = isMd ? 70 : 50;
-      const marginRight: number = isMd ? 100 : 70;
+      const marginRight: number = isMd ? 100 : 50;
       const marginLeft: number = isMd ? 100 : 70;
 
       //Get svg element
