@@ -75,13 +75,14 @@ const useStyles = makeStyles((theme: Theme) =>
       display: "flex",
       flexDirection: "row",
       alignItems: "center",
-      justifyContent: "center",
       width: "100%",
       [theme.breakpoints.up("xs")]: {
         height: "40px",
+        justifyContent: "flex-start",
       },
       [theme.breakpoints.up("md")]: {
         height: "60px",
+        justifyContent: "center",
       },
     },
     typeSelectButtonLabelWrapper: {
@@ -123,13 +124,14 @@ const useStyles = makeStyles((theme: Theme) =>
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "center",
-      marginRight: "150px",
-      width: "calc(100% - 300px)",
       [theme.breakpoints.up("xs")]: {
         height: "40px",
+        width: "calc(100% - 150px)",
       },
       [theme.breakpoints.up("md")]: {
         height: "60px",
+        width: "calc(100% - 300px)",
+        marginRight: "150px",
       },
     },
     flag: {
