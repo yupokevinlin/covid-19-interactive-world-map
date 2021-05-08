@@ -61,6 +61,6 @@ export enum ESRIMapLayerNames {
 
 export enum ESRIMapModeNames {
   totalCases = "Total Cases",
-  totalRecovered = "Total Recovered",
+  totalRecoveries = "Total Recoveries",
   totalDeaths = "Total Deaths",
 }

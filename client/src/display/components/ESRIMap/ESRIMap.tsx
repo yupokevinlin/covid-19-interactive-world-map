@@ -426,7 +426,7 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
         switch (casesDataType) {
           case CasesDataTypes.Total: {
             renderer.legendOptions = {
-              title: ESRIMapModeNames.totalRecovered,
+              title: ESRIMapModeNames.totalRecoveries,
             };
             renderer.field = "totalRecoveries";
             renderer.classBreakInfos = generateLogarithmicClassStep(MapTotalRecoveriesClassBreakDomain[4], MapTotalRecoveriesClassBreakColors, MapTotalRecoveriesClassBreakDomain);
