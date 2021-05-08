@@ -206,11 +206,11 @@ const HomePageSummaryDataDisplay: React.FC<HomePageSummaryDataDisplayProps> = (p
               </div>
               <SummaryDataSelectBar value={countriesDataType} handleWorldDataTypeChange={handleCountriesDataTypeChange}/>
               <div className={classes.summaryDataWrapper}>
-                <CountriesSummaryDataTable type={CountriesSummaryDataTableType.Deaths} data={countriesSummaryData.casesChange} countriesDataType={countriesDataType}/>
+                <CountriesSummaryDataTable type={CountriesSummaryDataTableType.Deaths} data={countriesSummaryData.deathsChange} countriesDataType={countriesDataType}/>
               </div>
               <SummaryDataSelectBar value={countriesDataType} handleWorldDataTypeChange={handleCountriesDataTypeChange}/>
               <div className={classes.summaryDataWrapper}>
-                <CountriesSummaryDataTable type={CountriesSummaryDataTableType.Recoveries} data={countriesSummaryData.casesChange} countriesDataType={countriesDataType}/>
+                <CountriesSummaryDataTable type={CountriesSummaryDataTableType.Recoveries} data={countriesSummaryData.recoveriesChange} countriesDataType={countriesDataType}/>
               </div>
             </React.Fragment>
           )
