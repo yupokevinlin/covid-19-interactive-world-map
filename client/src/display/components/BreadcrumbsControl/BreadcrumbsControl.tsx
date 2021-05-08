@@ -57,6 +57,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     text: {
       whiteSpace: "nowrap",
+      textOverflow: "ellipsis",
       [theme.breakpoints.up("xs")]: {
         overflow: "hidden",
         padding: "9px 8px",

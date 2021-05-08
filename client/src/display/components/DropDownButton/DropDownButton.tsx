@@ -28,6 +28,8 @@ const useStyles = makeStyles((theme: Theme) =>
     button: {
       "& .MuiButton-label": {
         whiteSpace: "nowrap",
+        textOverflow: "ellipsis",
+        display: "block",
       },
       [theme.breakpoints.up("xs")]: {
         padding: "9px 8px",
