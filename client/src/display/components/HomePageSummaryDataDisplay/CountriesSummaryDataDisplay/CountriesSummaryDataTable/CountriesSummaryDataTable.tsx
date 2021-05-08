@@ -140,7 +140,7 @@ const useStyles = makeStyles((theme: Theme) =>
       marginLeft: "10px",
       display: "flex",
       flexDirection: "column",
-      justifyContent: "space-evenly",
+      justifyContent: "space-around",
       alignItems: "flex-start",
       [theme.breakpoints.up("xs")]: {
         height: "63px",
@@ -170,10 +170,13 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
     rowFlag: {
+      boxShadow: "0px 0px 5px #aaa",
       [theme.breakpoints.up("xs")]: {
         height: "14px",
       },
-      height: "16px"
+      [theme.breakpoints.up("md")]: {
+        height: "20px",
+      },
     },
   }),
 );

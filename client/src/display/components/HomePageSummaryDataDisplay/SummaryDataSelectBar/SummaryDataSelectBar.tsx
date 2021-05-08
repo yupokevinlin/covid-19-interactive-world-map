@@ -135,12 +135,12 @@ const useStyles = makeStyles((theme: Theme) =>
       [theme.breakpoints.up("xs")]: {
         height: "27px",
         minHeight: "27px",
-        padding: "6px 12px",
+        padding: "6px 6px",
       },
       [theme.breakpoints.up("sm")]: {
         height: "30px",
         minHeight: "30px",
-        padding: "6px 12px",
+        padding: "6px 6px",
       },
       [theme.breakpoints.up("md")]: {
         height: "33px",

@@ -100,10 +100,8 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
     displayItemTitleTextAll: {
-      [theme.breakpoints.up("lg")]: {
-        marginTop: "0px",
-        marginLeft: "0px",
-      },
+      marginTop: "0px",
+      marginLeft: "0px",
     },
     displayItemText: {
       [theme.breakpoints.up("xs")]: {
