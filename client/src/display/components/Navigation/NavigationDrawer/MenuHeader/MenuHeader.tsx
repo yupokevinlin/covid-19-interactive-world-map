@@ -78,9 +78,17 @@ const MenuHeader: React.FC<MenuHeaderProps> = (props) => {
     setIsHover(false);
   };
 
+  const handleTouchStart = (e: React.TouchEvent<HTMLElement>): void => {
+    setIsHover(true);
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent<HTMLElement>): void => {
+    setIsHover(false);
+  };
+
   return (
     <React.Fragment>
-      <ListItem className={classes.companyIconWrapper} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+      <ListItem className={classes.companyIconWrapper} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
         <ListItemIcon>
           <img src={"/resources/icon.svg"} style={{height: iconFontSize, width: iconFontSize}}/>
         </ListItemIcon>
