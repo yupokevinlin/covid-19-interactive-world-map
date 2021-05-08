@@ -6,7 +6,7 @@ export const initialState: AppState = {
   displayLoadingBar: false,
   displayLoadingPage: false,
   isDoingNetworkCall: false,
-  version: "0.0.1",
+  version: "1.0.0",
   title: `${Pages.HOME}`,
   theme: null,
   page: Pages.HOME,

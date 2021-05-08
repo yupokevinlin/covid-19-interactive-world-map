@@ -50,7 +50,7 @@ export const appSagas = {
 
 function * initSaga(action: AppInitAction): any {
   getCasesDataObject();
-  const version: string = "0.0.1";
+  const version: string = "1.0.0";
   yield put({
     type: AppActionTypes.SET_VERSION,
     version: version,
