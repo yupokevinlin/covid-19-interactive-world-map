@@ -680,7 +680,7 @@ const ChartPageLineChart: React.FC<ChartPageLineChartProps> = (props) => {
         return b && (date - a.date > b.date - date) ? b : a;
       }
       svg.on("touchmove mousemove", (event) => {
-        const {date, value, average} = bisect(d3.pointer(event, this)[0]);
+        const {date, value, average} = event instanceof TouchEvent ? bisect(d3.pointer(event.touches[0])[0]) : bisect(d3.pointer(event)[0]);
         tooltip.call(callout, date, value, average);
       });
       svg.on("touchend mouseleave", () => tooltip.call(callout, null, null));
