@@ -52,6 +52,7 @@ import Add from "@material-ui/icons/Add";
 import Remove from "@material-ui/icons/Remove";
 import ChevronLeft from "@material-ui/icons/ChevronLeft";
 import ChevronRight from "@material-ui/icons/ChevronRight";
+import Info from "@material-ui/icons/Info";
 
 import {SkullIcon as Skull} from "./SvgIcon/SvgIcons"
 
@@ -82,6 +83,7 @@ export enum MaterialIconNames {
   Home = "Home",
   Image = "Image",
   Inbox = "Inbox",
+  Info = "Info",
   InsertDriveFile = "InsertDriveFile",
   Language = "Language",
   LastPage = "LastPage",
@@ -185,6 +187,9 @@ const MaterialIcon: React.FC<MaterialIconProps> = (props) => {
     }
     case MaterialIconNames.Inbox: {
       return <Inbox {...svgIconProps}/>;
+    }
+    case MaterialIconNames.Info: {
+      return <Info {...svgIconProps}/>;
     }
     case MaterialIconNames.InsertDriveFile: {
       return <InsertDriveFile {...svgIconProps}/>;
