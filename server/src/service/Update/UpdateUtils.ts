@@ -12,7 +12,7 @@ export namespace UpdateUtils {
       const lastUpdateMomentDate = moment(lastUpdate, "M/D/YY").startOf("day");
       const currentMomentDate = moment();
       const difference: number = currentMomentDate.diff(lastUpdateMomentDate);
-      const shouldUpdate: boolean = difference > 82800000;
+      const shouldUpdate: boolean = difference > 5400000 && difference < 9000000;
       if (shouldUpdate) {
         updateData();
       }
