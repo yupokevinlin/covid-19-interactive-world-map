@@ -50,7 +50,7 @@ export const reducer = (state: AppState = initialState, action: AppAction): AppS
       }
     }
     case AppActionTypes.SET_TITLE: {
-      const title: string = `${action.page}`;
+      const title: string = `Covid-19-Tracker: ${action.page}`;
       window.document.title = title;
       return {
         ...state,
