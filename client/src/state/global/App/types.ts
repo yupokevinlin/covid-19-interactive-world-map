@@ -11,6 +11,8 @@ export interface AppState {
   isDoingNetworkCall: boolean;
   version: string;
   title: string;
+  github: string;
+  email: string;
   theme: Theme;
   page: Pages;
   subPage: SubPages;

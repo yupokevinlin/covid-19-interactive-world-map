@@ -8,6 +8,8 @@ export const initialState: AppState = {
   isDoingNetworkCall: false,
   version: "1.0.0",
   title: `${Pages.HOME}`,
+  github: "https://github.com/yupokevinlin",
+  email: "covid19trackingapp@gmail.com",
   theme: null,
   page: Pages.HOME,
   subPage: null,
