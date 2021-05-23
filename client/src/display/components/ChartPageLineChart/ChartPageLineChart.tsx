@@ -559,11 +559,23 @@ const ChartPageLineChart: React.FC<ChartPageLineChartProps> = (props) => {
         .enter().append("rect")
         .attr("class", "bar")
         .attr("x", function(d) { return xScale(d.date) - xBand.bandwidth() / 2; })
-        .attr("y", function(d) { return yScale(d.value); })
+        .attr("y", function(d) {
+          if (d.value >= 0) {
+            return yScale(d.value);
+          } else {
+            return yScale(0);
+          }
+        })
         .attr("width", xBand.bandwidth())
         .style("fill", theme.palette.primary.main)
         .style("opacity", 0.3)
-        .attr("height", function(d) { return detectedHeight - marginBottom - yScale(d.value); });
+        .attr("height", function(d) {
+          if (d.value >= 0) {
+            return detectedHeight - marginBottom - yScale(d.value + minValue);
+          } else {
+            return detectedHeight - marginBottom - yScale(-d.value + minValue);
+          }
+        });
 
       //Generate line
       const dataLine: any = d3.line()
