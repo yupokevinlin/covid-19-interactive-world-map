@@ -125,14 +125,14 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
   const prevProps: ESRIMapProps = usePreviousProps<ESRIMapProps>(props);
   useEffect(() => {
     loadModules(
-      ["esri/config", "esri/Map", "esri/views/MapView", "esri/layers/FeatureLayer", "esri/layers/GraphicsLayer", "esri/widgets/Legend", "esri/geometry/Point", "esri/geometry/Polygon", "esri/Graphic"],
+      ["esri/config", "esri/Map", "esri/views/MapView", "esri/layers/FeatureLayer", "esri/layers/GraphicsLayer", "esri/widgets/Legend", "esri/geometry/Polygon", "esri/Graphic"],
       {
         css: true,
       }
-    ).then(([esriConfig, Map, MapView, FeatureLayer, GraphicsLayer, Legend, Point, Polygon, Graphic]) => {
+    ).then(([esriConfig, Map, MapView, FeatureLayer, GraphicsLayer, Legend, Polygon, Graphic]) => {
 
       if (!map) {
-        initialize(esriConfig, Map, MapView, FeatureLayer, GraphicsLayer, Legend, Point);
+        initialize(esriConfig, Map, MapView, FeatureLayer, GraphicsLayer, Legend);
       }
 
       if (prevProps) {
@@ -162,8 +162,8 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
     });
   }, [mapPolygons, caseType, date, mapRegionUpdateGeometry, breadcrumbsRegionUpdateGeometry, casesDataType, width]);
 
-  const initialize = (Map, MapView, FeatureLayer, GraphicsLayer, Legend, Point): void => {
-    
+  const initialize = (esriConfig, Map, MapView, FeatureLayer, GraphicsLayer, Legend): void => {
+
     map = new Map({
       basemap: initialBaseMap,
     });
