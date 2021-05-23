@@ -64,60 +64,31 @@ const useStyles = makeStyles((theme: Theme) =>
         duration: theme.transitions.duration.enteringScreen,
       }),
     },
-    badge: {
-      fontSize: 8,
-      top: 2,
-      height: 16,
-      [theme.breakpoints.up("sm")]: {
-        fontSize: 8,
-        top: 2,
-        height: 16,
-      },
-      [theme.breakpoints.up("md")]: {
-        fontSize: 8.5,
-        top: 3,
-        height: 18,
-      },
-      [theme.breakpoints.up("lg")]: {
-        fontSize: 8.5,
-        top: 3,
-        height: 20,
-      },
-    },
-    menuButton: {
+    button: {
       marginRight: theme.spacing(2),
-    },
-    title: {
-      flexGrow: 1,
-    },
-    grow: {
-      flexGrow: 1,
-    },
-    buttons: {
-      display: "flex",
-      alignItems: "center",
-    },
-    avatar: {
       marginLeft: theme.spacing(2),
-      cursor: "pointer",
-      height: appBarHeightXs - 8,
-      width: appBarHeightXs - 8,
-      [theme.breakpoints.up("sm")]: {
-        height: appBarHeightSm - 8,
-        width: appBarHeightSm - 8,
-      },
-      [theme.breakpoints.up("md")]: {
-        height: appBarHeightMd - 8,
-        width: appBarHeightMd - 8,
-      },
-      [theme.breakpoints.up("lg")]: {
-        height: appBarHeightLg - 8,
-        width: appBarHeightLg - 8,
-      },
-      ["&:hover"]: {
-        filter: `brightness(${100 - 2 * menuItemHoverBrightnessChangeAmount}%)`,
-      },
     },
+    toolBar: {
+      margin: 0,
+      padding: 0,
+    },
+    toolBarLeft: {
+      height: "100%",
+      display: "flex",
+      flexDirection: "row",
+      justifyContent: "flex-start",
+      alignItems: "center",
+      width: "50%",
+    },
+    toolBarRight: {
+      height: "100%",
+      display: "flex",
+      flexDirection: "row",
+      justifyContent: "flex-end",
+      alignItems: "center",
+      width: "50%",
+    },
+
     toolTip: {
       fontSize: 11,
       height: 16,
@@ -174,21 +145,22 @@ const ControlBar: React.FC<ControlBarProps> = (props) => {
       [classes.appBarShift]: drawerOpen && !drawerExpanded && !isSmXs,
       [classes.appBarShiftExpanded]: drawerOpen && drawerExpanded && !isSmXs,
     })}>
-      <Toolbar>
-        <Tooltip classes={{tooltip: classes.toolTip}} title={"Toggle Menu"}>
-          <IconButton edge={"start"} className={classes.menuButton} color={"inherit"} onClick={onMenuIconClick}>
-            <MaterialIcon iconName={MaterialIconNames.Menu} style={{fontSize: iconFontSize}}/>
-          </IconButton>
-        </Tooltip>
-        <Typography variant={"h4"}>
-          {
-            title
-          }
-        </Typography>
-        <div className={classes.grow} />
-        <div className={classes.buttons}>
+      <Toolbar className={classes.toolBar}>
+        <div className={classes.toolBarLeft}>
+          <Tooltip classes={{tooltip: classes.toolTip}} title={"Toggle Menu"}>
+            <IconButton edge={"start"} className={classes.button} color={"inherit"} onClick={onMenuIconClick}>
+              <MaterialIcon iconName={MaterialIconNames.Menu} style={{fontSize: iconFontSize}}/>
+            </IconButton>
+          </Tooltip>
+          <Typography variant={"h4"}>
+            {
+              title
+            }
+          </Typography>
+        </div>
+        <div className={classes.toolBarRight}>
           <Tooltip classes={{tooltip: classes.toolTip}} title={"Contact Info"}>
-            <IconButton edge={"start"} className={classes.menuButton} color={"inherit"} onClick={onInfoButtonClick}>
+            <IconButton edge={"start"} className={classes.button} color={"inherit"} onClick={onInfoButtonClick}>
               <MaterialIcon iconName={MaterialIconNames.Info} style={{fontSize: iconFontSize}}/>
             </IconButton>
           </Tooltip>
