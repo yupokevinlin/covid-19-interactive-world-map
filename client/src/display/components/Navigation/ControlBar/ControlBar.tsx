@@ -33,6 +33,7 @@ export interface ControlBarStyleProps {
 
 export interface ControlBarEventProps {
   handleDrawerToggle(open: boolean): void;
+  handleInfoButtonClick(): void;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -150,6 +151,7 @@ const ControlBar: React.FC<ControlBarProps> = (props) => {
     drawerExpanded,
     width,
     handleDrawerToggle,
+    handleInfoButtonClick,
   } = props;
 
   const isXs: boolean = /xs/.test(width);
@@ -161,6 +163,10 @@ const ControlBar: React.FC<ControlBarProps> = (props) => {
 
   const onMenuIconClick = (): void => {
     handleDrawerToggle(!drawerOpen);
+  };
+
+  const onInfoButtonClick = (): void => {
+    handleInfoButtonClick();
   };
 
   return (
@@ -180,7 +186,12 @@ const ControlBar: React.FC<ControlBarProps> = (props) => {
           }
         </Typography>
         <div className={classes.grow} />
-          <div className={classes.buttons}>
+        <div className={classes.buttons}>
+          <Tooltip classes={{tooltip: classes.toolTip}} title={"Contact Info"}>
+            <IconButton edge={"start"} className={classes.menuButton} color={"inherit"} onClick={onInfoButtonClick}>
+              <MaterialIcon iconName={MaterialIconNames.Info} style={{fontSize: iconFontSize}}/>
+            </IconButton>
+          </Tooltip>
         </div>
       </Toolbar>
     </AppBar>

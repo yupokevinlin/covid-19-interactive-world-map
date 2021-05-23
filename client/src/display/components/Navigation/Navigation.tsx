@@ -10,6 +10,8 @@ import ProgressBar from "../ProgressBar/ProgressBar";
 import {Breakpoint} from "@material-ui/core/styles/createBreakpoints";
 import NavigationDrawer, {NavigationDrawerMenuItem} from "./NavigationDrawer/NavigationDrawer";
 import {Pages, SubPages} from "../../../state/global/App/types";
+import InfoPage from "../InfoPage/InfoPage";
+import Modal from "@material-ui/core/Modal";
 
 export type PageNavigationControlProps = PageNavigationControlDataProps & PageNavigationControlStyleProps & PageNavigationControlEventProps;
 
@@ -19,6 +21,8 @@ export interface PageNavigationControlDataProps {
   displayLoadingBar: boolean;
   displayLoadingPage: boolean;
   version: string;
+  github: string;
+  email: string;
 }
 
 export interface PageNavigationControlStyleProps {
@@ -81,6 +85,11 @@ const useStyles = makeStyles((theme: Theme) =>
         duration: theme.transitions.duration.leavingScreen,
       }),
     },
+    modal: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+    },
   })
 );
 
@@ -95,6 +104,8 @@ const Navigation: React.FC<PageNavigationControlProps> = (props) => {
     displayLoadingBar,
     displayLoadingPage,
     version,
+    github,
+    email,
     handleMenuItemClick,
     handleMenuItemChildClick,
   } = props;
@@ -103,6 +114,7 @@ const Navigation: React.FC<PageNavigationControlProps> = (props) => {
 
   const [drawerOpen, setDrawerOpen] = useState<boolean>(!isSmXs);
   const [drawerExpanded, setDrawerExpanded] = useState<boolean>(!isSmXs);
+  const [isInfoModalOpen, setIsInfoModalOpen] = useState<boolean>(false);
 
   const handleDrawerToggle = (open: boolean): void => {
     setDrawerOpen(open);
@@ -110,6 +122,14 @@ const Navigation: React.FC<PageNavigationControlProps> = (props) => {
 
   const handleDrawerExpand = (expanded: boolean): void => {
     setDrawerExpanded(expanded);
+  };
+
+  const handleInfoButtonClick = (): void => {
+    setIsInfoModalOpen(true);
+  };
+
+  const handleCloseModal = (): void => {
+    setIsInfoModalOpen(false);
   };
 
   const onMenuItemClick = (parentKey: Pages): void => {
@@ -128,7 +148,7 @@ const Navigation: React.FC<PageNavigationControlProps> = (props) => {
           [classes.controlBarContentWrapperDrawerOpen]: drawerOpen && !drawerExpanded && !isSmXs,
           [classes.controlBarContentWrapperDrawerOpenExpanded]: drawerOpen && drawerExpanded && !isSmXs,
         })}>
-          <ControlBar width={width} title={pageTitle} drawerOpen={drawerOpen} drawerExpanded={drawerExpanded} handleDrawerToggle={handleDrawerToggle}/>
+          <ControlBar width={width} title={pageTitle} drawerOpen={drawerOpen} drawerExpanded={drawerExpanded} handleDrawerToggle={handleDrawerToggle} handleInfoButtonClick={handleInfoButtonClick}/>
           <ContentWrapper width={width} displayLoadingPage={displayLoadingPage} displayLoadingBar={displayLoadingBar}>
             {
               props.children
@@ -137,6 +157,9 @@ const Navigation: React.FC<PageNavigationControlProps> = (props) => {
         </div>
       </div>
       <ProgressBar isLoading={displayLoadingBar}/>
+      <Modal className={classes.modal} open={isInfoModalOpen} onClose={handleCloseModal}>
+        <InfoPage github={github} email={email}/>
+      </Modal>
     </React.Fragment>
   );
 };
