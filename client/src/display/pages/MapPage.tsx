@@ -183,11 +183,13 @@ const MapPage: React.FC<MapPageProps> = (props) => {
     },
   ];
 
+  const apiKey: string = "AAPKb9245ea78bf3450d960c7a8fe7352b2apCge0fHVY-IxCC0zM4_weWRXVIuG8S5cXaobgetTterhxMxynqNpNMVqFBTWuMwc";
+
   return (
     <div className={classes.root}>
       <BreadcrumbsControl dataTree={dataTree} handleChange={handleBreadCrumbsRegionChange} value={esriMapRegion}/>
       <div className={classes.map}>
-        <ESRIMap mapPolygons={mapPolygons} caseType={caseType} date={date} initialBaseMap={"streets"} mapRegionUpdateGeometry={mapRegionUpdateGeometry} breadcrumbsRegionUpdateGeometry={breadcrumbsRegionUpdateGeometry} casesDataType={casesDataType} dailyCasesInformationDataObject={dailyCasesInformationDataObject} weeklyCasesInformationDataObject={weeklyCasesInformationDataObject} monthlyCasesInformationDataObject={monthlyCasesInformationDataObject} yearlyCasesInformationDataObject={yearlyCasesInformationDataObject} width={width} handleUpdateStart={handleMapUpdateStart} handleUpdateComplete={handleMapUpdateComplete} handleRegionChange={handleEsriMapRegionChange}/>
+        <ESRIMap mapPolygons={mapPolygons} caseType={caseType} date={date} initialBaseMap={"streets"} mapRegionUpdateGeometry={mapRegionUpdateGeometry} breadcrumbsRegionUpdateGeometry={breadcrumbsRegionUpdateGeometry} casesDataType={casesDataType} dailyCasesInformationDataObject={dailyCasesInformationDataObject} weeklyCasesInformationDataObject={weeklyCasesInformationDataObject} monthlyCasesInformationDataObject={monthlyCasesInformationDataObject} yearlyCasesInformationDataObject={yearlyCasesInformationDataObject} apiKey={apiKey} width={width} handleUpdateStart={handleMapUpdateStart} handleUpdateComplete={handleMapUpdateComplete} handleRegionChange={handleEsriMapRegionChange}/>
       </div>
       <div className={classes.informationSelectWrapper}>
         <div className={classes.selectWrapper}>

@@ -61,6 +61,7 @@ export interface ESRIMapDataProps {
   weeklyCasesInformationDataObject: CasesInformationDataObject;
   monthlyCasesInformationDataObject: CasesInformationDataObject;
   yearlyCasesInformationDataObject: CasesInformationDataObject;
+  apiKey: string;
 }
 
 export interface ESRIMapStyleProps {
@@ -116,6 +117,7 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
     weeklyCasesInformationDataObject,
     monthlyCasesInformationDataObject,
     yearlyCasesInformationDataObject,
+    apiKey,
     width,
     handleUpdateStart,
     handleUpdateComplete,
@@ -163,7 +165,7 @@ const ESRIMap: React.FC<ESRIMapProps> = (props) => {
   }, [mapPolygons, caseType, date, mapRegionUpdateGeometry, breadcrumbsRegionUpdateGeometry, casesDataType, width]);
 
   const initialize = (esriConfig, Map, MapView, FeatureLayer, GraphicsLayer, Legend): void => {
-
+    esriConfig.apiKey = apiKey;
     map = new Map({
       basemap: initialBaseMap,
     });
