@@ -52,8 +52,8 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     updateFontSize: {
       [theme.breakpoints.up("xs")]: {
-        fontSize: "14px",
-        lineHeight: "14px",
+        fontSize: "12px",
+        lineHeight: "12px",
         height: "14px",
         marginBottom: "4px",
       },
