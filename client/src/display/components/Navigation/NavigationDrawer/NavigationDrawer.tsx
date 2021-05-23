@@ -99,6 +99,7 @@ const useStyles = makeStyles((theme: Theme) =>
       width: "100%",
       height: `calc(100% - ${appBarHeightXs}px)`,
       top: appBarHeightXs,
+      overflowX: "hidden",
       [theme.breakpoints.up("sm")]: {
         height: `calc(100% - ${appBarHeightSm}px)`,
         top: appBarHeightSm,
