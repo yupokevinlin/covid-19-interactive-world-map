@@ -78,7 +78,7 @@ const useStyles = makeStyles((theme: Theme) =>
       flexDirection: "row",
       justifyContent: "flex-start",
       alignItems: "center",
-      width: "50%",
+      width: "70%",
     },
     toolBarRight: {
       height: "100%",
@@ -86,7 +86,7 @@ const useStyles = makeStyles((theme: Theme) =>
       flexDirection: "row",
       justifyContent: "flex-end",
       alignItems: "center",
-      width: "50%",
+      width: "30%",
     },
 
     toolTip: {
