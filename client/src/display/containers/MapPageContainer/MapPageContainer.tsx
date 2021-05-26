@@ -10,6 +10,7 @@ import {MapPageAction} from "../../../state/containers/MapPageContainer/actions"
 import {DateUtils} from "../../../helper/DateUtils";
 import {withWidth} from "@material-ui/core";
 import {Breakpoint} from "@material-ui/core/styles/createBreakpoints";
+import {HomePageState} from "../../../state/containers/HomePageContainer/types";
 export type MapPageContainerProps = MapPageContainerDataProps & MapPageContainerStyleProps & MapPageContainerEventProps;
 
 export interface MapPageContainerDataProps {
@@ -29,6 +30,7 @@ const MapPageContainer: React.FC<MapPageContainerProps> = (props) => {
   const appDispatch: Dispatch<AppAction> = useDispatch<Dispatch<AppAction>>();
   const mapPageState: MapPageState = useSelector<Store, MapPageState>(store => store.mapPage, shallowEqual);
   const mapPageDispatch: Dispatch<MapPageAction> = useDispatch<Dispatch<MapPageAction>>();
+  const homePageState: HomePageState = useSelector<Store, HomePageState>(store => store.homePage, shallowEqual);
 
   useEffect(() => {
     if (!!appState.casesDataObject) {
@@ -42,7 +44,7 @@ const MapPageContainer: React.FC<MapPageContainerProps> = (props) => {
     width,
   } = props;
 
-  const [date, setDate] = useState<string>(DateUtils.getPreviousDate());
+  const [date, setDate] = useState<string>(homePageState.summaryData.currentDate);
   const [region, setRegion] = useState<string>("World");
 
   const handleDateChange = (date: string): void => {
