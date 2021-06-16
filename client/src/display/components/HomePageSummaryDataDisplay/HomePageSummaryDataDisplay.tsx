@@ -139,7 +139,7 @@ const HomePageSummaryDataDisplay: React.FC<HomePageSummaryDataDisplayProps> = (p
 
 
   const currentDateMoment: Moment = getMomentDateFromDateString(currentDate);
-  currentDateMoment.add(1, "hours");
+  currentDateMoment.add(25, "hours");
 
   const currentDateText: string = `Last Updated: ${currentDateMoment.format("LLLL")}`;
 
