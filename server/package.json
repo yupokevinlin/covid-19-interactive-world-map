@@ -4,8 +4,8 @@
   "description": "Back end server for an interactive map and dashboard for the COVID-19 outbreak.",
   "main": "./src/server/index.ts",
   "scripts": {
-    "start": "node --max_old_space_size=2000 -r ts-node/register ./src/server/index.ts",
-    "prod": "node --max_old_space_size=2000 -r ts-node/register ./src/server/index.ts"
+    "start": "node --max_old_space_size=4000 -r ts-node/register ./src/server/index.ts",
+    "prod": "node --max_old_space_size=4000 -r ts-node/register ./src/server/index.ts"
   },
   "keywords": [],
   "author": "Kevin Lin",
