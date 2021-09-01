@@ -1266,11 +1266,18 @@ export namespace CasesUtils {
         if (!!hierarchicalName) {
           createRegionData(name, hierarchicalName, countryCode);
           const dailyCasesData: DailyCasesDataObject = data[hierarchicalName] ? data[hierarchicalName].data : {};
+          let maxRecoveries: number = 0;
           dateStringArray.forEach((date, index) => {
             createDailyData(dailyCasesData, date);
-            const totalRecoveries: number = parseInt(row[index + 5]);
+            let totalRecoveries: number = parseInt(row[index + 5]);
             if (isNaN(totalRecoveries)) {
               throw `Total Recoveries is NaN for: ${hierarchicalName} date: ${date}.`;
+            } else {
+              if (totalRecoveries > maxRecoveries) {
+                maxRecoveries = totalRecoveries;
+              } else {
+                totalRecoveries = maxRecoveries;
+              }
             }
             dailyCasesData[date] = {
               ...dailyCasesData[date],
