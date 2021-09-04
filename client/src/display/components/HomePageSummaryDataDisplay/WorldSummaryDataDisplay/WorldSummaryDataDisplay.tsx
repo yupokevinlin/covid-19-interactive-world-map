@@ -183,10 +183,14 @@ const WorldSummaryDataDisplay: React.FC<WorldSummaryDataDisplayProps> = (props) 
   };
 
   const getPercentText = (percent: number): string => {
-    if (percent < 0) {
-      return `${(Math.round(percent * 10) / 10).toFixed(1)}%`;
+    let calculatedPercent: number = (Math.round(percent * 10) / 10);
+    if (isNaN(calculatedPercent)) {
+      calculatedPercent = 0;
+    }
+    if (calculatedPercent < 0) {
+      return `${calculatedPercent.toFixed(1)}%`;
     } else {
-      return `+${(Math.round(percent * 10) / 10).toFixed(1)}%`;
+      return `+${calculatedPercent.toFixed(1)}%`;
     }
   };
 
